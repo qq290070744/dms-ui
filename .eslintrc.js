@@ -54,7 +54,8 @@ module.exports = {
       {
         'ignoreReadBeforeAssign': false
       }
-    ]
+    ],
+    'comma-dangle': ['error', 'only-multiline']
   },
   parserOptions: {
     parser: 'babel-eslint'
