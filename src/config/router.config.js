@@ -39,6 +39,12 @@ export const asyncRouterMap = [
             name: 'instancesRedis',
             component: () => import('@/views/instances/redis'),
             meta: { title: 'redis实例管理', keepAlive: true }
+          },
+          {
+            path: 'mysql',
+            name: 'instancesMysql',
+            component: () => import('@/views/instances/mysql'),
+            meta: { title: 'mysql实例管理', keepAlive: true }
           }
         ]
       },

@@ -8,13 +8,22 @@
         ]"
       ></a-input>
     </a-form-item>
-    <a-form-item label="密码">
+    <a-form-item v-if="mysql" label="用户名">
       <a-input
+        v-decorator="[
+          'username',
+          { initialValue: initial.username, rules: [{ required: true, message: '用户名不能为空' }] },
+        ]"
+      ></a-input>
+    </a-form-item>
+    <a-form-item label="密码">
+      <a-input-password
+        autocomplete="new-password"
         v-decorator="[
           'password',
           { initialValue: initial.password }
         ]"
-      ></a-input>
+      ></a-input-password>
     </a-form-item>
     <a-form-item label="主机名">
       <a-input
@@ -43,7 +52,7 @@
       ></a-input>
     </a-form-item>
     <a-form-item>
-      <a-button type="primary" @click="submit">
+      <a-button type="primary" @click="submit" :loading="loading">
         提交
       </a-button>
     </a-form-item>
@@ -60,6 +69,10 @@ export default {
     initial: {
       default () { return {} },
       type: Object
+    },
+    mysql: {
+      default: false,
+      type: Boolean
     }
   },
   created () {
@@ -67,6 +80,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       formOption: {
         form: null,
         labelCol: { span: 4 },
@@ -78,8 +92,11 @@ export default {
     submit () {
       this.formOption.form.validateFields((err, values) => {
         if (!err) {
+          this.loading = true
           this.$asyncEmit('submit', values).then(() => {
             this.formOption.form.resetFields()
+          }).finally(() => {
+            this.loading = false
           })
         }
       })
@@ -88,6 +105,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.ant-btn {
+  margin-left: 100px;
+}
 </style>
