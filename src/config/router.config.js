@@ -26,6 +26,22 @@ export const asyncRouterMap = [
           }
         ]
       },
+      // 实例管理
+      {
+        path: 'instances',
+        name: 'instances',
+        redirect: '/instances/redis',
+        component: RouteView,
+        meta: { title: '数据库实例管理', keepAlive: true, icon: 'table' },
+        children: [
+          {
+            path: 'redis',
+            name: 'instancesRedis',
+            component: () => import('@/views/instances/redis'),
+            meta: { title: 'redis实例管理', keepAlive: true }
+          }
+        ]
+      },
 
       // account
       {
