@@ -17,6 +17,7 @@ const err = (error) => {
   if (typeof error === 'string') {
     return Promise.reject(new Error(error))
   }
+
   if (error.response) {
     const data = error.response.data
     const token = Vue.ls.get(ACCESS_TOKEN)
@@ -38,6 +39,12 @@ const err = (error) => {
           }, 1500)
         })
       }
+    } else {
+      const { status, data, statusText } = error.response
+      notification.error({
+        message: data.code || status,
+        description: data.msg || statusText
+      })
     }
   }
   return Promise.reject(error)
