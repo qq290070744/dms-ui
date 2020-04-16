@@ -19,6 +19,12 @@ Vue.config.productionTip = false
 // mount axios Vue.$http and this.$http
 Vue.use(VueAxios)
 
+Vue.prototype.$asyncEmit = function (name, payload) {
+  return new Promise((resolve, reject) => {
+    this.$emit(name, { payload, resolve, reject })
+  })
+}
+
 new Vue({
   router,
   store,

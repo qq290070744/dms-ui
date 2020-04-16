@@ -65,3 +65,19 @@ export function removeLoadingAnimate (id = '', timeout = 1500) {
     document.body.removeChild(document.getElementById(id))
   }, timeout)
 }
+
+export function waitRefShow (vm, key, timeout = 3000) {
+  const initTime = Date.now()
+  return new Promise(function (resolve, reject) {
+    const check = function () {
+      if (vm.$refs[key]) {
+        resolve(vm.$refs[key])
+      } else if (Date.now() - initTime > timeout) {
+        reject(new Error('timeout'))
+      } else {
+        requestAnimationFrame(check)
+      }
+    }
+    requestAnimationFrame(check)
+  })
+}
