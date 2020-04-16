@@ -92,6 +92,10 @@ export default {
   },
   mounted () {
     this.load()
+    window.addEventListener('resize', this.autoHeight)
+  },
+  beforeDestroy () {
+    window.removeEventListener('resize', this.autoHeight)
   },
   methods: {
     load (parameters = {}) {
