@@ -9,7 +9,7 @@
       </form-wrapper>
     </div>
     <!-- data list -->
-    <a-table v-bind="table">
+    <a-table v-bind="table" @change="load">
       <template #serial="text, record, index">
         <span>{{ index + 1 }}</span>
       </template>
