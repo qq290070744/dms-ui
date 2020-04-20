@@ -3,10 +3,10 @@
     <div class="redis-value-page--top">
       <span>键名：</span>
       <span>
-        <a-input :addonAfter="keyType" readonly :value="keyName"></a-input>
+        <a-input :addonAfter="keyType" readOnly :value="keyName"></a-input>
       </span>
       <span>TTL：</span>
-      <span><a-input v-model="ttl" class="redis-value-page--ttl-input"></a-input></span>
+      <span><a-input v-model="ttl" read-only class="redis-value-page--ttl-input"></a-input></span>
       <span class="redis-value-page--ttl-unit">(s)</span>
       <a-button>修改</a-button>
     </div>
@@ -26,9 +26,7 @@ export default {
     }
   },
   data () {
-    return {
-      ttl: '-1'
-    }
+    return { }
   },
   computed: {
     keyName () {
@@ -36,6 +34,9 @@ export default {
     },
     keyType () {
       return this.redisObject && this.redisObject.type
+    },
+    ttl () {
+      return this.redisObject && this.redisObject.ttl
     }
   }
 }

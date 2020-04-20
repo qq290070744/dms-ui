@@ -28,8 +28,11 @@ export function genRange (el) {
 
 export function defaultRedisObject () {
   return {
+    dbName: '',
+    instId: '',
     key: '',
     value: '',
-    type: ''
+    type: '',
+    ttl: '-1'
   }
 }

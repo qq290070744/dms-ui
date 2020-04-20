@@ -1,66 +1,72 @@
 <template>
   <div class="redis-key-list">
     <div class="function-row">
-      <a-button type="primary" size="small">新增</a-button>
-      <a-button size="small">删除1</a-button>
+      <!-- <a-button type="primary" size="small">新增</a-button>
+      <a-button size="small">删除</a-button> -->
     </div>
-    <s-table
-      ref="redisTable"
-      rowKey="key"
-      :data="loadData"
-      :columns="columns"
+    <a-table
+      v-bind="finalTableOption"
       :customRow="customRow"
-      :scroll="{y: tableHeight}"
-      :pageSize="40"
+      @change="(...args) => $emit('page-change', ...args)"
       bordered
       size="small"
     >
       <span slot="serial" slot-scope="text, record, index">
         {{ index + 1 }}
       </span>
-    </s-table>
+    </a-table>
   </div>
 </template>
 
 <script>
-import { STable } from '@/components'
-import * as redisApi from '@/api/redis'
 import { waitRefShow } from '@/utils/util'
 export default {
-  components: {
-    STable
+  props: {
+    tableOptions: {
+      type: Object,
+      default () { return {} }
+    }
   },
   data () {
     return {
       selectRow: {},
-      columns: [
-        {
-          title: '#',
-          width: 40,
-          scopedSlots: { customRender: 'serial' }
+      table: {
+        ref: 'redisTable',
+        scroll: { y: 400 },
+        pagination: {
+          defaultPageSize: 50,
         },
-        {
-          title: '类型',
-          dataIndex: 'type',
-          width: 80
-        },
-        {
-          title: '键名',
-          dataIndex: 'key'
-        }
-      ],
-      tableHeight: 400,
-      // 查询条件参数
-      queryParam: {},
-      // 加载数据方法 必须为 Promise 对象
-      loadData: parameter => {
-        return redisApi.page({ ...parameter, ...this.queryParam })
-          .then(result => result)
+        columns: [
+          {
+            title: '#',
+            width: 40,
+            scopedSlots: { customRender: 'serial' }
+          },
+          {
+            title: '类型',
+            dataIndex: 'type',
+            width: 80
+          },
+          {
+            title: '键名',
+            dataIndex: 'key'
+          }
+        ],
       }
     }
   },
-  mounted () {
-    this.initTableHeight()
+  computed: {
+    finalTableOption () {
+      return {
+        ...this.tableOptions,
+        ...this.table
+      }
+    }
+  },
+  watch: {
+    'tableOptions.dataSource' () {
+      this.initTableHeight()
+    }
   },
   methods: {
     customRow (record) {
@@ -71,14 +77,16 @@ export default {
     },
     onKeyClick (record) {
       this.selectRow = record
-      redisApi.key(record)
+      this.$emit('row-change', record)
     },
     initTableHeight () {
-      waitRefShow(this, 'redisTable')
-        .then((ref) => {
-          const { top } = ref.$el.getBoundingClientRect()
-          this.tableHeight = document.body.clientHeight - top - 24 - 40
-        })
+      this.$nextTick(() => {
+        waitRefShow(this, 'redisTable')
+          .then((ref) => {
+            const { top } = ref.$el.getBoundingClientRect()
+            this.table.scroll.y = document.body.clientHeight - top - 24 - 40
+          })
+      })
     }
   }
 }

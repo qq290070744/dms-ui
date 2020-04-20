@@ -1,10 +1,10 @@
 <template>
   <split-window class="redis-query-container">
     <template #left>
-      <redis-key-list></redis-key-list>
+      <redis-key-list @value-change="(value) => currRedisObject = value"></redis-key-list>
     </template>
     <template #right>
-      <redis-value-part></redis-value-part>
+      <redis-value-part :redisObject="currRedisObject"></redis-value-part>
     </template>
   </split-window>
 </template>
@@ -19,19 +19,17 @@ export default {
     RedisKeyList,
     RedisValuePart
   },
-  data () {
-    return {
-      redis: {
-        curr: '',
-        list: [{ label: 'DBO', value: 'DBO' }]
-      },
-      exactSearch: false
+  beforeRouteEnter (to, from, next) {
+    // console.log()
+    if (/\d+/.test(to.params.instance_id)) {
+      next()
+    } else {
+      next({ name: 'queryRedisInstances' })
     }
   },
-  methods: {
-    doSearch (e) {
-      // exactSearch
-      console.log(e.target.value)
+  data () {
+    return {
+      currRedisObject: null
     }
   }
 }

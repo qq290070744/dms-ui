@@ -49,10 +49,10 @@ export default {
   },
   computed: {
     originValue () {
-      return this.redisObject && this.redisObject.value
+      return this.redisObject ? this.redisObject.value : {}
     },
     currValue () {
-      return [{ field: '111', value: '2222222' }]
+      return Object.keys(this.originValue).map(key => ({ field: key, value: this.originValue[key] }))
     }
   },
   methods: {
@@ -62,9 +62,6 @@ export default {
     submit () {
       // 未检测到修改，无需提交。
       // key: devops:test:string:key:2  value: test1 dbName: 1
-    },
-    parseToJson () {
-      // try
     }
   }
 }

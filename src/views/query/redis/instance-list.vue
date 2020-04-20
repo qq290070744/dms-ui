@@ -2,8 +2,9 @@
   <div class="redis-query-instance-list">
     <div class="redis-query-instance-list--title"></div>
     <div class="redis-query-instance-list--table">
-      <s-table
+      <a-table
         v-bind="table"
+        :dataSource="redisInstances"
       >
         <template #serial="text, record, index">
           <span>{{ index + 1 }}</span>
@@ -11,18 +12,14 @@
         <template #actions="text, record">
           <router-link :to="{path: '/query/redis/' + record.id}">查询实例</router-link>
         </template>
-      </s-table>
+      </a-table>
     </div>
   </div>
 </template>
 
 <script>
-import * as redisApi from '@/api/redis'
-import { STable } from '@/components'
+import { mapGetters } from 'vuex'
 export default {
-  components: {
-    STable
-  },
   data () {
     const columns = [{
       title: '#',
@@ -40,12 +37,14 @@ export default {
       table: {
         rowKey: 'id',
         columns,
-        size: 'small',
-        data: parameter => {
-          return redisApi.instances({ ...parameter, ...this.queryParam })
-            .then(result => result)
-        }
+        size: 'small'
       }
+    }
+  },
+  computed: {
+    ...mapGetters(['resources']),
+    redisInstances () {
+      return this.resources ? (this.resources.redis || []) : []
     }
   }
 }

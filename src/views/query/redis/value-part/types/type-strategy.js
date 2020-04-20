@@ -1,6 +1,7 @@
 import StringType from './string-type'
 import HashType from './hash-type'
 import ZsetType from './zset-type'
+import SetType from './set-type'
 import ListType from './list-type'
 import { defaultRedisObject } from '../../utils'
 export default {
@@ -8,6 +9,7 @@ export default {
     StringType,
     HashType,
     ZsetType,
+    SetType,
     ListType
   },
   props: {
@@ -18,11 +20,11 @@ export default {
   },
   computed: {
     type () {
-      return this.redisObject && this.redisObject.type
+      return this.redisObject ? this.redisObject.type : ''
     }
   },
   render () {
-    const component = this.type.toLowerCase() + '-type'
+    const component = this.type ? this.type.toLowerCase() + '-type' : ''
     return (
       component ? <component redisObject={this.redisObject}></component> : undefined
     )

@@ -10,14 +10,16 @@
 <script>
 import ValuePage from './page'
 import TypeStrategy from './types/type-strategy'
+import { defaultRedisObject } from '../utils'
 export default {
   components: {
     ValuePage,
     TypeStrategy
   },
-  data () {
-    return {
-      redisObject: { key: 'unique-key', value: 'lalalalala', type: 'hash' }
+  props: {
+    redisObject: {
+      type: Object,
+      default: defaultRedisObject()
     }
   }
 }
@@ -28,6 +30,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
+  padding: 8px;
 
   &-page {
     flex: 1;

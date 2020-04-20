@@ -1,6 +1,6 @@
 <template>
-  <type-content class="redis-value-hash">
-    <a-table :columns="columns" :dataSource="currValue" rowKey="id" size="small" bordered>
+  <type-content class="redis-value-set">
+    <a-table :columns="columns" :dataSource="currValue" rowKey="value" size="small" bordered>
       <template #index="text, record, index">
         <span>{{ index + 1 }}</span>
       </template>
@@ -45,7 +45,7 @@ export default {
       return this.redisObject ? this.redisObject.value : []
     },
     currValue () {
-      return this.originValue.map(value => ({ id: this.uid(), value }))
+      return this.originValue.map(value => ({ value }))
     }
   },
   methods: {
@@ -55,9 +55,6 @@ export default {
     submit () {
       // 未检测到修改，无需提交。
       // key: devops:test:string:key:2  value: test1 dbName: 1
-    },
-    uid (len = 5) {
-      return (Date.now().toString(36) + Math.random().toString(36).substr(2, len)).toUpperCase()
     }
   }
 }
