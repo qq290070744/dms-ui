@@ -10,7 +10,8 @@ const user = {
     welcome: '',
     avatar: '',
     roles: [],
-    info: {}
+    info: {},
+    resources: {}
   },
 
   mutations: {
@@ -29,7 +30,11 @@ const user = {
     },
     SET_INFO: (state, info) => {
       state.info = info
-    }
+    },
+    SET: (state, payload) => {
+      const [key, value] = payload
+      state[key] = value
+    },
   },
 
   actions: {
@@ -55,6 +60,7 @@ const user = {
           const user = result.user_info
           const role = result.user_role
           const perms = result.user_perms
+          const resources = result.resources
           /** 这里需要根据接口定义对角色、权限列表进行修改，目前接口未定暂时不处理 */
           if (role /** && perms.length > 0 */) {
             role.permissions = perms
@@ -67,6 +73,7 @@ const user = {
             // role.permissionList = role.permissions.map(permission => { return permission.permissionId })
             commit('SET_ROLES', role)
             commit('SET_INFO', user)
+            commit('SET', ['resources', resources])
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }

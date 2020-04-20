@@ -21,7 +21,7 @@ export function login (parameter) {
 
 export function logout () {
   return axios({
-    url: '/logout',
+    url: '/auth/logout',
     method: 'post',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
@@ -31,7 +31,7 @@ export function logout () {
 
 export function getInfo () {
   return axios({
-    url: `/user/info`,
+    url: '/auth/user/info',
     method: 'get',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
