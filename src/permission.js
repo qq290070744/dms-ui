@@ -12,7 +12,7 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['login', 'register', 'registerResult'] // no redirect whitelist
 const defaultRoutePath = '/dashboard/workplace'
-// let initToken = false // need delete
+
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
   to.meta && (typeof to.meta.title !== 'undefined' && setDocumentTitle(`${to.meta.title} - ${domTitle}`))
@@ -55,14 +55,6 @@ router.beforeEach((to, from, next) => {
       } else {
         next()
       }
-      // need delete
-      // if (!initToken) {
-      //   onSuccess({ result: {} })
-      //   initToken = true
-      // } else {
-      //   next()
-      // }
-      // console.log(onFail)
     }
   } else {
     if (whiteList.includes(to.name)) {
