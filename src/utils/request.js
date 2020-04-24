@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import axios from 'axios'
-import store from '@/store'
 import notification from 'ant-design-vue/es/notification'
 import { VueAxios } from './axios-plugin'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { getAccessTokenFromCookie, redirectToLogin } from './unified-auth'
 
 const ERROR_CODE = 1
 
@@ -33,11 +33,12 @@ const err = (error) => {
         description: 'Authorization verification failed'
       })
       if (token) {
-        store.dispatch('Logout').then(() => {
-          setTimeout(() => {
-            window.location.reload()
-          }, 1500)
-        })
+        redirectToLogin()
+        // store.dispatch('Logout').then(() => {
+        //   setTimeout(() => {
+        //     window.location.reload()
+        //   }, 1500)
+        // })
       }
     } else {
       const { status, data, statusText } = error.response
@@ -52,15 +53,16 @@ const err = (error) => {
 
 // request interceptor
 service.interceptors.request.use(config => {
-  const token = Vue.ls.get(ACCESS_TOKEN)
+  const token = getAccessTokenFromCookie() || Vue.ls.get(ACCESS_TOKEN)
   if (token) {
-    config.headers['Authorization'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
+    config.headers['Authorization'] = token.replace('+', ' ') // 让每个请求携带自定义 token 请根据实际情况自行修改
   }
   return config
 }, err)
 
 // response interceptor
 service.interceptors.response.use((response) => {
+  console.log('--------', response)
   const responseData = response.data
   // 处理业务逻辑
   if (responseData.code !== undefined && responseData.msg !== undefined) {

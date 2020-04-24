@@ -6637,6 +6637,11 @@ js-beautify@^1.6.12, js-beautify@^1.6.14:
     mkdirp "~0.5.1"
     nopt "~4.0.1"
 
+js-cookie@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.npm.taobao.org/js-cookie/download/js-cookie-2.2.1.tgz?cache=0&sync_timestamp=1583934793245&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fjs-cookie%2Fdownload%2Fjs-cookie-2.2.1.tgz#69e106dc5d5806894562902aa5baec3744e9b2b8"
+  integrity sha1-aeEG3F1YBolFYpAqpbrsN0Tpsrg=
+
 js-levenshtein@^1.1.3:
   version "1.1.6"
   resolved "https://registry.npmjs.org/js-levenshtein/-/js-levenshtein-1.1.6.tgz#c6cee58eb3550372df8deb85fad5ce66ce01d59d"
@@ -10759,6 +10764,11 @@ url-loader@^2.1.0:
     mime "^2.4.4"
     schema-utils "^2.4.1"
 
+url-parameter-append@^1.0.2:
+  version "1.0.3"
+  resolved "http://nexus.corp.yatsenglobal.com/repository/npm-all/url-parameter-append/-/url-parameter-append-1.0.3.tgz#ebc6762471d2cb3d5681483d78406dd4f16c67bf"
+  integrity sha512-m5xbHbO9/SsXiO+A62d26JnwdY6fozVdfpSs5GDEQhVSj1F0mq0PtBp+hE+edjpzuvz/h5JnFJq9ZzPvOc0lPw==
+
 url-parse@^1.4.3:
   version "1.4.7"
   resolved "https://registry.npmjs.org/url-parse/-/url-parse-1.4.7.tgz#a8a83535e8c00a316e403a5db4ac1b9b853ae278"
@@ -11511,3 +11521,10 @@ yorkie@^2.0.0:
     is-ci "^1.0.10"
     normalize-path "^1.0.0"
     strip-indent "^2.0.0"
+
+ys-unified-auth@^0.1.2:
+  version "0.1.2"
+  resolved "http://nexus.corp.yatsenglobal.com/repository/npm-all/ys-unified-auth/-/ys-unified-auth-0.1.2.tgz#c46e8146913f4de660f3b66bb3ca537248a541d9"
+  integrity sha512-cdyqauUZqkpCzk7QCTqwHb13bQ3c8zN0SeglFwmugQbIjHD1V/2D5gdnhORov5OA7RTvFjHeJJfRlJSvFMo5qg==
+  dependencies:
+    url-parameter-append "^1.0.2"
