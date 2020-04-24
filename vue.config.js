@@ -2,6 +2,8 @@ const path = require('path')
 const webpack = require('webpack')
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
 
+console.log(`API_URL: ${process.env.VUE_APP_API_BASE_URL}`)
+
 function resolve (dir) {
   return path.join(__dirname, dir)
 }

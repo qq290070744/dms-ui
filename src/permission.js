@@ -7,11 +7,9 @@ import '@/components/NProgress/nprogress.less' // progress bar custom style
 import notification from 'ant-design-vue/es/notification'
 import { setDocumentTitle, domTitle } from '@/utils/domUtil'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { getAccessTokenFromCookie, redirectToLogin } from '@/utils/unified-auth'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
-
-const whiteList = ['login', 'register', 'registerResult'] // no redirect whitelist
-const defaultRoutePath = '/dashboard/workplace'
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
@@ -40,30 +38,22 @@ router.beforeEach((to, from, next) => {
       message: '错误',
       description: '请求用户信息失败，请重试'
     })
-    store.dispatch('Logout').then(() => {
-      next({ path: '/user/login', query: { redirect: to.fullPath } })
-    })
+    // store.dispatch('Logout').then(() => {
+    //   next({ path: '/user/login', query: { redirect: to.fullPath } })
+    // })
+    redirectToLogin()
   }
-  if (Vue.ls.get(ACCESS_TOKEN)) {
-    /* has token */
-    if (to.path === '/user/login') {
-      next({ path: defaultRoutePath })
-      NProgress.done()
+  if (getAccessTokenFromCookie() || Vue.ls.get(ACCESS_TOKEN)) {
+    if (store.getters.roles.length === 0) {
+      store.dispatch('GetInfo').then(onSuccess, onFail)
     } else {
-      if (store.getters.roles.length === 0) {
-        store.dispatch('GetInfo').then(onSuccess, onFail)
-      } else {
-        next()
-      }
+      next()
     }
   } else {
-    if (whiteList.includes(to.name)) {
-      // 在免登录白名单，直接进入
-      next()
-    } else {
-      next({ path: '/user/login', query: { redirect: to.fullPath } })
-      NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
-    }
+    NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
+    // todo: auth login
+    console.log('todo: auth login')
+    redirectToLogin()
   }
 })
 

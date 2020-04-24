@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "install:internal": "npm install --registry=http://nexus.corp.yatsenglobal.com/repository/npm-all/",
     "serve": "vue-cli-service serve",
     "serve:mock": "vue-cli-service serve --mode mock",
     "build": "vue-cli-service build",
@@ -18,6 +19,7 @@
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "enquire.js": "^2.1.6",
+    "js-cookie": "^2.2.1",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.pick": "^4.4.0",
@@ -34,7 +36,8 @@
     "vue-router": "^3.1.2",
     "vue-svg-component-runtime": "^1.0.1",
     "vuex": "^3.1.1",
-    "wangeditor": "^3.1.1"
+    "wangeditor": "^3.1.1",
+    "ys-unified-auth": "^0.1.2"
   },
   "devDependencies": {
     "@ant-design/colors": "^3.2.1",
