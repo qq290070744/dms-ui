@@ -1,6 +1,6 @@
 [English](./README.md) | 简体中文
 
-<h1 align="center">SQL-AUDIT-PLATFORM 审核平台</h1>
+<h1 align="center">DATABASE MANAGEMENT SYSTEM 数据库管控系统</h1>
 
 Overview
 ----
