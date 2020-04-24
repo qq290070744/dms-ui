@@ -26,6 +26,60 @@ export const asyncRouterMap = [
           }
         ]
       },
+      // 实例管理
+      {
+        path: 'instances',
+        name: 'instances',
+        redirect: '/instances/redis',
+        component: RouteView,
+        meta: { title: '数据库实例管理', keepAlive: true, icon: 'table' },
+        children: [
+          {
+            path: 'redis',
+            name: 'instancesRedis',
+            component: () => import('@/views/instances/redis'),
+            meta: { title: 'redis实例管理', keepAlive: true }
+          },
+          {
+            path: 'mysql',
+            name: 'instancesMysql',
+            component: () => import('@/views/instances/mysql'),
+            meta: { title: 'mysql实例管理', keepAlive: true }
+          }
+        ]
+      },
+      // query 查询
+      {
+        path: 'query',
+        name: 'query',
+        redirect: '/query/redis',
+        component: RouteView,
+        meta: { title: '查询', keepAlive: true, icon: 'search' },
+        children: [
+          {
+            path: 'redis',
+            name: 'queryRedis',
+            component: () => import('@/views/query/redis'),
+            meta: { title: 'redis实例列表', keepAlive: true },
+            redirect: 'redis/instances',
+            hideChildrenInMenu: true,
+            children: [
+              {
+                path: 'instances',
+                name: 'queryRedisInstances',
+                component: () => import('@/views/query/redis/instance-list'),
+                meta: { title: 'redis查询', keepAlive: true }
+              },
+              {
+                path: ':instance_id',
+                name: 'queryRedisInstance',
+                component: () => import('@/views/query/redis/instance'),
+                meta: { title: 'redis查询', keepAlive: true }
+              }
+            ]
+          }
+        ]
+      },
 
       // account
       {

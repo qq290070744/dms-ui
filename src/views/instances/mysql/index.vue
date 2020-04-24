@@ -1,10 +1,10 @@
 <template>
-  <div class="y-instances-redis">
+  <div class="y-instances">
     <!-- create -->
-    <div class="y-instances-redis--function-row">
+    <div class="y-instances--function-row">
       <form-wrapper>
         <template #default="{close}">
-          <create-record @submit="(payload) => create(payload, close)"></create-record>
+          <create-record :mysql="true" @submit="(payload) => create(payload, close)"></create-record>
         </template>
       </form-wrapper>
     </div>
@@ -16,7 +16,7 @@
       <template #handler="text, record, index">
         <form-wrapper placement="left">
           <template #default="{close}">
-            <create-record :initial="record" @submit="(payload) => update(payload, close, record)"></create-record>
+            <create-record :mysql="true" :initial="record" @submit="(payload) => update(payload, close, record)"></create-record>
           </template>
           <template #open="{show}">
             <a-button type="primary" @click="() => show()">编辑</a-button>
@@ -39,9 +39,9 @@ import {
   create as iCreate,
   update as iUpdate,
   remove as iRemove
-} from '@/api/db-redis'
-import CreateRecord from './create'
-import FormWrapper from './form-wrapper'
+} from '@/api/db-mysql'
+import CreateRecord from '../redis/create'
+import FormWrapper from '../redis/form-wrapper'
 export default {
   components: {
     FormWrapper,
@@ -64,6 +64,10 @@ export default {
           {
             title: '名称',
             dataIndex: 'name',
+          },
+          {
+            title: '用户名',
+            dataIndex: 'username',
           },
           {
             title: '主机名',
@@ -155,7 +159,7 @@ export default {
 </script>
 
 <style lang="less">
-.y-instances-redis {
+.y-instances {
   &--function-row {
     margin-bottom: 8px;
   }

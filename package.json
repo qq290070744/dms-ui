@@ -1,11 +1,14 @@
 {
-  "name": "audit-platform",
-  "version": "0.1.0",
+  "name": "database-management-system",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
+    "install:internal": "npm install --registry=http://nexus.corp.yatsenglobal.com/repository/npm-all/",
     "serve": "vue-cli-service serve",
     "serve:mock": "vue-cli-service serve --mode mock",
-    "build": "vue-cli-service build",
+    "build:test": "vue-cli-service build --mode test",
+    "build:testing": "vue-cli-service build --mode test",
+    "build:prod": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "build:preview": "vue-cli-service build --mode preview",
@@ -14,10 +17,11 @@
   },
   "dependencies": {
     "@antv/data-set": "^0.10.2",
-    "ant-design-vue": "1.5.0-alpha.1",
-    "axios": "^0.19.0",
-    "core-js": "^3.1.2",
+    "ant-design-vue": "1.5.3",
+    "axios": "^0.19.2",
+    "core-js": "^3.6.5",
     "enquire.js": "^2.1.6",
+    "js-cookie": "^2.2.1",
     "lodash.clonedeep": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.pick": "^4.4.0",
@@ -34,7 +38,8 @@
     "vue-router": "^3.1.2",
     "vue-svg-component-runtime": "^1.0.1",
     "vuex": "^3.1.1",
-    "wangeditor": "^3.1.1"
+    "wangeditor": "^3.1.1",
+    "ys-unified-auth": "^0.1.2"
   },
   "devDependencies": {
     "@ant-design/colors": "^3.2.1",
