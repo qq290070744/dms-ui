@@ -22,7 +22,7 @@ const auth = {
   clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
   responseType: process.env.VUE_APP_AUTH_RESPONSE_TYPE,
   scope: process.env.VUE_APP_AUTH_SCOPE,
-  state: process.env.VUE_APP_state,
+  state: process.env.VUE_APP_STATE,
 }
 
 const config = {
