@@ -8,6 +8,7 @@
     "serve:mock": "vue-cli-service serve --mode mock",
     "build:test": "vue-cli-service build --mode test",
     "build:testing": "vue-cli-service build --mode test",
+    "build:uat": "vue-cli-service build --mode uat",
     "build:prod": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
