@@ -62,7 +62,6 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
-  console.log('--------', response)
   const responseData = response.data
   // 处理业务逻辑
   if (responseData.code !== undefined && responseData.msg !== undefined) {

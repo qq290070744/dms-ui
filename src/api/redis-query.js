@@ -28,3 +28,7 @@ export function types (params) {
 export function ttl (params) {
   return axios.post(p('/keys/ttl'), params)
 }
+
+export function size (params) {
+  return axios.post(p('/dbs/size'), params)
+}

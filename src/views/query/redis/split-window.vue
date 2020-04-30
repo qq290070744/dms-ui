@@ -19,9 +19,6 @@ export default {
       height: '100%'
     }
   },
-  mounted () {
-    this.$nextTick(this.initSize)
-  },
   methods: {
     startResize (ev) {
       const range = genRange(this.$el)
@@ -31,11 +28,6 @@ export default {
           this.leftSideWidth = width
         }
       )
-    },
-    initSize () {
-      const { top } = this.$el.getBoundingClientRect()
-      const height = document.body.clientHeight - top - 24 // padding
-      this.height = height
     }
   }
 }

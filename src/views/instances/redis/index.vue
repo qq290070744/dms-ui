@@ -42,6 +42,7 @@ import {
 } from '@/api/db-redis'
 import CreateRecord from './create'
 import FormWrapper from './form-wrapper'
+import { calcTableBodyHeight } from '../../../utils/util'
 export default {
   components: {
     FormWrapper,
@@ -140,14 +141,7 @@ export default {
     },
     autoHeight () {
       this.$nextTick(() => {
-        const tableEl = this.$refs.table.$el
-        const thead = tableEl.querySelector('.ant-table-thead')
-        const { top, height } = tableEl.getBoundingClientRect()
-        const bodyHeight = document.body.clientHeight
-        // 底部溢出
-        const overflow = top + height - bodyHeight
-        const tbodyHeight = bodyHeight - top - (thead ? thead.clientHeight : 0) - overflow
-        this.table.scroll.y = tbodyHeight
+        this.table.scroll.y = calcTableBodyHeight(this.$refs.table.$el)
       })
     }
   }
