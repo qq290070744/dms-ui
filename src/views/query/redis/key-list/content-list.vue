@@ -71,6 +71,7 @@ export default {
   methods: {
     customRow (record) {
       return {
+        class: this.selectRow === record ? 'redis-key-list--row-select' : '',
         nativeOn: { click: () => this.onKeyClick(record) }
       }
     },
@@ -122,7 +123,7 @@ export default {
   // 选中时 .redis-key-list--row-select
   .ant-table-tbody > tr.ant-table-row.redis-key-list--row-select {
     & > td, &:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
-      background-color: #5bcbff ;
+      background-color: #a0d1ff ;
     }
   }
   // 分页

@@ -24,6 +24,7 @@ export default {
   flex-direction: column;
 
   &--content {
+    margin-top: 8px;
     flex: 1;
   }
 }

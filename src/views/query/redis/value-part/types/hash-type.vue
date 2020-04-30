@@ -1,10 +1,6 @@
 <template>
   <type-content class="redis-value-hash">
-    <a-table
-      :columns="columns"
-      :dataSource="currValue"
-      rowKey="field"
-      v-bind="tableOptions">
+    <a-table :columns="columns" :dataSource="currValue" rowKey="field" v-bind="tableOptions">
       <template #index="text, record, index">
         <span>{{ index + 1 }}</span>
       </template>

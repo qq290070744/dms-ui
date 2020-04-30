@@ -1,13 +1,3 @@
-<template>
-  <div class="editable-cell">
-    <div v-if="editable" class="editable-cell--input-wrapper">
-      <a-textarea class="editable-cell--input" v-focus @blur="onSave" @change="onChange" :value="currValue"/>
-    </div>
-    <div v-else class="editable-cell--text-wrapper" @dblclick="doStartEdit">
-      {{ value || ' ' }}
-    </div>
-  </div>
-</template>
 
 <script>
 export default {
@@ -33,32 +23,72 @@ export default {
   computed: {
     currValue () {
       return this.modify !== null ? this.modify : this.value
+    },
+    classes () {
+      return [
+        'editable-cell',
+        this.modify ? 'modify' : ''
+      ]
     }
   },
   methods: {
     onChange (e) {
-      this.modify = e.target.value || ''
+      this.modify = e.target.value !== this.value ? e.target.value : ''
     },
     doStartEdit () {
       this.editable = true
     },
     onSave () {
       this.editable = false
-      this.modify = null
+    },
+    // render
+    renderInput () {
+      const on = { blur: this.onSave, change: this.onChange }
+      const directives = [{ name: 'focus' }]
+      return <div class={this.classes}>
+        <a-textarea class='editable-cell--input' { ...{ on, directives } } value={this.currValue}/>
+        {this.modify && <a-icon type="book"/>}
+        <div class='editable-cell--text'>{ this.currValue || ' ' }</div>
+      </div>
+    },
+    renderText () {
+      return <div class={this.classes} onDblclick={this.doStartEdit}>
+        <div class='editable-cell--text'>{ this.currValue || ' ' }</div>
+      </div>
     }
+  },
+  render () {
+    return this.editable
+      ? this.renderInput()
+      : this.renderText()
   }
 }
 </script>
 
 <style lang="less">
-.editable-cell{
-  &--input-wrapper {
-    width: 100%;
-    height: 100%;
+
+.editable-cell {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  &.modify {
+    color: red;
   }
-  &--input.ant-input {
+  & .ant-input {
+    position: absolute;
     height: 100%;
     resize: none;
+    border: 0;
+    padding: 0;
+    min-height: 0;
+    &:focus {
+      box-shadow: none;
+    }
+  }
+  & .editable-cell--text {
+    white-space: break-spaces;
+    word-break: break-all;
+    height: 100%;
   }
 }
 </style>
