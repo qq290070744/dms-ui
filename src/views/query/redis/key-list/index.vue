@@ -6,7 +6,7 @@
         <a-col :span="18">
           <a-select :options="redis.list" v-model="redis.db" @change="loadData(searchStr)" size="small" style="width: 100%"></a-select>
         </a-col>
-        <a-col :span="6">总数：{{ table.dataSource.length }}</a-col>
+        <a-col :span="6">总数：{{ redisTotol }}</a-col>
       </a-row>
       <a-row :gutter="8">
         <a-col :span="18">
@@ -34,6 +34,7 @@ export default {
   },
   data () {
     return {
+      redisTotol: 0,
       redis: {
         db: 0,
         list: genDBList()
@@ -58,6 +59,7 @@ export default {
   },
   methods: {
     loadData (pattern) {
+      this.queryCount()
       const parameter = {
         db_name: this.redis.db,
         inst_id: this.instId,
@@ -75,6 +77,14 @@ export default {
           //   this.initTableHeight()
           // })
         })
+    },
+    queryCount () {
+      redisApi.size({
+        db_name: this.redis.db,
+        inst_id: this.instId
+      }).then((data) => {
+        this.redisTotol = data.total
+      })
     },
     queryKeyType (page, pageSize) {
       const start = (page - 1) * pageSize

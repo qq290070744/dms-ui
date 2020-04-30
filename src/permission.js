@@ -33,7 +33,6 @@ router.beforeEach((to, from, next) => {
     })
   }
   const onFail = (e) => {
-    console.log(e)
     notification.error({
       message: '错误',
       description: '请求用户信息失败，请重试'
@@ -51,8 +50,6 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
-    // todo: auth login
-    console.log('todo: auth login')
     redirectToLogin()
   }
 })

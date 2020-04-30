@@ -7,7 +7,7 @@
     <a-table
       v-bind="finalTableOption"
       :customRow="customRow"
-      @change="(...args) => $emit('page-change', ...args)"
+      @change="onChange"
       bordered
       size="small"
     >
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { waitRefShow } from '@/utils/util'
+import { waitRefShow, calcTableBodyHeight } from '@/utils/util'
 export default {
   props: {
     tableOptions: {
@@ -32,7 +32,7 @@ export default {
       selectRow: {},
       table: {
         ref: 'redisTable',
-        scroll: { y: 400 },
+        scroll: { y: 'auto' },
         pagination: {
           defaultPageSize: 50,
         },
@@ -71,7 +71,6 @@ export default {
   methods: {
     customRow (record) {
       return {
-        class: record.key === this.selectRow.key ? 'redis-key-list--row-select' : '',
         nativeOn: { click: () => this.onKeyClick(record) }
       }
     },
@@ -80,13 +79,16 @@ export default {
       this.$emit('row-change', record)
     },
     initTableHeight () {
-      this.$nextTick(() => {
-        waitRefShow(this, 'redisTable')
-          .then((ref) => {
-            const { top } = ref.$el.getBoundingClientRect()
-            this.table.scroll.y = document.body.clientHeight - top - 24 - 40
-          })
-      })
+      if (this.table.scroll.y !== 'auto') {
+        return
+      }
+      waitRefShow(this, 'redisTable')
+        .then((ref) => {
+          this.table.scroll.y = calcTableBodyHeight(ref.$el)
+        })
+    },
+    onChange (...args) {
+      this.$emit('page-change', ...args)
     }
   }
 }

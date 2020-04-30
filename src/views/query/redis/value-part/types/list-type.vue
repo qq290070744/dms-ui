@@ -1,6 +1,6 @@
 <template>
   <type-content class="redis-value-hash">
-    <a-table :columns="columns" :dataSource="currValue" rowKey="id" size="small" bordered>
+    <a-table :columns="columns" :dataSource="currValue" rowKey="id" v-bind="tableOptions">
       <template #index="text, record, index">
         <span>{{ index + 1 }}</span>
       </template>
@@ -15,11 +15,13 @@
 import EditableCell from './editable-cell'
 import TypeContent from './type-content'
 import { defaultRedisObject } from '../../utils'
+import { typeMixins } from './type-mixins'
 export default {
   components: {
     TypeContent,
     EditableCell
   },
+  mixins: [typeMixins],
   props: {
     redisObject: {
       default: defaultRedisObject,
