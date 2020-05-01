@@ -87,8 +87,8 @@ export default {
           this.table.scroll.y = calcTableBodyHeight(ref.$el)
         })
     },
-    onChange (...args) {
-      this.$emit('page-change', ...args)
+    onChange (pagination /** , filters, sorter */) {
+      this.$emit('page-change', pagination.current, pagination.pageSize)
     }
   }
 }

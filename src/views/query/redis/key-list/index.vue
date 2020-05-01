@@ -17,7 +17,7 @@
         </a-col>
       </a-row>
     </div>
-    <redis-content-key-list :tableOptions="table" @row-change="queryValue" @on-change="queryKeyType"></redis-content-key-list>
+    <redis-content-key-list :tableOptions="table" @row-change="queryValue" @page-change="queryKeyType"></redis-content-key-list>
   </div>
 </template>
 
@@ -88,10 +88,9 @@ export default {
     },
     queryKeyType (page, pageSize) {
       const start = (page - 1) * pageSize
-      const keys = this.table.dataSource.slice(start, pageSize)
+      const keys = this.table.dataSource.slice(start, start + pageSize)
 
       const filterKeys = keys.map((keyObj, i) => ({ ...keyObj, i: start + i })).filter(keyObj => !keyObj.type)
-
       if (filterKeys.length) {
         const targetKeys = filterKeys.map(keyObj => keyObj.key)
         const indexMap = filterKeys.reduce((m, c) => {
