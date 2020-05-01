@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import notification from 'ant-design-vue/es/notification'
+import Modal from 'ant-design-vue/es/modal'
 import { VueAxios } from './axios-plugin'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { getAccessTokenFromCookie, redirectToLogin } from './unified-auth'
@@ -20,7 +21,6 @@ const err = (error) => {
 
   if (error.response) {
     const data = error.response.data
-    const token = Vue.ls.get(ACCESS_TOKEN)
     if (error.response.status === 403) {
       notification.error({
         message: 'Forbidden',
@@ -28,18 +28,13 @@ const err = (error) => {
       })
     }
     if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
-      notification.error({
-        message: 'Unauthorized',
-        description: 'Authorization verification failed'
+      Modal.confirm({
+        title: '认证过期',
+        content: '点击确定跳转登录',
+        onOk () {
+          redirectToLogin()
+        }
       })
-      if (token) {
-        redirectToLogin()
-        // store.dispatch('Logout').then(() => {
-        //   setTimeout(() => {
-        //     window.location.reload()
-        //   }, 1500)
-        // })
-      }
     } else {
       const { status, data, statusText } = error.response
       notification.error({
