@@ -75,3 +75,16 @@ export function genHashAction (modifiedRecords, key) {
 
   return { actions: genHashActionPayload(actions), commands: genHashActionCommand(actions) }
 }
+
+/**
+ * 头部 lpush key value
+ * 尾部 rpush key value
+ * 设置 lset key index value
+ * 删除 lrem key index
+*/
+
+export function genListAction (modifiedRecords, key) {
+  console.log('modifiedRecords', modifiedRecords)
+
+  return { actions: [], commands: [] }
+}

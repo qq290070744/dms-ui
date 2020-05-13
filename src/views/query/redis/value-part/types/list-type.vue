@@ -1,5 +1,6 @@
 <script>
 import { typeMixins, genUniqueId, genColumns, HEAD_ADDED, TAIL_ADDED } from './type-mixins'
+import { genListAction } from './gen-cmd'
 export default {
   mixins: [typeMixins],
   data () {
@@ -27,7 +28,7 @@ export default {
       )
     },
     createWorkOrder () {
-
+      return genListAction(this.modifiedRecords)
     },
     renderTable () {
       return this._renderTable(['value'])
@@ -37,7 +38,7 @@ export default {
         <div>
           <a-button size="small" onClick={this.headAdd}>头部新增</a-button>
           <a-button size="small" onClick={this.tailAdd}>尾部新增</a-button>
-          <a-button size="small" onClick={this.createWorkOrder}>生成工单</a-button>
+          { this.renderActionButton() }
         </div>
       )
     },

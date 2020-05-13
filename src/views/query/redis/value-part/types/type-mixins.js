@@ -51,7 +51,8 @@ const typeMixins = {
         scroll: { y: 0 }
       },
       modifiedRecords: {},
-      dataSource: []
+      dataSource: [],
+      resetFlag: 0
     }
   },
   props: {
@@ -118,7 +119,6 @@ const typeMixins = {
 
       const nRecord = { ...record, ...prevObject, ...modifiedObj }
       status = this._checkModified(nRecord, record) ? MODIFIED : status
-      console.log(status, nRecord, record)
       const mdRecord = [status, nRecord, record]
       this.$set(this.modifiedRecords, rowKey, mdRecord)
     },
@@ -150,6 +150,10 @@ const typeMixins = {
       this.$set(record, 'status', status)
       this._genModified(record, status)
     },
+    _onSuccess () {
+      this.modifiedRecords = {}
+      this.resetFlag++
+    },
     _renderTable (columnNames) {
       const scopedSlots = {
         index: (_text, _record, index) => {
@@ -163,7 +167,16 @@ const typeMixins = {
         }
       }
       const tableOptions = { ...this.tableOptions, columns: this.columns, dataSource: this.dataSource }
-      return <a-table key={this._redisKey} {...{ props: tableOptions }} ref="table" scopedSlots={scopedSlots}/>
+      return <a-table key={this._redisKey + '-' + this.resetFlag} {...{ props: tableOptions }} ref="table" scopedSlots={scopedSlots}/>
+    },
+    renderActionButton () {
+      return <work-order-action
+        disabled={!this._isModified}
+        extraParams={this._params}
+        genActionObject={this.createWorkOrder}
+        title="创建 Redis 工单"
+        onSuccess={this._onSuccess}
+      />
     }
   }
 }

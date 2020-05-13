@@ -7,7 +7,7 @@
       <a-select
         v-decorator="[
           'auditor_id',
-          { rules: [{ required: true, message: '用户名不能为空' }] },
+          { rules: [{ required: true, message: '审核人不能为空' }] },
         ]"
         placeholder="请选择审核人"
         :options="auditors"
@@ -59,7 +59,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.formOption.form.validateFields((err, values) => {
           if (!err) {
-            values.actions = JSON.stringify(this.actionObject.actions)
+            values.actions = this.actionObject.commands
             resolve(values)
           } else {
             reject(err)

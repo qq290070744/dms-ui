@@ -1,6 +1,7 @@
 <script>
 import WorkOrderForm from './work-order-form'
 import { queryApprovalUser } from '@/api/users'
+import { createWorkOrder } from '@/api/work-order'
 export default {
   components: {
     WorkOrderForm,
@@ -17,6 +18,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    title: {
+      type: String,
+      default: '创建工单'
     }
   },
   data () {
@@ -43,8 +48,12 @@ export default {
     },
     handleOk () {
       if (this.disabled) { return }
-      this.$refs.form.submit().then(() => {
-        this.handleCancel()
+      this.$refs.form.submit().then((values) => {
+        createWorkOrder({ ...values, ...this.extraParams }).then(() => {
+          this.$message.success('创建工单成功')
+          this.handleCancel()
+          this.$emit('success')
+        })
       })
     },
     handleCancel () {
@@ -52,7 +61,7 @@ export default {
     },
     renderDialog () {
       return (
-        <a-modal title="创建工单" visible={this.showDialog} onOk={this.handleOk} onCancel={this.handleCancel}>
+        <a-modal title={this.title} visible={this.showDialog} onOk={this.handleOk} onCancel={this.handleCancel}>
           <work-order-form ref="form" auditors={this.auditors} actionObject={this.currActionObject}/>
         </a-modal>
       )
@@ -61,7 +70,7 @@ export default {
   render () {
     return <div class="work-order-action">
       { this.showDialog && this.renderDialog() }
-      <a-button disabled={this.disabled} size="small" onClick={this.showWorkOrder}>生成工单</a-button>
+      <a-button disabled={this.disabled} size="small" onClick={this.showWorkOrder}>{this.title}</a-button>
     </div>
   }
 }

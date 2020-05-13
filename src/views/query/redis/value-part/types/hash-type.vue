@@ -28,9 +28,7 @@ export default {
       )
     },
     createWorkOrder () {
-      console.log(this.modifiedRecords)
       const actions = genHashAction(this.modifiedRecords, this._redisKey)
-      console.log(actions)
       return actions
     },
     /**
@@ -40,7 +38,7 @@ export default {
       return (
         <div>
           <a-button size="small" onClick={this.addRecord}>添加</a-button>
-          <work-order-action disabled={!this._isModified} extraParams={this._params} genActionObject={this.createWorkOrder}/>
+          { this.renderActionButton() }
         </div>
       )
     },
