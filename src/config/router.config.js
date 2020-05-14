@@ -80,7 +80,22 @@ export const asyncRouterMap = [
           }
         ]
       },
-
+      // work order 工单
+      {
+        path: 'workOrder',
+        name: 'WorkOrder',
+        redirect: '/workOrder/myReviewList',
+        component: RouteView,
+        meta: { title: '工单审核', keepAlive: true, icon: 'search' },
+        children: [
+          {
+            path: 'myReviewList',
+            name: 'MyReviewList',
+            component: () => import('@/views/work-order/my-review-list'),
+            meta: { title: '我的工单审核列表', keepAlive: true }
+          }
+        ]
+      },
       // account
       {
         path: '/account',

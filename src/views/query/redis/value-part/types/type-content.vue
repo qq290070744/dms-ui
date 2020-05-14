@@ -22,10 +22,12 @@ export default {
 
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
   &--content {
     margin-top: 8px;
     flex: 1;
+    overflow: hidden;
   }
 }
 </style>

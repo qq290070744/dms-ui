@@ -13,6 +13,18 @@ export default {
     status: {
       type: String,
       default: '', // added removed
+    },
+    added: {
+      type: Boolean,
+      default: false
+    },
+    modified: {
+      type: Boolean,
+      default: false
+    },
+    removed: {
+      type: Boolean,
+      default: false
     }
   },
   directives: {
@@ -24,16 +36,16 @@ export default {
   },
   data () {
     return {
-      modified: null,
+      modifiedValue: null,
       editable: false
     }
   },
   computed: {
     isModified () {
-      return this.modified !== null
+      return this.modifiedValue !== null
     },
     currValue () {
-      return this.isModified ? this.modified : this.value
+      return this.isModified ? this.modifiedValue : this.value
     },
     fillText () {
       // 格式化
@@ -51,31 +63,37 @@ export default {
   },
   methods: {
     getStatus () {
-      return this.status || (this.isModified ? 'modified' : 'normal')
+      const status = ['removed', 'added', 'modified']
+      for (const s of status) {
+        if (this[s]) {
+          return s
+        }
+      }
+      return this.isModified ? 'modified' : 'normal'
     },
     onChange (e) {
       let value = e.target.value
       if (value === this.value) {
         value = null
       }
-      this.modified = value
+      this.modifiedValue = value
     },
     doStartEdit () {
       this.editable = true
     },
     onSave () {
       // 如果为空，则重置
-      if (/^[\n\s\t]*$/.test(this.modified)) {
-        this.modified = null
+      if (/^[\n\s\t]*$/.test(this.modifiedValue)) {
+        this.modifiedValue = null
       } else if (!this.keepSpace) {
-        this.modified = this.modified.replace(/[\n\s\t]*/, '')
+        this.modifiedValue = this.modifiedValue.replace(/[\n\s\t]*/, '')
       }
 
-      this.$emit('update:status', this.getStatus(), this.modified)
+      this.$emit('update:status', this.getStatus(), this.modifiedValue)
       this.editable = false
     },
     reset () {
-      this.modified = ''
+      this.modifiedValue = ''
       this.onSave()
     },
     // render

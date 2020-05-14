@@ -1,80 +1,12 @@
+function filterRecords (modifiedRecords) {
+  return Object.keys(modifiedRecords).map(k => modifiedRecords[k]).filter(v => !!v)
+}
+
 /**
  * 添加 hsetnx key field value
  * 更新 hset key field value
  * 删除 hdel key field
  */
-
-export function genHashActionCommand (actions) {
-  return actions.map(({ action, key, field, value }) => {
-    return [ action, key, field, value ].filter(v => !!v).join(' ')
-  })
-}
-
-export function genHashActionPayload (actions) {
-  return actions.map(({ action, key, field, value }) => {
-    return { action, payload: [ key, field, value ].filter(v => !!v) }
-  })
-}
-
-// const hashKeys = ['field', 'value']
-export function genHashAction (modifiedRecords, key) {
-  modifiedRecords = Object.keys(modifiedRecords).map(k => modifiedRecords[k]).filter(v => !!v)
-
-  const removed = (_modified, origin) => {
-    const { field } = origin
-    return { action: 'HDEL', key, field }
-  }
-  const statusAction = {
-    added (modified, _origin) {
-      const { field, value } = modified
-      if (!field || !value) {
-        return false
-      } else {
-        return { action: 'HSETNX', key, field, value }
-      }
-    },
-    removed,
-    modified (modified, origin) {
-      const result = ['field', 'value'].reduce((obj, k) => {
-        if (modified[k] && modified[k] !== origin[k]) {
-          obj[k] = modified[k]
-        }
-        return obj
-      }, {})
-
-      if (!Object.keys(result).length) {
-        return false
-      }
-
-      if (result.field) {
-        const command = [
-          removed(modified, origin),
-          { action: 'HSET', key, value: origin.value, ...result }
-        ]
-        return command
-      } else {
-        return { action: 'HSET', key, ...result }
-      }
-    }
-  }
-
-  const actions = modifiedRecords.map((record) => {
-    const [status, modified, origin] = record
-    if (statusAction[status]) {
-      return statusAction[status](modified, origin)
-    }
-    return false
-  })
-    .filter(v => !!v)
-    .reduce((actions, action) => {
-      if (Array.isArray(action)) {
-        return actions.concat(...action)
-      }
-      return actions.concat(action)
-    }, [])
-
-  return { actions: genHashActionPayload(actions), commands: genHashActionCommand(actions) }
-}
 
 /**
  * 头部 lpush key value
@@ -83,8 +15,120 @@ export function genHashAction (modifiedRecords, key) {
  * 删除 lrem key index
 */
 
-export function genListAction (modifiedRecords, key) {
-  console.log('modifiedRecords', modifiedRecords)
+const typeHandler = {
+  string ({ key, modified }) {
+    const { value, oldValue } = modified
+    const action = oldValue ? 'set' : 'setnx'
+    return [
+      [action, key, value]
+    ]
+  },
+  list ({ key, modified, unshift, push, removed }) {
+    let result = []
+    if (unshift && unshift.length) {
+      result = result.concat(
+        unshift.map(({ value }) => {
+          return value ? ['LPUSH', key, value] : false
+        }).filter(v => !!v).reverse()
+      )
+    }
 
-  return { actions: [], commands: [] }
+    if (push && push.length) {
+      result = result.concat(
+        push.map(({ value }) => {
+          return value ? ['RPUSH', key, value] : false
+        }).filter(v => !!v)
+      )
+    }
+
+    modified = filterRecords(modified)
+    if (modified.length) {
+      result = result.concat(
+        modified.map(([, mRecord, mKeys]) => {
+          if (!Object.keys(mKeys).length) { return false }
+          return ['LSET', key, mRecord.index, mRecord.value]
+        }).filter(v => !!v)
+      )
+    }
+
+    if (removed && removed.length) {
+      const REMOVED_VAL = '__REDIS_LIST_VALUE_REMOVED_BY_DMS__'
+      result = result.concat(
+        removed.map(({ index }) => {
+          return [
+            ['LSET', key, index, REMOVED_VAL],
+            ['LREM', key, 0, REMOVED_VAL]
+          ]
+        })
+      )
+    }
+
+    return result
+  },
+  hash ({ key, modified, push, removed }) {
+    const removedFn = (origin) => {
+      const { field } = origin
+      return ['HDEL', key, field]
+    }
+    let result = []
+    if (push && push.length) {
+      result = result.concat(
+        push.map(({ field, value }) => {
+          return field && value ? ['HSETNX', key, field, value] : false
+        }).filter(v => !!v)
+      )
+    }
+    const removedMap = {}
+    removed = Object.values(removed)
+    if (removed && removed.length) {
+      result = result.concat(
+        removed.map((obj) => {
+          removedMap[obj.key] = true
+          return removedFn(obj)
+        })
+      )
+    }
+    modified = filterRecords(modified)
+    if (modified.length) {
+      result = result.concat(
+        modified.map(([record, mRecord, mKeys]) => {
+          if (!Object.keys(mKeys).length || removedMap[record.key]) { return false }
+          if (mKeys.field) {
+            const command = [
+              removedFn(record),
+              ['HSET', key, mRecord.field, mRecord.value]
+            ]
+            return command
+          } else {
+            return ['HSET', key, mRecord.field, mRecord.value]
+          }
+        }).filter(v => !!v)
+      )
+    }
+    return result
+  }
+}
+
+export function genActions (type, payload) {
+  const result = typeof typeHandler[type] === 'function'
+    ? typeHandler[type](payload)
+    : []
+  if (payload.ttl) {
+    result.push(['expire', payload.key, payload.ttl])
+  }
+
+  const toCommand = (actions) => {
+    return actions.reduce((commands, action) => {
+      if (action && typeof action[0] === 'string') {
+        commands.push(action.join(' '))
+      } else {
+        commands.push(...toCommand(action))
+      }
+      return commands
+    }, [])
+  }
+
+  const commands = toCommand(result)
+
+  return { commands, actions: [] }
 }

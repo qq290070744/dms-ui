@@ -46,6 +46,7 @@ export default {
 .redis-value-page {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   &--top {
     padding: 10px;
     display: flex;
@@ -57,6 +58,7 @@ export default {
   }
   &--content {
     flex: 1;
+    overflow: hidden;
   }
   &--ttl-input {
     width: 80px;

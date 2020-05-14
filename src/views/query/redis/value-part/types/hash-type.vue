@@ -1,6 +1,5 @@
 <script>
 import { typeMixins, genUniqueId, ADDED, genColumns } from './type-mixins'
-import { genHashAction } from './gen-cmd'
 
 export default {
   mixins: [typeMixins],
@@ -23,13 +22,10 @@ export default {
       this.dataSource = Object.keys(originValue).map(key => ({ key: genUniqueId(), field: key, value: originValue[key], status: '' }))
     },
     addRecord () {
-      this.dataSource.push(
+      this.pushDataSource.push(
         { key: genUniqueId(), field: '', value: '', status: ADDED }
       )
-    },
-    createWorkOrder () {
-      const actions = genHashAction(this.modifiedRecords, this._redisKey)
-      return actions
+      this._fixHeight()
     },
     /**
      * render function
@@ -38,7 +34,7 @@ export default {
       return (
         <div>
           <a-button size="small" onClick={this.addRecord}>添加</a-button>
-          { this.renderActionButton() }
+          { this.renderActionButton('hash') }
         </div>
       )
     },

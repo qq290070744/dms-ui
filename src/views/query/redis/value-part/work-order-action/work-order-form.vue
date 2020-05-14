@@ -76,7 +76,7 @@ export default {
   margin-left: 100px;
 }
 .commands {
-  white-space: pre;
+  white-space: pre-wrap;
   line-height: 1.5;
 }
 </style>

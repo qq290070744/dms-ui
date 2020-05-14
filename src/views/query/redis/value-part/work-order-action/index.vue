@@ -61,7 +61,7 @@ export default {
     },
     renderDialog () {
       return (
-        <a-modal title={this.title} visible={this.showDialog} onOk={this.handleOk} onCancel={this.handleCancel}>
+        <a-modal title={this.title} visible={this.showDialog} onOk={this.handleOk} onCancel={this.handleCancel} width={800}>
           <work-order-form ref="form" auditors={this.auditors} actionObject={this.currActionObject}/>
         </a-modal>
       )

@@ -1,6 +1,5 @@
 <script>
 import { typeMixins, genUniqueId, genColumns, HEAD_ADDED, TAIL_ADDED } from './type-mixins'
-import { genListAction } from './gen-cmd'
 export default {
   mixins: [typeMixins],
   data () {
@@ -18,17 +17,16 @@ export default {
       this.dataSource = originValue.map((value, index) => ({ key: genUniqueId(), index, value, status: '' }))
     },
     headAdd () {
-      this.dataSource.unshift(
+      this.unshiftDataSource.unshift(
         { key: genUniqueId(), value: '', status: HEAD_ADDED }
       )
+      this._fixHeight()
     },
     tailAdd () {
-      this.dataSource.push(
+      this.pushDataSource.push(
         { key: genUniqueId(), value: '', status: TAIL_ADDED }
       )
-    },
-    createWorkOrder () {
-      return genListAction(this.modifiedRecords)
+      this._fixHeight()
     },
     renderTable () {
       return this._renderTable(['value'])
@@ -38,7 +36,7 @@ export default {
         <div>
           <a-button size="small" onClick={this.headAdd}>头部新增</a-button>
           <a-button size="small" onClick={this.tailAdd}>尾部新增</a-button>
-          { this.renderActionButton() }
+          { this.renderActionButton('list') }
         </div>
       )
     },
