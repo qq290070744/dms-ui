@@ -5,11 +5,15 @@
       <a-input
         size="small"
         class="redis-value-part--key-input"
-        :addonAfter="keyType"
-        :readOnly="createMode"
-        :value="keyName"
+        :readOnly="viewMode"
+        :defaultValue="keyName"
         @input="(e) => { inner.key = e.target.value }"
-      ></a-input>
+      >
+        <template #addonAfter>
+          <a-select v-if="!viewMode" :defaultValue="keyType" style="width: 80px" @change="onTypeChange" :options="types"/>
+          <span v-else>{{ keyType }}</span>
+        </template>
+      </a-input>
     </span>
     <span>TTL：</span>
     <span>
@@ -17,7 +21,7 @@
         :value="ttl"
         @input="(e) => { inner.ttl = e.target.value }"
         size="small"
-        :class="['redis-value-part--ttl-input', {modified: !!inner.ttl}]"
+        :class="['redis-value-part--ttl-input', {modified: inner.ttl && inner.ttl !== getOValue('ttl')}]"
         :addonAfter="'(s)'"
       />
     </span>
@@ -40,7 +44,8 @@ export default {
         type: '',
         ttl: '',
         temp: ''
-      }
+      },
+      types: ['string', 'list', 'hash', 'set', 'zset'].map(v => ({ label: v, value: v }))
     }
   },
   computed: {
@@ -53,13 +58,42 @@ export default {
     ttl () {
       return this.getValue('ttl')
     },
-    createMode () {
+    viewMode () {
       return !this.getValue('temp')
+    }
+  },
+  watch: {
+    inner: {
+      deep: true,
+      handler () {
+        this.onChange()
+      }
+    },
+    redisObject () {
+      this.inner = {
+        key: '',
+        type: '',
+        ttl: '',
+        temp: ''
+      }
     }
   },
   methods: {
     getValue (key) {
-      return this.inner[key] || (this.redisObject && this.redisObject[key])
+      return this.inner[key] || this.getOValue(key)
+    },
+    getOValue (key) {
+      return this.redisObject && this.redisObject[key]
+    },
+    onChange () {
+      const payload = Object.keys(this.inner).reduce((obj, key) => {
+        obj[key] = this.inner[key] === (this.redisObject[key] + '') ? '' : this.inner[key]
+        return obj
+      }, {})
+      this.$emit('change', payload)
+    },
+    onTypeChange (type) {
+      this.inner.type = type
     }
   }
 }

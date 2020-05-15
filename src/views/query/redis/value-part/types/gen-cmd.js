@@ -17,8 +17,11 @@ function filterRecords (modifiedRecords) {
 
 const typeHandler = {
   string ({ key, modified }) {
+    if (!modified) {
+      return []
+    }
     const { value, oldValue } = modified
-    const action = oldValue ? 'set' : 'setnx'
+    const action = oldValue ? 'SET' : 'SETNX'
     return [
       [action, key, value]
     ]

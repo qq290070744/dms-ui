@@ -1,7 +1,9 @@
 <template>
   <div class="redis-key-list">
     <div class="function-row">
-      <a-button type="primary" size="small">新增</a-button>
+      <a-button :disabled="creating" type="primary" size="small" @click="create">
+        <span>{{ creating ? '创建中' : '新增' }}</span>
+      </a-button>
       <work-order-action
         :disabled="!selectedRowKeys.length"
         :extraParams="extraParams"
@@ -27,6 +29,7 @@
 <script>
 import { waitRefShow, calcTableBodyHeight } from '@/utils/util'
 import WorkOrderAction from '../work-order-action'
+import EventBus, { REDIS_KEY_CREATED } from '../event-bus'
 export default {
   components: {
     WorkOrderAction
@@ -35,11 +38,15 @@ export default {
     tableOptions: {
       type: Object,
       default () { return {} }
+    },
+    extraParams: {
+      type: Object,
+      default () { return {} }
     }
   },
   data () {
     return {
-      extraParams: {},
+      creating: false,
       activedRow: {},
       selectedRowKeys: [],
       table: {
@@ -80,6 +87,12 @@ export default {
       }
     }
   },
+  mounted () {
+    EventBus.$on(REDIS_KEY_CREATED, this.closeCreate)
+  },
+  beforeDestroy () {
+    EventBus.$ff(REDIS_KEY_CREATED, this.closeCreate)
+  },
   watch: {
     'tableOptions.dataSource' () {
       this.initTableHeight()
@@ -93,6 +106,18 @@ export default {
       }
     },
     onKeyClick (record) {
+      if (this.creating) {
+        this.$confirm({
+          title: '当前正在创建 Redis key，是否放弃当前的修改？',
+          onOk: () => {
+            this.creating = false
+            this.activedRow = record
+            this.$emit('row-change', record)
+          }
+        })
+        return
+      }
+      this.creating = false
       this.activedRow = record
       this.$emit('row-change', record)
     },
@@ -116,6 +141,14 @@ export default {
         return 'DEL ' + key
       })
       return { commands, actions: [] }
+    },
+    create () {
+      this.creating = true
+      this.$emit('create')
+    },
+    closeCreate () {
+      this.creating = false
+      this.$emit('row-change', null)
     }
   }
 }
@@ -126,7 +159,7 @@ export default {
   flex: 1;
 }
 .function-row {
-  margin: 8px 8px 8px;
+  margin: 8px 0;
   .ant-btn {
     margin-right: 8px;
   }

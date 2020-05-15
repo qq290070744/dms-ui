@@ -1,8 +1,8 @@
 import { defaultRedisObject } from '../../utils'
-import RedisBaseInfo from '../base-info'
 import EditableCell from './editable-cell'
 import TypeContent from './type-content'
 import WorkOrderAction from '../../work-order-action'
+import EventBus, { REDIS_KEY_CREATED } from '../../event-bus'
 import { REDIS_TYPE } from '../../../utils'
 import { genActions } from './gen-cmd'
 
@@ -37,8 +37,7 @@ const typeMixins = {
   components: {
     TypeContent,
     EditableCell,
-    WorkOrderAction,
-    RedisBaseInfo
+    WorkOrderAction
   },
   data () {
     return {
@@ -67,6 +66,10 @@ const typeMixins = {
     redisObject: {
       default: defaultRedisObject,
       type: Object
+    },
+    modifiedTtl: {
+      type: [Number, String],
+      default: null
     }
   },
   computed: {
@@ -87,7 +90,7 @@ const typeMixins = {
     _isModified () {
       const rs = this.modifiedRecords
       const md = Object.keys(rs).filter(k => rs[k] && rs[k][0] && rs[k][0] !== 'normal')
-      return !!this.unshiftDataSource.length || !!this.pushDataSource.length || !!md.length
+      return !!this.unshiftDataSource.length || !!this.pushDataSource.length || !!md.length || this.modifiedTtl
     }
   },
   watch: {
@@ -104,6 +107,7 @@ const typeMixins = {
   methods: {
     _autoHeight () {
       this.$nextTick(() => {
+        if (!this.$refs.table) { return }
         const tableEl = this.$refs.table.$el
         const pagination = tableEl.querySelector('.ant-table-pagination')
         const tbodyHeightOrigin = (tableEl.querySelector('.ant-table-tbody') || { clientHeight: 0 }).clientHeight
@@ -115,6 +119,9 @@ const typeMixins = {
           this.initTableHeight = this.tableOptions.scroll.y
         }
       })
+    },
+    needRenderTable () {
+      return this.dataSource.length || (!this.pushDataSource.length && !this.unshiftDataSource.length)
     },
     _fixHeight () {
       this._autoHeight()
@@ -169,6 +176,10 @@ const typeMixins = {
     _onSuccess () {
       this.modifiedRecords = {}
       this.resetFlag++
+      // 新建 key 完成通知
+      if (this.redisObject.temp) {
+        EventBus.$emit(REDIS_KEY_CREATED)
+      }
     },
     _genActions (type) {
       return genActions(type, {
@@ -176,7 +187,8 @@ const typeMixins = {
         modified: this.modifiedRecords,
         push: this.pushDataSource,
         unshift: this.unshiftDataSource,
-        removed: Object.values(this.removedRecords)
+        removed: Object.values(this.removedRecords),
+        ttl: this.modifiedTtl
       })
     },
     // table
@@ -225,14 +237,13 @@ const typeMixins = {
         return slots
       }, {})
     },
-    _renderBaseInfo () {
-      return <redis-base-info redisObject={this.redisObject}/>
-    },
     _renderTable (columnNames) {
       const scopedSlots = this._genSlots(columnNames)
       const tableOptions = this._genProps(this.dataSource)
       const tableStyle = { margin: '10px 0', overflow: 'hidden' }
-      const dataTable = <a-table style={tableStyle} key={this._redisKey + '-' + this.resetFlag} {...{ props: tableOptions }} ref="table" scopedSlots={scopedSlots}/>
+      const dataTable = this.needRenderTable()
+        ? <a-table style={tableStyle} key={this._redisKey + '-' + this.resetFlag} {...{ props: tableOptions }} ref="table" scopedSlots={scopedSlots}/>
+        : undefined
       const pushDataTable = this._renderNewRecord(columnNames, this.pushDataSource, 'pushTable')
       const unshiftDataTable = this._renderNewRecord(columnNames, this.unshiftDataSource, 'unshiftTable')
       const style = {
@@ -266,7 +277,6 @@ const typeMixins = {
     const scopedSlots = {
       function: this.renderFuncRow,
       default: this.renderTable,
-      base: this._renderBaseInfo,
     }
     return (
       <type-content scopedSlots={scopedSlots}>

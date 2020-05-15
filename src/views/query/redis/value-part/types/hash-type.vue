@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     _initValue () {
-      const originValue = this.redisObject ? this.redisObject.value : {}
+      const originValue = this.redisObject ? (this.redisObject.value || {}) : {}
       this.dataSource = Object.keys(originValue).map(key => ({ key: genUniqueId(), field: key, value: originValue[key], status: '' }))
     },
     addRecord () {

@@ -13,7 +13,7 @@ export default {
   },
   methods: {
     _initValue () {
-      const originValue = this.redisObject ? this.redisObject.value : []
+      const originValue = this.redisObject ? (this.redisObject.value || []) : []
       this.dataSource = originValue.map((value, index) => ({ key: genUniqueId(), index, value, status: '' }))
     },
     headAdd () {
