@@ -103,10 +103,11 @@ const typeMixins = {
     _autoHeight () {
       this.$nextTick(() => {
         const tableEl = this.$refs.table.$el
+        const pagination = tableEl.querySelector('.ant-table-pagination')
         const tbodyHeightOrigin = (tableEl.querySelector('.ant-table-tbody') || { clientHeight: 0 }).clientHeight
         const theadHeightOrigin = (tableEl.querySelector('.ant-table-thead') || { clientHeight: 0 }).clientHeight
         const tableHeight = tableEl.clientHeight
-        const tbodyHeight = tableHeight - theadHeightOrigin - 32
+        const tbodyHeight = tableHeight - theadHeightOrigin - (pagination ? 32 : 0)
         if (tbodyHeightOrigin > this.tableOptions.scroll.y) {
           this.tableOptions.scroll.y = tbodyHeight
           this.initTableHeight = this.tableOptions.scroll.y

@@ -1,63 +1,48 @@
-<template>
-  <type-content class="redis-value-set">
-    <a-table :columns="columns" :dataSource="currValue" rowKey="value" v-bind="tableOptions">
-      <template #index="text, record, index">
-        <span>{{ index + 1 }}</span>
-      </template>
-      <template #value="text">
-        <editable-cell :value="text"></editable-cell>
-      </template>
-    </a-table>
-  </type-content>
-</template>
-
 <script>
-import EditableCell from './editable-cell'
-import TypeContent from './type-content'
-import { defaultRedisObject } from '../../utils'
-import { typeMixins } from './type-mixins'
+import { typeMixins, genUniqueId, genColumns } from './type-mixins'
 export default {
-  components: {
-    TypeContent,
-    EditableCell
-  },
   mixins: [typeMixins],
-  props: {
-    redisObject: {
-      default: defaultRedisObject,
-      type: Object
-    }
-  },
   data () {
     return {
-      modify: '',
-      columns: [{
-        title: '序号',
-        width: 60,
-        scopedSlots: { customRender: 'index' }
-      }, {
+      columns: genColumns([{
         title: 'Value',
         dataIndex: 'value',
         scopedSlots: { customRender: 'value' }
-      }]
-    }
-  },
-  computed: {
-    originValue () {
-      return this.redisObject ? this.redisObject.value : []
-    },
-    currValue () {
-      return this.originValue.map(value => ({ value }))
+      }])
     }
   },
   methods: {
-    onChange (e) {
-      console.log(e)
+    _initValue () {
+      const originValue = this.redisObject ? this.redisObject.value : []
+      this.dataSource = originValue.map((value, index) => ({ key: genUniqueId(), index, value, status: '' }))
     },
-    submit () {
-      // 未检测到修改，无需提交。
-      // key: devops:test:string:key:2  value: test1 dbName: 1
+    add () {
+      this.pushDataSource.push(
+        { key: genUniqueId(), value: '', status: 'added' }
+      )
+      this._fixHeight()
+    },
+    renderTable () {
+      return this._renderTable(['value'])
+    },
+    renderFuncRow () {
+      return (
+        <div>
+          <a-button size="small" onClick={this.add}>添加</a-button>
+          { this.renderActionButton('set') }
+        </div>
+      )
+    },
+  },
+  render () {
+    const scopedSlots = {
+      function: this.renderFuncRow,
+      default: this.renderTable
     }
+    return (
+      <type-content class="redis-value-list" scopedSlots={scopedSlots}>
+      </type-content>
+    )
   }
 }
 </script>

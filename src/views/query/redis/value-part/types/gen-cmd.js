@@ -106,7 +106,86 @@ const typeHandler = {
       )
     }
     return result
-  }
+  },
+  set ({ key, modified, push, removed }) {
+    const addFn = (key, value) => ['SADD', key, value]
+    const removedFn = (key, value) => ['SREM', key, value]
+    let result = []
+    if (push && push.length) {
+      result = result.concat(
+        push.map(({ value }) => {
+          return value ? addFn(key, value) : false
+        }).filter(v => !!v)
+      )
+    }
+
+    modified = filterRecords(modified)
+    if (modified.length) {
+      result = result.concat(
+        modified.map(([record, mRecord, mKeys]) => {
+          if (!Object.keys(mKeys).length) { return false }
+          return [
+            removedFn(key, record.value),
+            addFn(key, mRecord.value)
+          ]
+        }).filter(v => !!v)
+      )
+    }
+
+    if (removed && removed.length) {
+      result = result.concat(
+        removed.map(({ value }) => {
+          return [
+            removedFn(key, value)
+          ]
+        })
+      )
+    }
+
+    return result
+  },
+  zset ({ key, modified, push, removed }) {
+    const removedFn = (origin) => {
+      const { value } = origin
+      return ['ZREM', key, value]
+    }
+    let result = []
+    if (push && push.length) {
+      result = result.concat(
+        push.map(({ score, value }) => {
+          return score && value ? ['ZADD', key, score, value] : false
+        }).filter(v => !!v)
+      )
+    }
+    const removedMap = {}
+    removed = Object.values(removed)
+    if (removed && removed.length) {
+      result = result.concat(
+        removed.map((obj) => {
+          removedMap[obj.key] = true
+          return removedFn(obj)
+        })
+      )
+    }
+    modified = filterRecords(modified)
+    if (modified.length) {
+      result = result.concat(
+        modified.map(([record, mRecord, mKeys]) => {
+          if (!Object.keys(mKeys).length || removedMap[record.key]) { return false }
+          if (mKeys.value) {
+            const command = [
+              removedFn(record),
+              ['ZADD', key, mRecord.score, mRecord.value]
+            ]
+            return command
+          } else {
+            return ['ZADD', key, mRecord.score, mRecord.value]
+          }
+        }).filter(v => !!v)
+      )
+    }
+    return result
+  },
 }
 
 export function genActions (type, payload) {
