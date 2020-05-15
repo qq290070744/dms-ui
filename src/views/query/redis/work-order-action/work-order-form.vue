@@ -62,7 +62,6 @@ export default {
   },
   methods: {
     submit () {
-      console.log(this.getCommands())
       return new Promise((resolve, reject) => {
         this.formOption.form.validateFields((err, values) => {
           if (!err) {
