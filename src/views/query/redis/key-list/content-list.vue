@@ -134,6 +134,13 @@ export default {
 </style>
 
 <style lang="less">
+.redis-key-list {
+  .ant-table-tbody > tr {
+    td {
+      white-space: nowrap;
+    }
+  }
+}
 .redis-key-list, .redis-value-box--content {
   .ant-table colgroup > col.ant-table-selection-col {
     width: 40px;
@@ -142,9 +149,6 @@ export default {
     padding: 0 4px;
   }
   .ant-table-tbody > tr {
-    td {
-      white-space: nowrap;
-    }
     &:nth-child(2n) > td {
       background-color: #ebf9ff ;
     }
