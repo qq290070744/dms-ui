@@ -41,16 +41,6 @@ export default {
     renderTable () {
       return this._renderTable(['field', 'value'])
     }
-  },
-  render () {
-    const scopedSlots = {
-      function: this.renderFuncRow,
-      default: this.renderTable
-    }
-    return (
-      <type-content class="redis-value-hash" scopedSlots={scopedSlots}>
-      </type-content>
-    )
   }
 }
 </script>

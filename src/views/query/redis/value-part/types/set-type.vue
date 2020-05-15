@@ -33,16 +33,6 @@ export default {
         </div>
       )
     },
-  },
-  render () {
-    const scopedSlots = {
-      function: this.renderFuncRow,
-      default: this.renderTable
-    }
-    return (
-      <type-content class="redis-value-list" scopedSlots={scopedSlots}>
-      </type-content>
-    )
   }
 }
 </script>

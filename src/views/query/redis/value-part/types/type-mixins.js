@@ -1,4 +1,5 @@
 import { defaultRedisObject } from '../../utils'
+import RedisBaseInfo from '../base-info'
 import EditableCell from './editable-cell'
 import TypeContent from './type-content'
 import WorkOrderAction from '../../work-order-action'
@@ -36,7 +37,8 @@ const typeMixins = {
   components: {
     TypeContent,
     EditableCell,
-    WorkOrderAction
+    WorkOrderAction,
+    RedisBaseInfo
   },
   data () {
     return {
@@ -223,6 +225,9 @@ const typeMixins = {
         return slots
       }, {})
     },
+    _renderBaseInfo () {
+      return <redis-base-info redisObject={this.redisObject}/>
+    },
     _renderTable (columnNames) {
       const scopedSlots = this._genSlots(columnNames)
       const tableOptions = this._genProps(this.dataSource)
@@ -249,7 +254,24 @@ const typeMixins = {
         title="创建 Redis 工单"
         onSuccess={this._onSuccess}
       />
+    },
+    renderFuncRow () {
+      // mixins 在子类实现
+    },
+    renderTable () {
+      // mixins 在子类实现
     }
+  },
+  render () {
+    const scopedSlots = {
+      function: this.renderFuncRow,
+      default: this.renderTable,
+      base: this._renderBaseInfo,
+    }
+    return (
+      <type-content scopedSlots={scopedSlots}>
+      </type-content>
+    )
   }
 }
 

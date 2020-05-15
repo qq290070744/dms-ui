@@ -41,16 +41,6 @@ export default {
     renderTable () {
       return this._renderTable(['value', 'score'])
     }
-  },
-  render () {
-    const scopedSlots = {
-      function: this.renderFuncRow,
-      default: this.renderTable
-    }
-    return (
-      <type-content class="redis-value-zset" scopedSlots={scopedSlots}>
-      </type-content>
-    )
   }
 }
 </script>

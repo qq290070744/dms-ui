@@ -1,5 +1,8 @@
 <template>
   <div class="redis-value-box">
+    <div class="redis-value-box--base">
+      <slot name="base"></slot>
+    </div>
     <div class="redis-value-box--function-row">
       <slot name="function"></slot>
     </div>
