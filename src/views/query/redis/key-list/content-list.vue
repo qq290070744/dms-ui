@@ -1,8 +1,14 @@
 <template>
   <div class="redis-key-list">
     <div class="function-row">
-      <!-- <a-button type="primary" size="small">新增</a-button>
-      <a-button size="small">删除</a-button> -->
+      <a-button type="primary" size="small">新增</a-button>
+      <work-order-action
+        :disabled="!selectedRowKeys.length"
+        :extraParams="extraParams"
+        :genActionObject="genActionObject"
+        @success="onSuccess"
+        title="删除"
+      />
     </div>
     <a-table
       v-bind="finalTableOption"
@@ -20,7 +26,11 @@
 
 <script>
 import { waitRefShow, calcTableBodyHeight } from '@/utils/util'
+import WorkOrderAction from '../work-order-action'
 export default {
+  components: {
+    WorkOrderAction
+  },
   props: {
     tableOptions: {
       type: Object,
@@ -29,7 +39,9 @@ export default {
   },
   data () {
     return {
-      selectRow: {},
+      extraParams: {},
+      activedRow: {},
+      selectedRowKeys: [],
       table: {
         ref: 'redisTable',
         scroll: { y: 'auto' },
@@ -45,13 +57,18 @@ export default {
           {
             title: '类型',
             dataIndex: 'type',
-            width: 80
+            width: 60
           },
           {
             title: '键名',
             dataIndex: 'key'
           }
         ],
+        rowSelection: {
+          onChange: (selectedRowKeys, _selectedRows) => {
+            this.selectedRowKeys = selectedRowKeys
+          },
+        }
       }
     }
   },
@@ -71,12 +88,12 @@ export default {
   methods: {
     customRow (record) {
       return {
-        class: this.selectRow === record ? 'redis-key-list--row-select' : '',
+        class: this.activedRow === record ? 'redis-key-list--row-select' : '',
         nativeOn: { click: () => this.onKeyClick(record) }
       }
     },
     onKeyClick (record) {
-      this.selectRow = record
+      this.activedRow = record
       this.$emit('row-change', record)
     },
     initTableHeight () {
@@ -90,6 +107,15 @@ export default {
     },
     onChange (pagination /** , filters, sorter */) {
       this.$emit('page-change', pagination.current, pagination.pageSize)
+    },
+    onSuccess () {
+      this.selectedRowKeys = []
+    },
+    genActionObject () {
+      const commands = this.selectedRowKeys.map((key) => {
+        return 'DEL ' + key
+      })
+      return { commands, actions: [] }
     }
   }
 }
@@ -109,6 +135,9 @@ export default {
 
 <style lang="less">
 .redis-key-list, .redis-value-box--content {
+  .ant-table colgroup > col.ant-table-selection-col {
+    width: 40px;
+  }
   .ant-table-small > .ant-table-content > .ant-table-header > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-body > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-header > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-body > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-fixed-left > .ant-table-header > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-fixed-right > .ant-table-header > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-fixed-left > .ant-table-body-outer > .ant-table-body-inner > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-fixed-right > .ant-table-body-outer > .ant-table-body-inner > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-header > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-body > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-header > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-body > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-fixed-left > .ant-table-header > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-fixed-right > .ant-table-header > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-fixed-left > .ant-table-body-outer > .ant-table-body-inner > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-fixed-right > .ant-table-body-outer > .ant-table-body-inner > table > .ant-table-tbody > tr > td {
     padding: 0 4px;
   }

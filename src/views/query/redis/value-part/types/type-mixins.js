@@ -1,7 +1,7 @@
 import { defaultRedisObject } from '../../utils'
 import EditableCell from './editable-cell'
 import TypeContent from './type-content'
-import WorkOrderAction from '../work-order-action'
+import WorkOrderAction from '../../work-order-action'
 import { REDIS_TYPE } from '../../../utils'
 import { genActions } from './gen-cmd'
 
