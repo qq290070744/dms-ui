@@ -17,8 +17,7 @@
         :value="ttl"
         @input="(e) => { inner.ttl = e.target.value }"
         size="small"
-        :readOnly="createMode"
-        class="redis-value-part--ttl-input"
+        :class="['redis-value-part--ttl-input', {modified: !!inner.ttl}]"
         :addonAfter="'(s)'"
       />
     </span>
@@ -78,8 +77,14 @@ export default {
 }
 .redis-value-part--key-input {
   width: 250px;
+  &.modified input {
+    color: #eda700;
+  }
 }
 .redis-value-part--ttl-input {
   width: 120px;
+  &.modified input {
+    color: #eda700;
+  }
 }
 </style>

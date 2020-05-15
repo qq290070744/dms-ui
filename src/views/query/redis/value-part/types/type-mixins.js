@@ -156,7 +156,7 @@ const typeMixins = {
         this.pushDataSource.splice(index, 1)
         return
       }
-      if (this.unshiftDataSource === record) {
+      if (this.unshiftDataSource[index] === record) {
         this.unshiftDataSource.splice(index, 1)
         return
       }
@@ -189,7 +189,7 @@ const typeMixins = {
         operation: (_text, record, index) => {
           return this.removedRecords[record.key]
             ? <a onClick={() => this._restoreRecord(record)}>撤回</a>
-            : <a onClick={() => this._removeRecord(record, index)}>删除</a>
+            : <a style={{ color: '#ff0000' }} onClick={() => this._removeRecord(record, index)}>删除</a>
         }
       }
     },
