@@ -1,7 +1,9 @@
 <template>
   <a-form v-bind="formOption">
     <a-form-item label="工单内容(命令)">
-      <div class="commands">{{ commands }}</div>
+      <div class="commands-wrapper">
+        <div class="commands-content" id="redis-work-order-editor"></div>
+      </div>
     </a-form-item>
     <a-form-item label="审核人">
       <a-select
@@ -24,6 +26,7 @@
 </template>
 
 <script>
+import * as monaco from 'monaco-editor'
 export default {
   props: {
     actionObject: {
@@ -43,8 +46,8 @@ export default {
       loading: false,
       formOption: {
         form: null,
-        labelCol: { span: 6 },
-        wrapperCol: { span: 18 },
+        labelCol: { span: 4 },
+        wrapperCol: { span: 20 },
       }
     }
   },
@@ -54,17 +57,30 @@ export default {
       return commands ? commands.join('\n') : ''
     }
   },
+  mounted () {
+    this.initEditor()
+  },
   methods: {
     submit () {
+      console.log(this.getCommands())
       return new Promise((resolve, reject) => {
         this.formOption.form.validateFields((err, values) => {
           if (!err) {
-            values.actions = this.actionObject.commands
+            values.actions = this.getCommands()
             resolve(values)
           } else {
             reject(err)
           }
         })
+      })
+    },
+    getCommands () {
+      return this.editor.getValue().split('\n').map(command => command.trim().replace(/\s+/g, ' ')).filter(v => !!v)
+    },
+    initEditor () {
+      this.editor = monaco.editor.create(document.getElementById('redis-work-order-editor'), {
+        value: this.commands,
+        language: 'redis'
       })
     }
   }
@@ -75,8 +91,13 @@ export default {
 .ant-btn {
   margin-left: 100px;
 }
-.commands {
-  white-space: pre-wrap;
-  line-height: 1.5;
+.commands-wrapper {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px;
+  box-sizing: border-box;
+}
+.commands-content {
+  height: 300px;
 }
 </style>

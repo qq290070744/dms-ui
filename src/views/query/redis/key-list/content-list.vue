@@ -11,6 +11,11 @@
         @success="onSuccess"
         title="删除"
       />
+      <work-order-action
+        :extraParams="extraParams"
+        :genActionObject="genActionObject"
+        title="创建命令行工单"
+      />
     </div>
     <a-table
       v-bind="finalTableOption"
@@ -91,7 +96,7 @@ export default {
     EventBus.$on(REDIS_KEY_CREATED, this.closeCreate)
   },
   beforeDestroy () {
-    EventBus.$ff(REDIS_KEY_CREATED, this.closeCreate)
+    EventBus.$off(REDIS_KEY_CREATED, this.closeCreate)
   },
   watch: {
     'tableOptions.dataSource' () {
@@ -161,7 +166,7 @@ export default {
 .function-row {
   margin: 8px 0;
   .ant-btn {
-    margin-right: 8px;
+    margin-right: 4px;
   }
 }
 </style>

@@ -43,7 +43,7 @@ export default {
       queryApprovalUser().then((result) => {
         this.auditors = result.map(u => ({ label: u.name, value: u.id }))
       })
-      const actionObject = this.genActionObject() || null
+      const actionObject = this.genActionObject() || { actions: [], commands: [] }
       this.currActionObject = actionObject
     },
     handleOk () {
@@ -61,7 +61,7 @@ export default {
     },
     renderDialog () {
       return (
-        <a-modal title={this.title} visible={this.showDialog} onOk={this.handleOk} onCancel={this.handleCancel} width={800}>
+        <a-modal title={this.title} visible={this.showDialog} onOk={this.handleOk} onCancel={this.handleCancel} width={1000}>
           <work-order-form ref="form" auditors={this.auditors} actionObject={this.currActionObject}/>
         </a-modal>
       )
