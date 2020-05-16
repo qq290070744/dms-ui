@@ -8,6 +8,7 @@ export default {
       columns: genColumns([{
         title: 'Field',
         dataIndex: 'field',
+        width: 200,
         scopedSlots: { customRender: 'field' }
       }, {
         title: 'Value',
