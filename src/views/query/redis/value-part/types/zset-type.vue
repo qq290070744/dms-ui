@@ -12,6 +12,7 @@ export default {
       }, {
         title: 'Score',
         dataIndex: 'score',
+        width: 100,
         scopedSlots: { customRender: 'score' }
       }])
     }

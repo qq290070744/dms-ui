@@ -90,7 +90,8 @@ const typeMixins = {
     _isModified () {
       const rs = this.modifiedRecords
       const md = Object.keys(rs).filter(k => rs[k] && rs[k][0] && rs[k][0] !== 'normal')
-      return !!this.unshiftDataSource.length || !!this.pushDataSource.length || !!md.length || this.modifiedTtl
+      const rm = Object.keys(this.removedRecords)
+      return !!this.unshiftDataSource.length || !!this.pushDataSource.length || !!md.length || !!rm.length || this.modifiedTtl
     }
   },
   watch: {
@@ -206,7 +207,7 @@ const typeMixins = {
       }
     },
     _genProps (dataSource) {
-      return { ...this.tableOptions, columns: this.columns, dataSource: dataSource }
+      return { ...this.tableOptions, columns: this.columns, dataSource: dataSource, tableLayout: 'auto' }
     },
     _renderNewRecord (columnNames, dataSource, ref) {
       if (!dataSource || !dataSource.length) {
@@ -240,7 +241,7 @@ const typeMixins = {
     _renderTable (columnNames) {
       const scopedSlots = this._genSlots(columnNames)
       const tableOptions = this._genProps(this.dataSource)
-      const tableStyle = { margin: '10px 0', overflow: 'hidden' }
+      const tableStyle = { margin: '10px 0', overflow: 'hidden', maxHeight: '100%' }
       const dataTable = this.needRenderTable()
         ? <a-table style={tableStyle} key={this._redisKey + '-' + this.resetFlag} {...{ props: tableOptions }} ref="table" scopedSlots={scopedSlots}/>
         : undefined

@@ -28,21 +28,6 @@ const typeHandler = {
   },
   list ({ key, modified, unshift, push, removed }) {
     let result = []
-    if (unshift && unshift.length) {
-      result = result.concat(
-        unshift.map(({ value }) => {
-          return value ? ['LPUSH', key, value] : false
-        }).filter(v => !!v).reverse()
-      )
-    }
-
-    if (push && push.length) {
-      result = result.concat(
-        push.map(({ value }) => {
-          return value ? ['RPUSH', key, value] : false
-        }).filter(v => !!v)
-      )
-    }
 
     modified = filterRecords(modified)
     if (modified.length) {
@@ -63,6 +48,22 @@ const typeHandler = {
             ['LREM', key, 0, REMOVED_VAL]
           ]
         })
+      )
+    }
+    // push unshift 操作在最后进行，不影响修改删除
+    if (unshift && unshift.length) {
+      result = result.concat(
+        unshift.map(({ value }) => {
+          return value ? ['LPUSH', key, value] : false
+        }).filter(v => !!v).reverse()
+      )
+    }
+
+    if (push && push.length) {
+      result = result.concat(
+        push.map(({ value }) => {
+          return value ? ['RPUSH', key, value] : false
+        }).filter(v => !!v)
       )
     }
 

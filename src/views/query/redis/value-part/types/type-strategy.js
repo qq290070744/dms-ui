@@ -55,6 +55,9 @@ export default {
       const curr = this.modified.ttl
 
       return origin === curr ? null : curr
+    },
+    redisKey () {
+      return this.redisObject && this.redisObject.key
     }
   },
   mounted () {
@@ -94,7 +97,7 @@ export default {
       <div style={style}>
         <base-info redisObject={this.redisObject} on={on}/>
         {
-          component ? <component style={{ flex: 1 }} redisObject={this.finalObject} modifiedTtl={this.ttl}/> : undefined
+          component ? <component style={{ flex: 1 }} key={this.redisKey} redisObject={this.finalObject} modifiedTtl={this.ttl}/> : undefined
         }
       </div>
     )

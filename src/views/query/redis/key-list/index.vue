@@ -32,7 +32,7 @@ import RedisContentKeyList from './content-list'
 import * as redisApi from '@/api/redis-query'
 import { defaultRedisObject } from '../utils'
 const genDBList = () => {
-  return Array(255).fill(1).map((_v, i) => ({ value: i, label: 'DB' + i }))
+  return Array(50).fill(1).map((_v, i) => ({ value: i, label: 'DB' + i }))
 }
 export default {
   components: {
