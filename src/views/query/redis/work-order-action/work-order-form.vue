@@ -1,9 +1,7 @@
 <template>
   <a-form v-bind="formOption">
     <a-form-item label="工单内容(命令)">
-      <div class="commands-wrapper">
-        <div class="commands-content" id="redis-work-order-editor"></div>
-      </div>
+      <monaco-editor :value="commands" ref="editor"></monaco-editor>
     </a-form-item>
     <a-form-item label="审核人">
       <a-select
@@ -26,8 +24,11 @@
 </template>
 
 <script>
-import * as monaco from 'monaco-editor'
+import MonacoEditor from '@/components/monaco-editor'
 export default {
+  components: {
+    MonacoEditor
+  },
   props: {
     actionObject: {
       type: Object,
@@ -57,9 +58,6 @@ export default {
       return commands ? commands.join('\n') : ''
     }
   },
-  mounted () {
-    this.initEditor()
-  },
   methods: {
     submit () {
       return new Promise((resolve, reject) => {
@@ -74,14 +72,8 @@ export default {
       })
     },
     getCommands () {
-      return this.editor.getValue().split('\n').map(command => command.trim().replace(/\s+/g, ' ')).filter(v => !!v)
+      return this.$refs.editor.getValue()
     },
-    initEditor () {
-      this.editor = monaco.editor.create(document.getElementById('redis-work-order-editor'), {
-        value: this.commands,
-        language: 'redis'
-      })
-    }
   }
 }
 </script>
