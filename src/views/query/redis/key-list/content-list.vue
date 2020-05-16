@@ -13,7 +13,6 @@
       />
       <work-order-action
         :extraParams="extraParams"
-        :genActionObject="genActionObject"
         title="创建命令行工单"
       />
     </div>

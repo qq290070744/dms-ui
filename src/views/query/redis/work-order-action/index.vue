@@ -37,13 +37,13 @@ export default {
   },
   methods: {
     showWorkOrder () {
-      if (this.disabled || !this.genActionObject) {
+      if (this.disabled) {
         return
       }
       queryApprovalUser().then((result) => {
         this.auditors = result.map(u => ({ label: u.name, value: u.id }))
       })
-      const actionObject = this.genActionObject() || { actions: [], commands: [] }
+      const actionObject = typeof this.genActionObject === 'function' ? this.genActionObject() : { actions: [], commands: [] }
       this.currActionObject = actionObject
     },
     handleOk () {
