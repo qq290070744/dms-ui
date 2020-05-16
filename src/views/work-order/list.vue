@@ -9,27 +9,37 @@ export default {
     }
   },
   data () {
+    const status = ['驳回', '执行成功', '待审核', '执行中', '执行失败']
+    const sqlType = ['MySQL ddl', 'MySQL dml', 'redis', 'mongodb', 'pgsql ', 'mssql ', '其他']
     const columns = [
       {
         title: '#',
         width: 60,
-        scopedSlots: { customRender: 'serial' }
+        customRender: (_text, _record, index) => {
+          return <span>{ index + 1 }</span>
+        }
       },
       {
         title: '类型',
         dataIndex: 'type',
+        customRender: (text) => {
+          return sqlType[text]
+        }
       },
       {
-        title: '数据库',
+        title: '数据库名',
         dataIndex: 'data_base',
       },
       {
-        title: '数据库机器',
+        title: '数据库机器源',
         dataIndex: 'source',
       },
       {
         title: '状态',
         dataIndex: 'status',
+        customRender: (text, record, index) => {
+          return <span>{status[text]}</span>
+        }
       },
       {
         title: '备注',
@@ -50,11 +60,14 @@ export default {
       {
         title: '操作',
         width: 200,
-        scopedSlots: { customRender: 'handler' }
+        customRender: (text, record, index) => {
+          return <a onClick={() => { this.currOrder = record }}>详情</a>
+        }
       }
     ]
     return {
       innerSource: null,
+      currOrder: null,
       pagination: {},
       columns,
     }
@@ -78,10 +91,6 @@ export default {
           this.innerSource = records
         })
       }
-    },
-    // render
-    renderColumns () {
-
     }
   },
   render () {
