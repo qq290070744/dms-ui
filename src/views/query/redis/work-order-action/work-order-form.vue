@@ -25,6 +25,9 @@
 
 <script>
 import MonacoEditor from '@/components/monaco-editor'
+function str (val) {
+  return /^\d+|"(?:[^"\\]|\\.)*"$/.test(val) ? val : JSON.stringify(val)
+}
 export default {
   components: {
     MonacoEditor
@@ -72,7 +75,11 @@ export default {
       })
     },
     getCommands () {
-      return this.$refs.editor.getValue()
+      const lines = this.$refs.editor.getPrettyValue()
+      return lines.map((line) => {
+        const array = line.match(/"(?:[^"\\]|\\.)*"|\d+|[^\s]+/g)
+        return array.map((v, i) => i > 0 ? str(v) : v).join(' ')
+      })
     },
   }
 }

@@ -1,5 +1,10 @@
 <script>
+import { orderType, orderStatus } from './utils'
+import WorkOrderDetail from './detail'
 export default {
+  components: {
+    WorkOrderDetail
+  },
   props: {
     dataSource: {
       type: [Array, Function],
@@ -9,8 +14,6 @@ export default {
     }
   },
   data () {
-    const status = ['驳回', '执行成功', '待审核', '执行中', '执行失败']
-    const sqlType = ['MySQL ddl', 'MySQL dml', 'redis', 'mongodb', 'pgsql ', 'mssql ', '其他']
     const columns = [
       {
         title: '#',
@@ -23,7 +26,7 @@ export default {
         title: '类型',
         dataIndex: 'type',
         customRender: (text) => {
-          return sqlType[text]
+          return orderType[text]
         }
       },
       {
@@ -38,7 +41,7 @@ export default {
         title: '状态',
         dataIndex: 'status',
         customRender: (text, record, index) => {
-          return <span>{status[text]}</span>
+          return <span>{orderStatus[text]}</span>
         }
       },
       {
@@ -95,11 +98,14 @@ export default {
   },
   render () {
     return (
-      <a-table
-        rowKey="id"
-        dataSource={this.finalDataSource}
-        columns={this.columns}
-      />
+      <div>
+        <work-order-detail onExecuted={ () => { this.getSource() } } dataSource={this.currOrder} onClose={() => { this.currOrder = null }}/>
+        <a-table
+          rowKey="id"
+          dataSource={this.finalDataSource}
+          columns={this.columns}
+        />
+      </div>
     )
   }
 }

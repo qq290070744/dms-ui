@@ -2,6 +2,10 @@ function filterRecords (modifiedRecords) {
   return Object.keys(modifiedRecords).map(k => modifiedRecords[k]).filter(v => !!v)
 }
 
+function str (val) {
+  return /^\d+$/.test(val) ? val : JSON.stringify(val)
+}
+
 /**
  * 添加 hsetnx key field value
  * 更新 hset key field value
@@ -201,11 +205,11 @@ export function genActions (type, payload) {
   }
 
   const toCommand = (actions) => {
-    return actions.reduce((commands, action) => {
-      if (action && typeof action[0] === 'string') {
-        commands.push(action.join(' '))
+    return actions.reduce((commands, commandArr) => {
+      if (commandArr && typeof commandArr[0] === 'string') {
+        commands.push(commandArr.map((v, i) => i > 0 ? str(v) : v).join(' '))
       } else {
-        commands.push(...toCommand(action))
+        commands.push(...toCommand(commandArr))
       }
       return commands
     }, [])

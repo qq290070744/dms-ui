@@ -60,7 +60,7 @@ const vueConfig = {
       .options({
         name: 'assets/[name].[hash:8].[ext]'
       })
-    
+
     // if prod is on
     // assets require on cdn
     if (isProd) {

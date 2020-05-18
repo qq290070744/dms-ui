@@ -46,7 +46,8 @@ import {
   Skeleton,
   Popconfirm,
   message,
-  notification
+  notification,
+  Descriptions,
 } from 'ant-design-vue'
 // import VueCropper from 'vue-cropper'
 
@@ -89,6 +90,7 @@ Vue.use(Skeleton)
 Vue.use(Popconfirm)
 // Vue.use(VueCropper)
 Vue.use(notification)
+Vue.use(Descriptions)
 
 Vue.prototype.$confirm = Modal.confirm
 Vue.prototype.$message = message

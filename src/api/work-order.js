@@ -20,3 +20,15 @@ export function mySubmitWorkOrder (params) {
 export function workOrderByKey (keyname) {
   return axios.post('/work_order/q_redis_key', { keyname })
 }
+
+export function execWorkOrder (id, type) {
+  return axios.post(`/work_order/${type}/exec`, { work_id: id })
+}
+
+export function rejectWorkOrder (id, rejected) {
+  return axios.post(`/work_order/rejected_work_order`, { work_id: id, rejected })
+}
+
+export function queryWorkOrderExection (id) {
+  return axios.get(`/work_order/get_order_exec_info`, { params: { work_id: id } })
+}

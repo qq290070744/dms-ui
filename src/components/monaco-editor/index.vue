@@ -37,7 +37,10 @@ export default {
   },
   methods: {
     getValue () {
-      return this.editor.getValue().split('\n').map(command => command.trim().replace(/\s+/g, ' ')).filter(v => !!v)
+      return this.editor.getValue()
+    },
+    getPrettyValue () {
+      return this.getValue().split('\n').map(command => command.trim().replace(/\s+/g, ' ')).filter(v => !!v)
     },
     initEditor () {
       waitRefShow(this, 'target').then((ref) => {

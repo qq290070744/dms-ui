@@ -6,7 +6,7 @@
         size="small"
         class="redis-value-part--key-input"
         :readOnly="viewMode"
-        :defaultValue="keyName"
+        :value="keyName"
         @input="(e) => { inner.key = e.target.value }"
       >
         <template #addonAfter>

@@ -38,13 +38,13 @@ export const asyncRouterMap = [
             path: 'redis',
             name: 'instancesRedis',
             component: () => import('@/views/instances/redis'),
-            meta: { title: 'redis实例管理', keepAlive: true }
+            meta: { title: 'redis实例管理' }
           },
           {
             path: 'mysql',
             name: 'instancesMysql',
             component: () => import('@/views/instances/mysql'),
-            meta: { title: 'mysql实例管理', keepAlive: true }
+            meta: { title: 'mysql实例管理' }
           }
         ]
       },
@@ -68,13 +68,13 @@ export const asyncRouterMap = [
                 path: 'instances',
                 name: 'queryRedisInstances',
                 component: () => import('@/views/query/redis/instance-list'),
-                meta: { title: 'redis查询', keepAlive: true }
+                meta: { title: 'redis查询' }
               },
               {
                 path: ':instance_id',
                 name: 'queryRedisInstance',
                 component: () => import('@/views/query/redis/instance'),
-                meta: { title: 'redis查询', keepAlive: true }
+                meta: { title: 'redis查询' }
               }
             ]
           }
@@ -92,7 +92,7 @@ export const asyncRouterMap = [
             path: 'myReviewList',
             name: 'MyReviewList',
             component: () => import('@/views/work-order/my-review-list'),
-            meta: { title: '我的工单审核列表', keepAlive: true }
+            meta: { title: '我的工单审核列表' }
           }
         ]
       },
