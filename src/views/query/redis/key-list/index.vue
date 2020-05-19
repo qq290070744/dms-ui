@@ -31,6 +31,7 @@
 import RedisContentKeyList from './content-list'
 import * as redisApi from '@/api/redis-query'
 import { defaultRedisObject } from '../utils'
+import { REDIS_TYPE } from '../../utils'
 const genDBList = () => {
   return Array(50).fill(1).map((_v, i) => ({ value: i, label: 'DB' + i }))
 }
@@ -40,6 +41,7 @@ export default {
   },
   data () {
     return {
+      REDIS_TYPE,
       redisTotol: 0,
       redis: {
         db: 0,
@@ -63,6 +65,7 @@ export default {
       return {
         db_name: this.redis.db,
         inst_id: this.instId,
+        type: this.REDIS_TYPE
       }
     }
   },

@@ -35,7 +35,7 @@ export default {
       },
       {
         title: '数据库机器源',
-        dataIndex: 'source',
+        dataIndex: 'inst_name',
       },
       {
         title: '状态',
