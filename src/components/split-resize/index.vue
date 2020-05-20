@@ -18,29 +18,38 @@ export default {
     vertical: {
       type: Boolean,
       default: false
+    },
+    asideWidth: {
+      type: Number,
+      default: 400
     }
   },
   data () {
     return {
-      asideWidth: 400,
+      innerAsideWidth: 0,
       height: '100%'
     }
   },
   computed: {
+    finalAsideWidth () {
+      return this.innerAsideWidth || this.asideWidth
+    },
     asideStyle () {
-      return this.vertical ? { height: this.asideWidth + 'px' } : { width: this.asideWidth + 'px' }
+      const len = this.finalAsideWidth + 'px'
+      return this.vertical ? { height: len } : { width: len }
     },
     controlStyle () {
-      return this.vertical ? { top: this.asideWidth + 'px' } : { left: this.asideWidth + 'px' }
+      const len = this.finalAsideWidth + 'px'
+      return this.vertical ? { top: len } : { left: len }
     }
   },
   methods: {
     startResize (ev) {
       const range = genRange(this.$el, this.vertical)
       resize(
-        ev, this.asideWidth, range,
+        ev, this.finalAsideWidth, range,
         (width) => {
-          this.asideWidth = width
+          this.innerAsideWidth = width
         },
         this.vertical
       )

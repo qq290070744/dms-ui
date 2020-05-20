@@ -89,7 +89,7 @@ const vueConfig = {
 
   devServer: {
     disableHostCheck: true,
-    host: 'local-dms.perfectdiary.com',
+    // host: 'local-dms.perfectdiary.com',
     port: 8024,
     proxy: {
       '/admin': {

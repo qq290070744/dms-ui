@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import { UserLayout, BasicLayout, RouteView } from '@/layouts'
+import { UserLayout, BasicLayout, RouteView, BlankLayout } from '@/layouts'
 import { bxAnaalyse } from '@/core/icons'
 
 export const asyncRouterMap = [
@@ -59,7 +59,7 @@ export const asyncRouterMap = [
           {
             path: 'redis',
             name: 'queryRedis',
-            component: () => import('@/views/query/redis'),
+            component: BlankLayout,
             meta: { title: 'redis实例列表', keepAlive: true },
             redirect: 'redis/instances',
             hideChildrenInMenu: true,
@@ -75,6 +75,28 @@ export const asyncRouterMap = [
                 name: 'queryRedisInstance',
                 component: () => import('@/views/query/redis/instance'),
                 meta: { title: 'redis查询' }
+              }
+            ]
+          },
+          {
+            path: 'mysql',
+            name: 'queryMysql',
+            component: BlankLayout,
+            meta: { title: 'mysql实例列表', keepAlive: true },
+            redirect: 'mysql/instances',
+            hideChildrenInMenu: true,
+            children: [
+              {
+                path: 'instances',
+                name: 'queryMysqlInstances',
+                component: () => import('@/views/query/mysql/instance-list'),
+                meta: { title: 'mysql查询' }
+              },
+              {
+                path: ':instance_id',
+                name: 'queryMysqlInstance',
+                component: () => import('@/views/query/mysql/instance'),
+                meta: { title: 'mysql查询' }
               }
             ]
           }
