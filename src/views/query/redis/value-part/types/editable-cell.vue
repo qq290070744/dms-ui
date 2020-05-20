@@ -86,10 +86,12 @@ export default {
       if (/^[\n\s\t]*$/.test(this.modifiedValue)) {
         this.modifiedValue = null
       } else if (!this.keepSpace) {
-        this.modifiedValue = this.modifiedValue.replace(/[\n\s\t]*/, '')
+        this.modifiedValue = this.modifiedValue.replace(/[\n\s\t]*/g, '')
       }
 
-      this.$emit('update:status', this.getStatus(), this.modifiedValue)
+      const emitValue = this.modifiedValue.replace(/[\n\s\t]*/g, '')
+      console.log(emitValue)
+      this.$emit('update:status', this.getStatus(), emitValue)
       this.editable = false
     },
     reset () {
