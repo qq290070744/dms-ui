@@ -89,8 +89,8 @@ export default {
         this.modifiedValue = this.modifiedValue.replace(/[\n\s\t]*/g, '')
       }
 
-      const emitValue = this.modifiedValue.replace(/[\n\s\t]*/g, '')
-      console.log(emitValue)
+      const emitValue = this.modifiedValue ? this.modifiedValue.replace(/[\n\s\t]*/g, '') : null
+
       this.$emit('update:status', this.getStatus(), emitValue)
       this.editable = false
     },
