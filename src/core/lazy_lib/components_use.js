@@ -51,7 +51,6 @@ import {
   notification,
   Transfer,
   FormModel,
-  Tree,
   Descriptions,
 } from 'ant-design-vue'
 // import VueCropper from 'vue-cropper'
@@ -99,7 +98,6 @@ Vue.use(Popconfirm)
 Vue.use(notification)
 Vue.use(Transfer)
 Vue.use(FormModel)
-Vue.use(Tree)
 Vue.use(Descriptions)
 
 Vue.prototype.$confirm = Modal.confirm
