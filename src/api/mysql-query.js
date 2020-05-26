@@ -13,14 +13,14 @@ function uuid (type) {
 // inst_id => string[]
 export function dbs (parameter) {
   return axios.post(p('/dbs'), parameter).then((result) => {
-    return result.records.map((name) => ({ uid: uuid('d'), level: 1, children: [], name }))
+    return (result.records || result).map((name) => ({ uid: uuid('d'), level: 1, children: [], name }))
   })
 }
 
 // inst_id, db_name => string[]
 export function tables (params) {
   return axios.post(p('/dbs/tbs'), params).then((result) => {
-    return result.map((name) => ({ uid: uuid('t'), level: 2, isLeaf: true, children: [], name }))
+    return (result.records || result).map((name) => ({ uid: uuid('t'), level: 2, isLeaf: true, children: [], name }))
   })
 }
 
@@ -36,4 +36,9 @@ export function indexes (params) {
   return axios.post(p('/dbs/tbs/index'), params).then((result) => {
     return result.map((index) => ({ uid: uuid('i'), level: 3, ...index }))
   })
+}
+
+// inst_id, db_name, sql
+export function querySql (params) {
+  return axios.post(p('/content'), params)
 }

@@ -1,7 +1,7 @@
 export function resize (ev, curr, range, set, vertical) {
   const { clientX: initX, clientY: initY } = ev
   const prevCursor = document.body.style.cursor
-  document.body.style.cursor = 'col-resize'
+  document.body.style.cursor = vertical ? 'row-resize' : 'col-resize'
   function move (ev) {
     const movement = vertical ? ev.clientY - initY : ev.clientX - initX
     const pos = curr + movement
@@ -20,7 +20,7 @@ export function resize (ev, curr, range, set, vertical) {
   document.addEventListener('mouseup', end)
 }
 
-export function genRange (el, vertical) {
+export function genRange (el, padding = 0, vertical) {
   const { width, height } = el.getBoundingClientRect()
 
   return [0, vertical ? height : width]

@@ -32,3 +32,7 @@ export function rejectWorkOrder (id, rejected) {
 export function queryWorkOrderExection (id) {
   return axios.get(`/work_order/get_order_exec_info`, { params: { work_id: id } })
 }
+
+export function beautySql (params) {
+  return axios.post('/work_order/mysql/beauty', params)
+}

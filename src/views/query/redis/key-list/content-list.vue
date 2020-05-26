@@ -159,6 +159,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+// src\components\global.less
 .redis-key-list {
   flex: 1;
 }
@@ -166,39 +167,6 @@ export default {
   margin: 8px 0;
   .ant-btn {
     margin-right: 4px;
-  }
-}
-</style>
-
-<style lang="less">
-.redis-key-list {
-  .ant-table-tbody > tr {
-    td {
-      white-space: nowrap;
-    }
-  }
-}
-.redis-key-list, .redis-value-box--content {
-  .ant-table colgroup > col.ant-table-selection-col {
-    width: 40px;
-  }
-  .ant-table-small > .ant-table-content > .ant-table-header > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-body > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-header > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-body > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-fixed-left > .ant-table-header > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-fixed-right > .ant-table-header > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-fixed-left > .ant-table-body-outer > .ant-table-body-inner > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-fixed-right > .ant-table-body-outer > .ant-table-body-inner > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-header > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-body > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-header > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-body > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-fixed-left > .ant-table-header > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-fixed-right > .ant-table-header > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-fixed-left > .ant-table-body-outer > .ant-table-body-inner > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-fixed-right > .ant-table-body-outer > .ant-table-body-inner > table > .ant-table-tbody > tr > td {
-    padding: 0 4px;
-  }
-  .ant-table-tbody > tr {
-    &:nth-child(2n) > td {
-      background-color: #ebf9ff ;
-    }
-  }
-  // 选中时 .redis-key-list--row-select
-  .ant-table-tbody > tr.ant-table-row.redis-key-list--row-select {
-    & > td, &:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
-      background-color: #a0d1ff ;
-    }
-  }
-  // 分页
-  .ant-pagination.mini.ant-table-pagination {
-    margin: 4px 0;
   }
 }
 </style>

@@ -7,7 +7,7 @@
       <slot name="main"></slot>
       <slot></slot>
     </div>
-    <div class="split-resize--control" @mousedown="startResize" :style="controlStyle"></div>
+    <div class="split-resize--control" @mousedown.prevent="startResize" :style="controlStyle"></div>
   </div>
 </template>
 
@@ -66,11 +66,12 @@ export default {
   width: 100%;
   height: 100%;
 
-  user-select: none;
   &--main, &--aside {
+    box-sizing: border-box;
     height: 100%;
     background-color: #fff;
     overflow: hidden;
+    padding: 0 8px;
   }
   &--main {
     margin-left: @split-width;
@@ -84,10 +85,10 @@ export default {
     width: @split-width;
     height: 100%;
     cursor: col-resize;
+    background-color: rgba(51, 51, 51, 0.1);
     &:hover {
-      background-color: rgba(51, 51, 51, 0.1)
+      background-color: rgba(51, 51, 51, 0.2);
     }
-
   }
 
   &.vertical {

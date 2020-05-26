@@ -6,8 +6,6 @@
 
 <script>
 import * as monaco from 'monaco-editor'
-import { language as mysqlDef } from 'monaco-editor/esm/vs/basic-languages/mysql/mysql'
-import { language as redisDef } from 'monaco-editor/esm/vs/basic-languages/redis/redis'
 import { waitRefShow } from '../../utils/util'
 export default {
   props: {
@@ -32,20 +30,35 @@ export default {
   },
   data () {
     return {
-      editor: null
+      editor: null,
+      langSuggestions: []
     }
   },
   computed: {
     initialValue () {
       return Array.isArray(this.value) ? this.value.join('\n') : this.value
+    },
+    customSuggestions () {
+      return this.suggestions.reduce((result, [detail, strList]) => {
+        return result.concat(this.genSuggestion(strList, detail))
+      }, [])
+    },
+    finalSuggestions () {
+      return [...this.langSuggestions, ...this.customSuggestions]
     }
   },
   mounted () {
     this.initEditor()
   },
   methods: {
+    getEditor () {
+      return this.editor
+    },
     getValue () {
       return this.editor.getValue()
+    },
+    setValue (val) {
+      this.editor.setValue(val)
     },
     getPrettyValue () {
       return this.getValue().split('\n').map(command => command.trim().replace(/\s+/g, ' ')).filter(v => !!v)
@@ -58,31 +71,55 @@ export default {
           readOnly: this.readOnly,
           language: this.language
         })
+        this.bindEvent()
       })
     },
-    genSuggestion (...args) {
-      args = args.reduce((result, arg) => {
-        return result.concat(arg)
-      }, [])
-      return args.map((kw) => {
+    bindEvent () {
+      if (this.$listeners['ctrl-enter']) {
+        this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+          this.$emit('ctrl-enter', this.getValue())
+        })
+      }
+    },
+    genSuggestion (suggestionStrs, detail) {
+      return suggestionStrs.map((kw) => {
         return {
           label: kw,
           kind: monaco.languages.CompletionItemKind.Function,
           insertText: kw,
+          detail
         }
       })
     },
-    registerSuggention () {
-      const defs = {
-        mysql: mysqlDef,
-        redis: redisDef
+    registerLanguageSuggention () {
+      try {
+        const lang = this.language
+        const langDef = require(`monaco-editor/esm/vs/basic-languages/${lang}/${lang}`)
+        const { builtinFunctions, keywords, operators } = langDef.language
+
+        this.langSuggestions = [
+          ...this.genSuggestion(builtinFunctions, '函数'),
+          ...this.genSuggestion(keywords, '关键字'),
+          ...this.genSuggestion(operators, '操作符'),
+        ]
+      } catch (e) {
+        console.log(e)
       }
-      const lang = this.language
-      const { builtinFunctions, keywords, operators } = defs[lang]
-      monaco.languages.registerCompletionItemProvider(lang, {
-        provideCompletionItems: () => {
+    },
+    registerSuggention () {
+      this.registerLanguageSuggention()
+      const that = this
+      monaco.languages.registerCompletionItemProvider(this.language, {
+        provideCompletionItems (model, position) {
+          const word = model.getWordUntilPosition(position)
+          const range = {
+            startLineNumber: position.lineNumber,
+            endLineNumber: position.lineNumber,
+            startColumn: word.startColumn,
+            endColumn: word.endColumn
+          }
           return {
-            suggestions: this.genSuggestion(builtinFunctions, keywords, operators)
+            suggestions: that.finalSuggestions.map(s => ({ ...s, range }))
           }
         }
       })
