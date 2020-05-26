@@ -1,9 +1,9 @@
 <template>
   <split-resize class="mysql-query-container" :asideWidth="300">
     <template #aside>
-      <database-tree @set-db="setDB" @init-db="initDB"></database-tree>
+      <database-tree @set-db="setDB" @init-db="initDB" @set-fields="(f) => currFields = f"></database-tree>
     </template>
-    <query-area v-if="currDatabase" :instId="instId" :databases="databases" :database="currDatabase"></query-area>
+    <query-area v-if="currDatabase" :instId="instId" :databases="databases" :fields="currFields" :database="currDatabase"></query-area>
     <div class="empty" v-else>
       <a-empty description="请在左侧选择数据库" />
     </div>
@@ -30,6 +30,7 @@ export default {
   data () {
     return {
       currDatabase: null,
+      currFields: [],
       databases: []
     }
   },

@@ -104,9 +104,33 @@ export default {
     width: @split-width;
     height: 100%;
     cursor: col-resize;
-    background-color: rgba(51, 51, 51, 0.1);
+    background-color: rgba(100, 100, 100, 0.1);
     &:hover {
-      background-color: rgba(51, 51, 51, 0.2);
+      background-color: rgba(100, 100, 100, 0.2);
+    }
+    &::before {
+      position: absolute;
+      margin-left: -@split-width / 2;
+      margin-top: -10px;
+      top: 50%;
+      left: 50%;
+
+      content: '';
+      width: @split-width;
+      height: 20px;
+      background-color: #aaa;
+    }
+    &::after {
+      position: absolute;
+      margin-left: -2px;
+      top: 50%;
+      left: 50%;
+      content: '';
+      width: 4px;
+      height: 1px;
+      background-color: #eee;
+      z-index: 2;
+      box-shadow: 0 3px 0 #eee, 0 -3px 0 #eee;
     }
   }
 
@@ -124,6 +148,12 @@ export default {
       height: @split-width;
       width: 100%;
       cursor: row-resize;
+      &::before {
+        transform: rotate(90deg);
+      }
+      &::after {
+        transform: rotate(90deg);
+      }
     }
     &--main {
       margin-top: @split-width;

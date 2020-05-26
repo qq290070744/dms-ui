@@ -37,6 +37,10 @@ export default {
       type: Object,
       default: null
     },
+    fields: {
+      type: Array,
+      default () { return [] }
+    },
     instId: {
       type: Number,
       default: 0
@@ -50,10 +54,11 @@ export default {
   },
   computed: {
     suggestions () {
+      const fds = ['字段', this.fields]
       const dbs = ['库', this.databases.map(db => db.name)]
       const dbn = this.database ? this.database.name : ''
       const tbs = [dbn + '表', this.database ? this.database.children.map(tb => tb.name) : []]
-      return [dbs, tbs]
+      return [dbs, tbs, fds]
     },
     hasResult () {
       return this.result.records && this.result.records.length
