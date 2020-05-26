@@ -16,8 +16,10 @@ export function genPage (data, parameter) {
 }
 
 export function transform (parameter) {
+  const { current, pageSize, ...rest } = parameter
   return {
-    page: parameter.current || defaultPagination.current,
-    page_size: parameter.pageSize || defaultPagination.pageSize,
+    page: current || defaultPagination.current,
+    page_size: pageSize || defaultPagination.pageSize,
+    ...rest
   }
 }

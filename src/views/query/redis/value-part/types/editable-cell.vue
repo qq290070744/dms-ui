@@ -1,13 +1,3 @@
-<template>
-  <div class="editable-cell">
-    <div v-if="editable" class="editable-cell--input-wrapper">
-      <a-textarea class="editable-cell--input" v-focus @blur="onSave" @change="onChange" :value="currValue"/>
-    </div>
-    <div v-else class="editable-cell--text-wrapper" @dblclick="doStartEdit">
-      {{ value || ' ' }}
-    </div>
-  </div>
-</template>
 
 <script>
 export default {
@@ -15,6 +5,26 @@ export default {
     value: {
       type: [String, Number],
       default: undefined
+    },
+    keepSpace: {
+      type: Boolean,
+      default: true
+    },
+    status: {
+      type: String,
+      default: '', // added removed
+    },
+    added: {
+      type: Boolean,
+      default: false
+    },
+    modified: {
+      type: Boolean,
+      default: false
+    },
+    removed: {
+      type: Boolean,
+      default: false
     }
   },
   directives: {
@@ -26,39 +36,134 @@ export default {
   },
   data () {
     return {
-      modify: null,
+      modifiedValue: null,
       editable: false
     }
   },
   computed: {
+    isModified () {
+      return this.modifiedValue !== null
+    },
     currValue () {
-      return this.modify !== null ? this.modify : this.value
+      return this.isModified ? this.modifiedValue : this.value
+    },
+    fillText () {
+      // 格式化
+      return (/^[\n\s\t]*$/.test(this.currValue) ? '\n' : '') + this.currValue
+    },
+    statusClass () {
+      return this.status || (this.getStatus())
+    },
+    classes () {
+      return [
+        'editable-cell',
+        this.statusClass
+      ]
     }
   },
   methods: {
+    getStatus () {
+      const status = ['removed', 'added', 'modified']
+      for (const s of status) {
+        if (this[s]) {
+          return s
+        }
+      }
+      return this.isModified ? 'modified' : 'normal'
+    },
     onChange (e) {
-      this.modify = e.target.value || ''
+      let value = e.target.value
+      if (value === this.value) {
+        value = null
+      }
+      this.modifiedValue = value
     },
     doStartEdit () {
       this.editable = true
     },
     onSave () {
+      // 如果为空，则重置
+      if (/^[\n\s\t]*$/.test(this.modifiedValue)) {
+        this.modifiedValue = null
+      } else if (!this.keepSpace) {
+        this.modifiedValue = this.modifiedValue.replace(/[\n\s\t]*/g, '')
+      }
+
+      const emitValue = this.modifiedValue ? this.modifiedValue.replace(/[\n\s\t]*/g, '') : null
+
+      this.$emit('update:status', this.getStatus(), emitValue)
       this.editable = false
-      this.modify = null
+    },
+    reset () {
+      this.modifiedValue = ''
+      this.onSave()
+    },
+    // render
+    renderInput () {
+      const on = { blur: this.onSave, change: this.onChange }
+      const directives = [{ name: 'focus' }]
+      return <div class={this.classes}>
+        <a-textarea class='editable-cell--input' { ...{ on, directives } } value={this.currValue}/>
+        <div class='editable-cell--text'>{ this.fillText || ' ' }</div>
+      </div>
+    },
+    renderText () {
+      return <div class={this.classes} onDblclick={this.doStartEdit}>
+        <div class='editable-cell--text'>{ this.currValue || ' ' }</div>
+        {this.isModified && <a-icon class='editable-cell--redo' title={'重置为:' + this.value} type="reload" onClick={this.reset} />}
+      </div>
     }
+  },
+  render () {
+    return this.editable
+      ? this.renderInput()
+      : this.renderText()
   }
 }
 </script>
 
 <style lang="less">
-.editable-cell{
-  &--input-wrapper {
-    width: 100%;
-    height: 100%;
+
+.editable-cell {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  &.modified {
+    color: #eda700;
   }
-  &--input.ant-input {
+  &.added, &.added-head, &.added-tail {
+    color: #00c024;
+  }
+  &.removed {
+    color: #ff0000;
+  }
+  & .ant-input {
+    position: absolute;
     height: 100%;
     resize: none;
+    border: 0;
+    padding: 0;
+    min-height: 0;
+    &:focus {
+      box-shadow: none;
+    }
+  }
+  & .editable-cell--text {
+    white-space: break-spaces;
+    word-break: break-all;
+    height: 100%;
+  }
+  &--redo {
+    display: none;
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    z-index: 1;
+  }
+  &:hover {
+    .editable-cell--redo {
+      display: inline-block;
+    }
   }
 }
 </style>

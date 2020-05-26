@@ -1,19 +1,15 @@
 <template>
   <div class="redis-value">
     <div class="tag"></div>
-    <value-page :redisObject="redisObject">
-      <type-strategy :redisObject="redisObject"></type-strategy>
-    </value-page>
+    <type-strategy :redisObject="redisObject"></type-strategy>
   </div>
 </template>
 
 <script>
-import ValuePage from './page'
 import TypeStrategy from './types/type-strategy'
 import { defaultRedisObject } from '../utils'
 export default {
   components: {
-    ValuePage,
     TypeStrategy
   },
   props: {
@@ -34,6 +30,7 @@ export default {
 
   &-page {
     flex: 1;
+    overflow: hidden;
   }
 }
 </style>

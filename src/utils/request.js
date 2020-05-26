@@ -6,7 +6,7 @@ import { VueAxios } from './axios-plugin'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { getAccessTokenFromCookie, redirectToLogin } from './unified-auth'
 
-const ERROR_CODE = 1
+const VALID_CODE = 0
 
 // 创建 axios 实例
 const service = axios.create({
@@ -16,9 +16,12 @@ const service = axios.create({
 
 const err = (error) => {
   if (typeof error === 'string') {
+    notification.error({
+      message: '请求出错',
+      description: error
+    })
     return Promise.reject(new Error(error))
   }
-
   if (error.response) {
     const data = error.response.data
     if (error.response.status === 403) {
@@ -60,7 +63,7 @@ service.interceptors.response.use((response) => {
   const responseData = response.data
   // 处理业务逻辑
   if (responseData.code !== undefined && responseData.msg !== undefined) {
-    if (responseData.code === ERROR_CODE) {
+    if (responseData.code !== VALID_CODE) {
       return err(responseData.msg)
     } else {
       // 返回真正的业务数据

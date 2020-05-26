@@ -1,8 +1,20 @@
 <template>
   <div class="redis-key-list">
     <div class="function-row">
-      <!-- <a-button type="primary" size="small">新增</a-button>
-      <a-button size="small">删除</a-button> -->
+      <a-button :disabled="creating" type="primary" size="small" @click="create">
+        <span>{{ creating ? '创建中' : '新增' }}</span>
+      </a-button>
+      <work-order-action
+        :disabled="!selectedRowKeys.length"
+        :extraParams="extraParams"
+        :genActionObject="genActionObject"
+        @success="onSuccess"
+        title="删除"
+      />
+      <work-order-action
+        :extraParams="extraParams"
+        title="创建命令行工单"
+      />
     </div>
     <a-table
       v-bind="finalTableOption"
@@ -20,16 +32,27 @@
 
 <script>
 import { waitRefShow, calcTableBodyHeight } from '@/utils/util'
+import WorkOrderAction from '../work-order-action'
+import EventBus, { REDIS_KEY_CREATED } from '../event-bus'
 export default {
+  components: {
+    WorkOrderAction
+  },
   props: {
     tableOptions: {
+      type: Object,
+      default () { return {} }
+    },
+    extraParams: {
       type: Object,
       default () { return {} }
     }
   },
   data () {
     return {
-      selectRow: {},
+      creating: false,
+      activedRow: {},
+      selectedRowKeys: [],
       table: {
         ref: 'redisTable',
         scroll: { y: 'auto' },
@@ -45,13 +68,18 @@ export default {
           {
             title: '类型',
             dataIndex: 'type',
-            width: 80
+            width: 60
           },
           {
             title: '键名',
             dataIndex: 'key'
           }
         ],
+        rowSelection: {
+          onChange: (selectedRowKeys, _selectedRows) => {
+            this.selectedRowKeys = selectedRowKeys
+          },
+        }
       }
     }
   },
@@ -63,6 +91,12 @@ export default {
       }
     }
   },
+  mounted () {
+    EventBus.$on(REDIS_KEY_CREATED, this.closeCreate)
+  },
+  beforeDestroy () {
+    EventBus.$off(REDIS_KEY_CREATED, this.closeCreate)
+  },
   watch: {
     'tableOptions.dataSource' () {
       this.initTableHeight()
@@ -71,11 +105,24 @@ export default {
   methods: {
     customRow (record) {
       return {
+        class: this.activedRow === record ? 'redis-key-list--row-select' : '',
         nativeOn: { click: () => this.onKeyClick(record) }
       }
     },
     onKeyClick (record) {
-      this.selectRow = record
+      if (this.creating) {
+        this.$confirm({
+          title: '当前正在创建 Redis key，是否放弃当前的修改？',
+          onOk: () => {
+            this.creating = false
+            this.activedRow = record
+            this.$emit('row-change', record)
+          }
+        })
+        return
+      }
+      this.creating = false
+      this.activedRow = record
       this.$emit('row-change', record)
     },
     initTableHeight () {
@@ -89,45 +136,37 @@ export default {
     },
     onChange (pagination /** , filters, sorter */) {
       this.$emit('page-change', pagination.current, pagination.pageSize)
+    },
+    onSuccess () {
+      this.selectedRowKeys = []
+    },
+    genActionObject () {
+      const commands = this.selectedRowKeys.map((key) => {
+        return 'DEL ' + key
+      })
+      return { commands, actions: [] }
+    },
+    create () {
+      this.creating = true
+      this.$emit('create')
+    },
+    closeCreate () {
+      this.creating = false
+      this.$emit('row-change', null)
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+// src\components\global.less
 .redis-key-list {
   flex: 1;
 }
 .function-row {
-  margin: 8px 8px 8px;
+  margin: 8px 0;
   .ant-btn {
-    margin-right: 8px;
-  }
-}
-</style>
-
-<style lang="less">
-.redis-key-list {
-  .ant-table-small > .ant-table-content > .ant-table-header > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-body > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-header > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-body > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-fixed-left > .ant-table-header > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-fixed-right > .ant-table-header > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-fixed-left > .ant-table-body-outer > .ant-table-body-inner > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-fixed-right > .ant-table-body-outer > .ant-table-body-inner > table > .ant-table-thead > tr > th, .ant-table-small > .ant-table-content > .ant-table-header > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-body > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-header > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-body > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-fixed-left > .ant-table-header > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-fixed-right > .ant-table-header > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-fixed-left > .ant-table-body-outer > .ant-table-body-inner > table > .ant-table-tbody > tr > td, .ant-table-small > .ant-table-content > .ant-table-fixed-right > .ant-table-body-outer > .ant-table-body-inner > table > .ant-table-tbody > tr > td {
-    padding: 0 4px;
-  }
-  .ant-table-tbody > tr {
-    td {
-      white-space: nowrap;
-    }
-    &:nth-child(2n) > td {
-      background-color: #ebf9ff ;
-    }
-  }
-  // 选中时 .redis-key-list--row-select
-  .ant-table-tbody > tr.ant-table-row.redis-key-list--row-select {
-    & > td, &:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
-      background-color: #5bcbff ;
-    }
-  }
-  // 分页
-  .ant-pagination.mini.ant-table-pagination {
-    margin: 4px 0;
+    margin-right: 4px;
   }
 }
 </style>
