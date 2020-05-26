@@ -1,5 +1,5 @@
 <template>
-  <split-resize class="mysql-query-container" :asideWidth="200">
+  <split-resize class="mysql-query-container" :asideWidth="300">
     <template #aside>
       <database-tree @set-db="setDB" @init-db="initDB"></database-tree>
     </template>

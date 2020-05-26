@@ -1,18 +1,18 @@
 <template>
-  <split-resize class="ys-query-panel" :vertical="true" :asideWidth="320">
+  <split-resize class="ys-query-panel" :vertical="true" :autoStart="true" :asideWidth="320">
+    <monaco-editor language="mysql" :height="450" ref="editor" :suggestions="suggestions" @ctrl-enter="query"></monaco-editor>
     <template #aside>
-      <monaco-editor language="mysql" ref="editor" :suggestions="suggestions" @ctrl-enter="query"></monaco-editor>
+      <div class="main">
+        <div :class="['function-row', {'has-result': hasResult}]">
+          <a-button type="primary" @click="clickQuery">查询</a-button>
+          <a-button type="danger" @click="beauty">美化</a-button>
+          <!-- <a-button>查看表结构</a-button> -->
+        </div>
+        <div class="result">
+          <sql-result v-bind="result" :key="queryCount"></sql-result>
+        </div>
+      </div>
     </template>
-    <div class="main">
-      <div :class="['function-row', {'has-result': hasResult}]">
-        <a-button type="primary" @click="clickQuery">查询</a-button>
-        <a-button type="danger" @click="beauty">美化</a-button>
-        <!-- <a-button>查看表结构</a-button> -->
-      </div>
-      <div class="result">
-        <sql-result v-bind="result" :key="queryCount"></sql-result>
-      </div>
-    </div>
   </split-resize>
 </template>
 
@@ -95,6 +95,10 @@ export default {
 
 <style scoped lang="less">
 .ys-query-panel {
+  height: calc(100% - 60px);
+  // relative to a-tabs
+  position: absolute;
+  top: 60px;
   .result {
     overflow: auto;
     margin-top: 16px;

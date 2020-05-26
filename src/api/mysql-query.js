@@ -20,7 +20,7 @@ export function dbs (parameter) {
 // inst_id, db_name => string[]
 export function tables (params) {
   return axios.post(p('/dbs/tbs'), params).then((result) => {
-    return (result.records || result).map((name) => ({ uid: uuid('t'), level: 2, isLeaf: true, children: [], name }))
+    return (result.records || result).map((name) => ({ uid: uuid('t'), level: 2, db: params.db_name, isLeaf: true, children: [], name }))
   })
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="commands-wrapper">
-    <div class="commands-content" ref="target"></div>
+    <div class="commands-content" :style="contentStyle" ref="target"></div>
   </div>
 </template>
 
@@ -26,6 +26,10 @@ export default {
       default () {
         return []
       }
+    },
+    height: {
+      type: Number,
+      default: 300
     }
   },
   data () {
@@ -45,6 +49,11 @@ export default {
     },
     finalSuggestions () {
       return [...this.langSuggestions, ...this.customSuggestions]
+    },
+    contentStyle () {
+      return {
+        height: this.height + 'px'
+      }
     }
   },
   mounted () {
