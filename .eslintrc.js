@@ -55,7 +55,8 @@ module.exports = {
         'ignoreReadBeforeAssign': false
       }
     ],
-    'comma-dangle': ['error', 'only-multiline']
+    'comma-dangle': ['error', 'only-multiline'],
+    'space-before-function-paren': 0
   },
   parserOptions: {
     parser: 'babel-eslint'

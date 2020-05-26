@@ -107,12 +107,13 @@ export default {
   watch: {
     sidebarOpened (val) {
       this.collapsed = !val
+    },
+    mainMenu () {
+      this.generateMenu()
     }
   },
   created () {
-    const routes = convertRoutes(this.mainMenu.find(item => item.path === '/'))
-    this.menus = (routes && routes.children) || []
-    this.collapsed = !this.sidebarOpened
+    this.generateMenu()
   },
   mounted () {
     const userAgent = navigator.userAgent
@@ -145,6 +146,11 @@ export default {
     },
     drawerClose () {
       this.collapsed = false
+    },
+    generateMenu () {
+      const routes = convertRoutes(this.mainMenu.find(item => item.path === '/'))
+      this.menus = (routes && routes.children) || []
+      this.collapsed = !this.sidebarOpened
     }
   }
 }
