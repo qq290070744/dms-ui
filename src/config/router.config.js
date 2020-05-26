@@ -130,6 +130,22 @@ export const asyncRouterMap = [
             ]
           }
         ]
+      },
+      //  系统管理
+      {
+        path: 'system',
+        name: 'system',
+        redirect: '/system/menu',
+        meta: { title: '系统管理', icon: bxAnaalyse },
+        component: RouteView,
+        children: [
+          {
+            path: 'menu',
+            name: 'menu',
+            component: () => import('@/views/system/menu'),
+            meta: { title: '菜单管理', keepAlive: true }
+          }
+        ]
       }
     ]
   },
