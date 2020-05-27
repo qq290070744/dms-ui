@@ -1,17 +1,51 @@
 <template>
-  <a-directory-tree
-    class="ys-database-tree"
-    v-bind="options"
-    @select="selectNode"
-  />
+  <split-resize :asideWidth="150" :vertical="true" :autoStart="true">
+    <a-directory-tree
+      class="ys-database-tree"
+      v-bind="options"
+      @select="selectNode"
+    />
+    <template #aside>
+      <a-empty v-if="!currTableName" description="选择上面的表可以在此处展示表结构" />
+      <div class="table-field-info" v-else>
+        <p>{{ currTableName }}</p>
+        <a-table
+          class="mini-row-table"
+          size="small"
+          :bordered="true"
+          rowKey="uid"
+          :columns="columns"
+          :dataSource="tableFields"
+        />
+      </div>
+    </template>
+  </split-resize>
 </template>
 
 <script>
-import { dbs, tables } from '@/api/mysql-query'
+import { dbs, tables, fields } from '@/api/mysql-query'
+import SplitResize from '@/components/split-resize'
 export default {
+  components: {
+    SplitResize
+  },
   data () {
+    const columns = [
+      { title: 'Field', dataIndex: 'Field' },
+      { title: 'Type', dataIndex: 'Type' },
+      { title: 'Key', dataIndex: 'Key' },
+      { title: 'Null', dataIndex: 'Null' },
+      { title: 'Extra', dataIndex: 'Extra' },
+      // { title: '权限', dataIndex: 'Privileges' },
+      // { title: '字符集', dataIndex: 'Collation' },
+      // { title: '注释', dataIndex: 'Comment' },
+      // { title: '默认', dataIndex: 'Default' },
+    ]
     return {
+      columns,
       currMysqlObject: null,
+      selectedTable: null,
+      tableFields: [],
       options: {
         treeData: [],
         replaceFields: {
@@ -26,6 +60,13 @@ export default {
   computed: {
     instId () {
       return Number(this.$route.params.instance_id)
+    },
+    currTableName () {
+      if (!this.selectedTable) {
+        return ''
+      }
+      const { db, name } = this.selectedTable
+      return `${db}.${name} 表字段信息`
     }
   },
   mounted () {
@@ -55,18 +96,28 @@ export default {
       })
     },
     selectNode (_s, { node }) {
-      if (node.level === 1) {
+      const level = node.dataRef.level
+      if (level === 1) {
         this.$emit('set-db', node.dataRef)
+      } else if (level === 2) {
+        this.selectedTable = node.dataRef
+        fields({ inst_id: this.instId, db_name: node.dataRef.db, tb_name: node.dataRef.name }).then((result) => {
+          this.tableFields = result
+          this.setFields()
+        })
       }
+    },
+    setFields () {
+      const fieldnames = this.tableFields.map(item => item.Field)
+      this.$emit('set-fields', fieldnames)
     }
   }
 }
 </script>
 
 <style scoped>
-.ys-database-tree {
-  overflow-y: auto;
+.ys-database-tree, .table-field-info {
+  overflow: auto;
   height: 100%;
-  overflow-x: hidden;
 }
 </style>
