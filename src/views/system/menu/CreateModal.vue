@@ -145,7 +145,6 @@ export default {
         this.$message.error('请选择上级菜单')
         return
       }
-      console.log(666)
       const _this = this
       this.form.validateFields((err, values) => {
         if (!err) {

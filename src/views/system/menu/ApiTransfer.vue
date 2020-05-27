@@ -8,17 +8,17 @@
     @ok="handleOk"
   >
     <a-transfer
+      showSearch
       :data-source="dataSource"
       :target-keys="targetKeys"
+      :selected-keys="selectedKeys"
       :list-style="{
         width: '250px',
         height: '300px'
       }"
-      :selected-keys="selectedKeys"
       :render="record => record.display_name"
       @selectChange="handleSelectChange"
       @change="handleChange"
-      showSearch
     />
   </a-modal>
 </template>
@@ -66,7 +66,7 @@ export default {
       this.selectedKeys = []
       this.menuId = record.id
       getApiListByMenu(this.menuId).then(res => {
-        this.targetKeys = res && res.map(String) || []
+        this.targetKeys = res ? res.map(String) : []
       })
     }
   },

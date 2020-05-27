@@ -33,6 +33,7 @@
 <script>
 import CreateModal from './CreateModal'
 import { getRoles, deleteRole } from '@/api/role'
+import moment from 'moment'
 
 const columns = [
   {
@@ -58,12 +59,14 @@ const columns = [
   {
     title: '状态',
     key: 'status',
-    dataIndex: 'status'
+    dataIndex: 'status',
+    customRender: text => (text === 1 ? '启用' : '停用')
   },
   {
     title: '创建时间',
     key: 'created_time',
-    dataIndex: 'created_time'
+    dataIndex: 'created_time',
+    customRender: text => moment(text).format('YYYY-MM-DD HH:mm:ss')
   },
   {
     title: '操作',
