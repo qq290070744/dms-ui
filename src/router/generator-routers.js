@@ -19,6 +19,7 @@ const redirectRouter = {
   instances: '/instances/redis', //  实例管理
   query: '/query/redis', //  查询
   queryRedis: 'redis/instances', //  查询
+  queryMysql: 'mysql/instances', //  查询
   dashboard: '/dashboard/Workplace' // 仪表盘
 }
 
@@ -38,6 +39,20 @@ const mapChildrenByName = {
       name: 'queryRedisInstance',
       component: () => import('@/views/query/redis/instance'),
       meta: { title: 'redis查询', keepAlive: true }
+    }
+  ],
+  queryMysql: [
+    {
+      path: 'instances',
+      name: 'queryMysqlInstances',
+      component: () => import('@/views/query/mysql/instance-list'),
+      meta: { title: 'mysql查询' }
+    },
+    {
+      path: ':instance_id',
+      name: 'queryMysqlInstance',
+      component: () => import('@/views/query/mysql/instance'),
+      meta: { title: 'mysql查询' }
     }
   ]
 }
@@ -94,6 +109,8 @@ export const generator = (routerMap, parent) => {
     if (mapChildrenByName[item.name]) {
       currentRouter.children = mapChildrenByName[item.name]
       currentRouter.hideChildrenInMenu = true
+      // 当有子路由时，把当前路由的组件置为空的 <router-view />
+      currentRouter.component = BlankLayout
     }
 
     // 是否有子菜单，并递归处理
