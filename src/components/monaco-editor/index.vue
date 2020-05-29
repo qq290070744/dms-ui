@@ -1,5 +1,5 @@
 <template>
-  <div class="commands-wrapper">
+  <div class="ys-monaco-editor commands-wrapper">
     <div class="commands-content" :style="contentStyle" ref="target"></div>
   </div>
 </template>

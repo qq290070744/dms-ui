@@ -100,18 +100,23 @@ export default {
 
 <style scoped lang="less">
 .ys-query-panel {
-  height: calc(100% - 60px);
   // relative to a-tabs
   position: absolute;
-  top: 60px;
+  top: 50px;
+  height: calc(100% - 50px);
   .result {
     overflow: auto;
     margin-top: 16px;
   }
+  .ys-monaco-editor {
+    margin: 0 8px;
+  }
   .main {
+    padding: 0 8px;
     position: relative;
   }
   .function-row {
+    padding: 0 8px;
     margin: 8px 0;
     &.has-result {
       position: absolute;

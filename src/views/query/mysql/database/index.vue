@@ -1,7 +1,7 @@
 <template>
-  <split-resize :asideWidth="150" :vertical="true" :autoStart="true">
+  <split-resize class="ys-mysql-database" :asideWidth="150" :vertical="true" :autoStart="true">
     <a-directory-tree
-      class="ys-database-tree"
+      class="ys-mysql-database--tree"
       v-bind="options"
       @select="selectNode"
     />
@@ -115,9 +115,20 @@ export default {
 }
 </script>
 
-<style scoped>
-.ys-database-tree, .table-field-info {
+<style scoped lang="less">
+.ys-mysql-database {
+  padding: 0 4px;
+}
+.ys-mysql-database--tree, .table-field-info {
   overflow: auto;
   height: 100%;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  &:hover {
+    &::-webkit-scrollbar {
+      display: initial;
+    }
+  }
 }
 </style>
