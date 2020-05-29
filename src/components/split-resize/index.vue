@@ -88,7 +88,6 @@ export default {
     height: 100%;
     background-color: #fff;
     overflow: hidden;
-    padding: 0 8px;
   }
   &--main {
     margin-left: @split-width;
@@ -158,10 +157,6 @@ export default {
     &--main {
       margin-top: @split-width;
       margin-left: 0;
-      padding: 8px 0;
-    }
-    &--aside {
-      padding: 8px 0;
     }
   }
   &.vertical.auto-start & {

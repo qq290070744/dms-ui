@@ -69,10 +69,13 @@ export default {
   display: flex;
   flex-direction: column;
   h3 {
-    margin: 8px 0;
+    margin: 8px;
   }
   .ant-tabs {
     flex: 1;
+  }
+  ::v-deep .ant-tabs-bar {
+    margin: 0 8px;
   }
 }
 </style>
