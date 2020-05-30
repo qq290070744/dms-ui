@@ -1,7 +1,7 @@
 <template>
   <div>
     <a-modal
-      title="database"
+      title="实例授权"
       :visible="visible"
       v-if="visible"
       @ok="handleOk"
@@ -12,7 +12,7 @@
     >
       <a-transfer
         showSearch
-        :data-source="dataSource"
+        :data-source="databaseSource"
         :target-keys="targetKeys"
         :render="item => item.title"
         @selectChange="handleSelectChange"
@@ -32,8 +32,13 @@
             :columns="direction === 'left' ? tableColumns : tableColumns"
             :data-source="filteredItems"
             size="small"
-            :style="{ pointerEvents: listDisabled ? 'none' : null }"
+            :style="{
+              pointerEvents: listDisabled ? 'none' : null,
+              height: '50vh',
+              overflowY: 'auto'
+            }"
             :defaultPageSize="5"
+            :pagination="false"
             :custom-row="
               ({ key, disabled: itemDisabled }) => ({
                 on: {
@@ -53,7 +58,7 @@
 
 <script>
 import difference from 'lodash/difference'
-import { getDatabase, associatedUserDatabase, getUserInfo } from '@/api/userList'
+import { associatedUserDatabase, getUserInfo } from '@/api/userList'
 
 const instanceDatabase = {
   1: 'mysql',
@@ -75,12 +80,17 @@ const tableColumns = [
 ]
 
 export default {
+  props: {
+    databaseSource: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
       tableColumns,
       visible: false,
       confirmLoading: false,
-      dataSource: [],
       targetKeys: [],
       userId: null
     }
@@ -98,7 +108,7 @@ export default {
         return
       }
       const list = []
-      this.dataSource.forEach(item => {
+      this.databaseSource.forEach(item => {
         if (this.targetKeys.includes(item.key)) {
           list.push({
             id: item.id,
@@ -141,16 +151,6 @@ export default {
     }
   },
   created() {
-    getDatabase().then(res => {
-      const list = (res || []).map(item => {
-        return {
-          ...item,
-          key: item.id.toString(),
-          title: item.name
-        }
-      })
-      this.dataSource = list
-    })
   }
 }
 </script>

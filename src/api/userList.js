@@ -1,13 +1,13 @@
 import { axios } from '@/utils/request'
 
 /**
- * 获取角色列表
+ * 获取用户列表
  */
 export function getUserList(data) {
   return axios({
     url: '/auth/users',
     method: 'get',
-    data
+    params: data
   })
 }
 /**
@@ -46,5 +46,35 @@ export function associatedUserDatabase(data) {
     url: '/auth/grant/user_dbs',
     method: 'put',
     data
+  })
+}
+/**
+ * 实例id获取库表结构
+ */
+export function getDatabaseById(data) {
+  return axios({
+    url: '/query/v1/mysql/schema_tree',
+    method: 'get',
+    params: data
+  })
+}
+/**
+ * 实例和schema的关联
+ */
+export function associatedChema(data) {
+  return axios({
+    url: '/auth/grant/db_schemas',
+    method: 'put',
+    data
+  })
+}
+/**
+ * 获取用户的资源授权信息
+ */
+export function getAuthByUserId(data) {
+  return axios({
+    url: '/auth/grant/user_resource',
+    method: 'get',
+    params: data
   })
 }
