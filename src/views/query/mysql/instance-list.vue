@@ -1,20 +1,13 @@
 <template>
-  <div class="redis-query-instance-list">
-    <div class="redis-query-instance-list--title"></div>
-    <div class="redis-query-instance-list--table">
+  <basic-container>
+    <div class="mysql-query-instance-list--title"></div>
+    <div class="mysql-query-instance-list--table">
       <a-table
         v-bind="table"
-        :dataSource="redisInstances"
-      >
-        <template #serial="text, record, index">
-          <span>{{ index + 1 }}</span>
-        </template>
-        <template #actions="text, record">
-          <router-link :to="{path: '/query/mysql/' + record.id}">查询实例</router-link>
-        </template>
-      </a-table>
+        :dataSource="mysqlInstances"
+      />
     </div>
-  </div>
+  </basic-container>
 </template>
 
 <script>
@@ -24,31 +17,31 @@ export default {
     const columns = [{
       title: '#',
       width: 60,
-      scopedSlots: { customRender: 'serial' }
+      customRender: (text, record, index) => {
+        return <span>{ index + 1 }</span>
+      }
     }, {
       title: '实例',
       dataIndex: 'name'
     }, {
       title: '操作',
       width: 200,
-      scopedSlots: { customRender: 'actions' }
+      customRender: (text, record, index) => {
+        return <router-link to={{ path: '/query/mysql/' + record.id }}>查询实例</router-link>
+      }
     }]
     return {
       table: {
         rowKey: 'id',
-        columns,
-        size: 'small'
+        columns
       }
     }
   },
   computed: {
     ...mapGetters(['resources']),
-    redisInstances () {
+    mysqlInstances () {
       return this.resources ? (this.resources.mysql || []) : []
     }
   }
 }
 </script>
-
-<style>
-</style>
