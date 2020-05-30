@@ -219,3 +219,6 @@ export const constantRouterMap = [
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
   }
 ]
+
+export const constantMenu = [
+]

@@ -2,6 +2,7 @@
 import { getMenuUserTree } from '@/api/menu'
 // eslint-disable-next-line
 import { BasicLayout, BlankLayout, PageView, RouteView } from '@/layouts'
+import { constantMenu } from '@/config/router.config'
 
 // 前端未找到页面路由（固定不用改）
 const notFoundRouter = {
@@ -69,6 +70,11 @@ export const generatorDynamicRouter = () => {
         const menuNav = []
         menuNav.push(res)
         const routers = generator(menuNav)
+        if (routers[0] && routers[0].name === 'root') {
+          const rootChildren = routers[0].children || []
+          rootChildren.push(...constantMenu)
+          routers[0].children = rootChildren
+        }
         routers.push(notFoundRouter)
         resolve(routers)
       })
