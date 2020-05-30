@@ -46,10 +46,16 @@ export default {
       getAuthByUserId({
         user_id: this.userId
       }).then(res => {
-        if (res[0]) {
-          this.checkedKeys = res[0].schemas[0].tables.map(item => {
-            return item.key
+        if (res && res.length > 0) {
+          const checkedKeys = []
+          res.map(item => {
+            item.schemas.map(dbItem => {
+              dbItem.tables.map(tbItem => {
+                checkedKeys.push(tbItem.key)
+              })
+            })
           })
+          this.checkedKeys = checkedKeys
         } else {
           this.checkedKeys = []
         }
@@ -122,6 +128,7 @@ export default {
     },
     onCheck(checkedKeys, e) {
       this.checkedKeys = checkedKeys
+      console.log(this.checkedKeys)
     }
   },
   watch: {
