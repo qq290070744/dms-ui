@@ -128,7 +128,6 @@ export default {
     },
     onCheck(checkedKeys, e) {
       this.checkedKeys = checkedKeys
-      console.log(this.checkedKeys)
     }
   },
   watch: {
