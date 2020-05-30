@@ -3,10 +3,12 @@
     <monaco-editor language="mysql" :height="450" ref="editor" :suggestions="suggestions" @ctrl-enter="query"></monaco-editor>
     <template #aside>
       <div class="main">
-        <div :class="['function-row', {'has-result': hasResult}]">
+        <div :class="['function-row', {'has-result': resultRecords}]">
           <a-button type="primary" @click="clickQuery">查询</a-button>
           <a-button type="danger" @click="beauty">美化</a-button>
           <!-- <a-button>查看表结构</a-button> -->
+          <span class="query-time" v-if="latency">查询耗时：{{ latency }}</span>
+          <span class="query-time" v-if="resultRecords">总数据量：{{ resultRecords.length }}</span>
         </div>
         <div class="result">
           <sql-result v-bind="result" :key="queryCount"></sql-result>
@@ -60,8 +62,12 @@ export default {
       const tbs = [dbn + '表', this.database ? this.database.children.map(tb => tb.name) : []]
       return [dbs, tbs, fds]
     },
-    hasResult () {
-      return this.result.records && this.result.records.length
+    resultRecords () {
+      return this.result.records
+    },
+    latency () {
+      const latency = this.result.latency
+      return typeof latency === 'number' ? (latency + '毫秒') : null
     }
   },
   methods: {
@@ -74,7 +80,7 @@ export default {
       return editorVm ? editorVm.getValue().replace(/[\n\s\t]+/g, ' ') : ''
     },
     clickQuery () {
-      const sql = this.getValue()
+      const sql = 'select * from sys_action' // this.getValue()
       this.query(sql)
     },
     query (sql) {
@@ -127,6 +133,9 @@ export default {
     .ant-btn + .ant-btn {
       margin-left: 8px;
     }
+  }
+  .query-time {
+    margin-left: 8px;
   }
 }
 

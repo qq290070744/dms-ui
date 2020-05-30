@@ -31,10 +31,10 @@ export default {
   },
   data () {
     const columns = [
-      { title: 'Field', dataIndex: 'Field' },
-      { title: 'Type', dataIndex: 'Type' },
-      { title: 'Key', dataIndex: 'Key' },
-      { title: 'Null', dataIndex: 'Null' },
+      { title: 'Field', dataIndex: 'Field', width: 200 },
+      { title: 'Type', dataIndex: 'Type', width: 90 },
+      { title: 'Key', dataIndex: 'Key', width: 40 },
+      { title: 'Null', dataIndex: 'Null', width: 40 },
       { title: 'Extra', dataIndex: 'Extra' },
       // { title: '权限', dataIndex: 'Privileges' },
       // { title: '字符集', dataIndex: 'Collation' },
@@ -131,4 +131,7 @@ export default {
     }
   }
 }
+// .table-field-info {
+//   min-width: 300px;
+// }
 </style>
