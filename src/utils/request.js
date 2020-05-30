@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import axios from 'axios'
 import notification from 'ant-design-vue/es/notification'
+import Modal from 'ant-design-vue/es/modal'
 import { VueAxios } from './axios-plugin'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { getAccessTokenFromCookie, redirectToLogin } from './unified-auth'
 
-const ERROR_CODE = 1
+const VALID_CODE = 0
 
 // 创建 axios 实例
 const service = axios.create({
@@ -15,12 +16,14 @@ const service = axios.create({
 
 const err = (error) => {
   if (typeof error === 'string') {
+    notification.error({
+      message: '请求出错',
+      description: error
+    })
     return Promise.reject(new Error(error))
   }
-
   if (error.response) {
     const data = error.response.data
-    const token = Vue.ls.get(ACCESS_TOKEN)
     if (error.response.status === 403) {
       notification.error({
         message: 'Forbidden',
@@ -28,18 +31,13 @@ const err = (error) => {
       })
     }
     if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
-      notification.error({
-        message: 'Unauthorized',
-        description: 'Authorization verification failed'
+      Modal.confirm({
+        title: '认证过期',
+        content: '点击确定跳转登录',
+        onOk () {
+          redirectToLogin()
+        }
       })
-      if (token) {
-        redirectToLogin()
-        // store.dispatch('Logout').then(() => {
-        //   setTimeout(() => {
-        //     window.location.reload()
-        //   }, 1500)
-        // })
-      }
     } else {
       const { status, data, statusText } = error.response
       notification.error({
@@ -62,11 +60,10 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
-  console.log('--------', response)
   const responseData = response.data
   // 处理业务逻辑
   if (responseData.code !== undefined && responseData.msg !== undefined) {
-    if (responseData.code === ERROR_CODE) {
+    if (responseData.code !== VALID_CODE) {
       return err(responseData.msg)
     } else {
       // 返回真正的业务数据

@@ -6,6 +6,9 @@ import Vue from 'vue'
 
 // bootstrap.js
 function getAccessTokenFromCookie () {
+  if (process.env.VUE_APP_LOCAL_TOKEN) {
+    return process.env.VUE_APP_LOCAL_TOKEN
+  }
   const config = { path: '/', domain: process.env.VUE_APP_COOKIE_DOMAIN }
   const prefix = process.env.VUE_APP_COOKIE_PREFIX
   const accessToken = Cookies.get(`${prefix}TOKEN`, config)
@@ -22,7 +25,7 @@ const auth = {
   clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
   responseType: process.env.VUE_APP_AUTH_RESPONSE_TYPE,
   scope: process.env.VUE_APP_AUTH_SCOPE,
-  state: process.env.VUE_APP_state,
+  state: process.env.VUE_APP_STATE,
 }
 
 const config = {

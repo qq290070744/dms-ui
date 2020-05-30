@@ -14,8 +14,11 @@ import './permission' // permission control
 import './utils/filter' // global filter
 import './components/global.less'
 
+import GlobalLayout from './layouts/global-install'
+
 Vue.config.productionTip = false
 
+Vue.use(GlobalLayout)
 // mount axios Vue.$http and this.$http
 Vue.use(VueAxios)
 

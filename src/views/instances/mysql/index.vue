@@ -1,5 +1,5 @@
 <template>
-  <div class="y-instances">
+  <basic-container class="y-instances">
     <!-- create -->
     <div class="y-instances--function-row">
       <form-wrapper>
@@ -30,7 +30,7 @@
         </a-popconfirm>
       </template>
     </a-table>
-  </div>
+  </basic-container>
 </template>
 
 <script>
@@ -42,6 +42,7 @@ import {
 } from '@/api/db-mysql'
 import CreateRecord from '../redis/create'
 import FormWrapper from '../redis/form-wrapper'
+import { calcTableBodyHeight } from '../../../utils/util'
 export default {
   components: {
     FormWrapper,
@@ -144,14 +145,7 @@ export default {
     },
     autoHeight () {
       this.$nextTick(() => {
-        const tableEl = this.$refs.table.$el
-        const thead = tableEl.querySelector('.ant-table-thead')
-        const { top, height } = tableEl.getBoundingClientRect()
-        const bodyHeight = document.body.clientHeight
-        // 底部溢出
-        const overflow = top + height - bodyHeight
-        const tbodyHeight = bodyHeight - top - (thead ? thead.clientHeight : 0) - overflow
-        this.table.scroll.y = tbodyHeight
+        this.table.scroll.y = calcTableBodyHeight(this.$refs.table.$el)
       })
     }
   }

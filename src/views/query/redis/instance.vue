@@ -1,16 +1,14 @@
 <template>
   <split-window class="redis-query-container">
-    <template #left>
+    <template #aside>
       <redis-key-list @value-change="(value) => currRedisObject = value"></redis-key-list>
     </template>
-    <template #right>
-      <redis-value-part :redisObject="currRedisObject"></redis-value-part>
-    </template>
+    <redis-value-part :redisObject="currRedisObject"></redis-value-part>
   </split-window>
 </template>
 
 <script>
-import SplitWindow from './split-window'
+import SplitWindow from '@/components/split-resize'
 import RedisKeyList from './key-list'
 import RedisValuePart from './value-part'
 export default {

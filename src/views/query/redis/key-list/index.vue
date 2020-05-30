@@ -6,7 +6,7 @@
         <a-col :span="18">
           <a-select :options="redis.list" v-model="redis.db" @change="loadData(searchStr)" size="small" style="width: 100%"></a-select>
         </a-col>
-        <a-col :span="6">总数：{{ table.dataSource.length }}</a-col>
+        <a-col :span="6">总数：{{ redisTotol }}</a-col>
       </a-row>
       <a-row :gutter="8">
         <a-col :span="18">
@@ -17,7 +17,13 @@
         </a-col>
       </a-row>
     </div>
-    <redis-content-key-list :tableOptions="table" @row-change="queryValue" @on-change="queryKeyType"></redis-content-key-list>
+    <redis-content-key-list
+      :tableOptions="table"
+      :extra-params="connection"
+      @create="startCreate"
+      @row-change="queryValue"
+      @page-change="queryKeyType"
+    />
   </div>
 </template>
 
@@ -25,8 +31,9 @@
 import RedisContentKeyList from './content-list'
 import * as redisApi from '@/api/redis-query'
 import { defaultRedisObject } from '../utils'
+import { REDIS_TYPE } from '../../utils'
 const genDBList = () => {
-  return Array(255).fill(1).map((_v, i) => ({ value: i, label: 'DB' + i }))
+  return Array(50).fill(1).map((_v, i) => ({ value: i, label: 'DB' + i }))
 }
 export default {
   components: {
@@ -34,6 +41,8 @@ export default {
   },
   data () {
     return {
+      REDIS_TYPE,
+      redisTotol: 0,
       redis: {
         db: 0,
         list: genDBList()
@@ -51,13 +60,28 @@ export default {
   computed: {
     instId () {
       return Number(this.$route.params.instance_id)
+    },
+    connection () {
+      return {
+        db_name: this.redis.db,
+        inst_id: this.instId,
+        type: this.REDIS_TYPE
+      }
     }
   },
   mounted () {
     this.loadData()
   },
   methods: {
+    startCreate () {
+      const dbName = this.redis.db
+      const instId = this.instId
+
+      const data = { ...defaultRedisObject(), type: 'string', dbName, instId, temp: true }
+      this.$emit('value-change', data)
+    },
     loadData (pattern) {
+      this.queryCount()
       const parameter = {
         db_name: this.redis.db,
         inst_id: this.instId,
@@ -76,12 +100,19 @@ export default {
           // })
         })
     },
+    queryCount () {
+      redisApi.size({
+        db_name: this.redis.db,
+        inst_id: this.instId
+      }).then((data) => {
+        this.redisTotol = data.total
+      })
+    },
     queryKeyType (page, pageSize) {
       const start = (page - 1) * pageSize
-      const keys = this.table.dataSource.slice(start, pageSize)
+      const keys = this.table.dataSource.slice(start, start + pageSize)
 
       const filterKeys = keys.map((keyObj, i) => ({ ...keyObj, i: start + i })).filter(keyObj => !keyObj.type)
-
       if (filterKeys.length) {
         const targetKeys = filterKeys.map(keyObj => keyObj.key)
         const indexMap = filterKeys.reduce((m, c) => {
@@ -104,11 +135,14 @@ export default {
       }
     },
     queryValue (record) {
+      if (!record) {
+        this.$emit('value-change', null)
+        return
+      }
       const dbName = this.redis.db
       const instId = this.instId
       const params = {
-        db_name: this.redis.db,
-        inst_id: this.instId,
+        ...this.connection,
         ...record
       }
 
@@ -120,7 +154,7 @@ export default {
     },
     queryTTL (data) {
       redisApi.ttl({ key: data.key, inst_id: data.instId, db_name: data.dbName }).then((v) => {
-        data.ttl = v.ttl
+        data.ttl = v.ttl + ''
         this.$emit('value-change', data)
       })
     }

@@ -1,64 +1,45 @@
-<template>
-  <type-content class="redis-value-hash">
-    <a-table :columns="columns" :dataSource="currValue" rowKey="id" size="small" bordered>
-      <template #index="text, record, index">
-        <span>{{ index + 1 }}</span>
-      </template>
-      <template #value="text">
-        <editable-cell :value="text"></editable-cell>
-      </template>
-    </a-table>
-  </type-content>
-</template>
-
 <script>
-import EditableCell from './editable-cell'
-import TypeContent from './type-content'
-import { defaultRedisObject } from '../../utils'
+import { typeMixins, genUniqueId, genColumns, HEAD_ADDED, TAIL_ADDED } from './type-mixins'
 export default {
-  components: {
-    TypeContent,
-    EditableCell
-  },
-  props: {
-    redisObject: {
-      default: defaultRedisObject,
-      type: Object
-    }
-  },
+  mixins: [typeMixins],
   data () {
     return {
-      modify: '',
-      columns: [{
-        title: '序号',
-        width: 60,
-        scopedSlots: { customRender: 'index' }
-      }, {
+      columns: genColumns([{
         title: 'Value',
         dataIndex: 'value',
         scopedSlots: { customRender: 'value' }
-      }]
-    }
-  },
-  computed: {
-    originValue () {
-      return this.redisObject ? this.redisObject.value : []
-    },
-    currValue () {
-      return this.originValue.map(value => ({ id: this.uid(), value }))
+      }])
     }
   },
   methods: {
-    onChange (e) {
-      console.log(e)
+    _initValue () {
+      const originValue = this.redisObject ? (this.redisObject.value || []) : []
+      this.dataSource = originValue.map((value, index) => ({ key: genUniqueId(), index, value, status: '' }))
     },
-    submit () {
-      // 未检测到修改，无需提交。
-      // key: devops:test:string:key:2  value: test1 dbName: 1
+    headAdd () {
+      this.unshiftDataSource.unshift(
+        { key: genUniqueId(), value: '', status: HEAD_ADDED }
+      )
+      this._fixHeight()
     },
-    uid (len = 5) {
-      return (Date.now().toString(36) + Math.random().toString(36).substr(2, len)).toUpperCase()
-    }
+    tailAdd () {
+      this.pushDataSource.push(
+        { key: genUniqueId(), value: '', status: TAIL_ADDED }
+      )
+      this._fixHeight()
+    },
+    renderTable () {
+      return this._renderTable(['value'])
+    },
+    renderFuncRow () {
+      return (
+        <div>
+          <a-button size="small" onClick={this.headAdd}>头部新增</a-button>
+          <a-button size="small" onClick={this.tailAdd}>尾部新增</a-button>
+          { this.renderActionButton('list') }
+        </div>
+      )
+    },
   }
 }
 </script>

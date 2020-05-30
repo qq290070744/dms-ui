@@ -3,31 +3,35 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "install:internal": "npm install --registry=http://nexus.corp.yatsenglobal.com/repository/npm-all/",
+    "install:internal": "yarn --registry=http://nexus.corp.yatsenglobal.com/repository/npm-all/",
     "serve": "vue-cli-service serve",
     "serve:mock": "vue-cli-service serve --mode mock",
     "build:test": "vue-cli-service build --mode test",
     "build:testing": "vue-cli-service build --mode test",
+    "build:uat": "vue-cli-service build --mode uat",
     "build:prod": "vue-cli-service build",
+    "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "build:preview": "vue-cli-service build --mode preview",
-    "lint:nofix": "vue-cli-service lint --no-fix",
-    "postinstall": "opencollective-postinstall"
+    "lint:nofix": "vue-cli-service lint --no-fix"
   },
   "dependencies": {
     "@antv/data-set": "^0.10.2",
-    "ant-design-vue": "1.5.3",
+    "@riophae/vue-treeselect": "^0.4.0",
+    "ant-design-vue": "1.5.5",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "enquire.js": "^2.1.6",
     "js-cookie": "^2.2.1",
     "lodash.clonedeep": "^4.5.0",
+    "lodash.difference": "^4.5.0",
     "lodash.get": "^4.4.2",
     "lodash.pick": "^4.4.0",
     "md5": "^2.2.1",
     "mockjs2": "1.0.8",
     "moment": "^2.24.0",
+    "monaco-editor": "^0.20.0",
+    "monaco-editor-webpack-plugin": "^1.9.0",
     "nprogress": "^0.2.0",
     "viser-vue": "^2.4.6",
     "vue": "^2.6.11",
@@ -59,14 +63,8 @@
     "eslint-plugin-vue": "^5.2.3",
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
-    "opencollective": "^1.0.3",
-    "opencollective-postinstall": "^2.0.2",
     "vue-svg-icon-loader": "^2.1.1",
     "vue-template-compiler": "^2.6.11",
     "webpack-theme-color-replacer": "^1.2.17"
-  },
-  "collective": {
-    "type": "opencollective",
-    "url": "https://opencollective.com/ant-design-pro-vue"
   }
 }

@@ -81,3 +81,15 @@ export function waitRefShow (vm, key, timeout = 3000) {
     requestAnimationFrame(check)
   })
 }
+
+export function calcTableBodyHeight (tableEl, bottomPadding = 0) {
+  const bodyHeight = document.body.clientHeight
+  const tbodyHeightOrigin = (tableEl.querySelector('.ant-table-tbody') || { clientHeight: 0 }).clientHeight
+  const theadHeightOrigin = (tableEl.querySelector('.ant-table-thead') || { clientHeight: 0 }).clientHeight
+  const { top, height } = tableEl.getBoundingClientRect()
+  const pagination = height - tbodyHeightOrigin - theadHeightOrigin
+  // 底部溢出
+  const overflow = top + height - bodyHeight
+  const tbodyHeight = height - overflow - pagination - theadHeightOrigin - 16 - bottomPadding // padding-bottom
+  return tbodyHeight
+}
