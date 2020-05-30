@@ -78,3 +78,23 @@ export function getAuthByUserId(data) {
     params: data
   })
 }
+/**
+ * redis审计日志
+ */
+export function getRedisLog(data) {
+  return axios({
+    url: '/query/v1/redis_log',
+    method: 'get',
+    params: data
+  })
+}
+/**
+ * mysql审计日志
+ */
+export function getMysqlLog(data) {
+  return axios({
+    url: '/query/v1/mysql_log',
+    method: 'get',
+    params: data
+  })
+}

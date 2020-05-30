@@ -52,7 +52,8 @@ const columns = [
   {
     title: '菜单名称',
     key: 'display_name',
-    dataIndex: 'display_name'
+    dataIndex: 'display_name',
+    width: '250px'
   },
   {
     title: '图标',
