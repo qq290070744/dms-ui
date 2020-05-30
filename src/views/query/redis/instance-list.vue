@@ -1,5 +1,5 @@
 <template>
-  <div class="redis-query-instance-list">
+  <basic-container>
     <div class="redis-query-instance-list--title"></div>
     <div class="redis-query-instance-list--table">
       <a-table
@@ -14,7 +14,7 @@
         </template>
       </a-table>
     </div>
-  </div>
+  </basic-container>
 </template>
 
 <script>

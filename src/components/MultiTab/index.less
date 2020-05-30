@@ -10,8 +10,32 @@
 }
 */
 .@{multi-tab-prefix-cls} {
-  margin: -23px -24px 24px -24px;
-  background: #fff;
+  margin: -14px -24px 24px -24px;
+  // background: #fff;
+  background: #f5f5f5;
+}
+
+.@{multi-tab-wrapper-prefix-cls} {
+  background: #f5f5f5;
+  overflow: hidden;
+
+  & > .ant-tabs-card > .ant-tabs-content > .ant-tabs-tabpane {
+    background: #fff;
+  }
+  
+  & > .ant-tabs-card > .ant-tabs-bar {
+    border-color: #fff;
+  }
+  
+  & > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
+    border-color: transparent;
+    background: transparent;
+  }
+  
+  & > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
+    border-color: #fff;
+    background: #fff;
+  }
 }
 
 .topmenu .@{multi-tab-wrapper-prefix-cls} {

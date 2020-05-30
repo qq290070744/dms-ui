@@ -1,5 +1,5 @@
 <template>
-  <div class="y-instances">
+  <basic-container class="y-instances">
     <!-- create -->
     <div class="y-instances--function-row">
       <form-wrapper>
@@ -30,7 +30,7 @@
         </a-popconfirm>
       </template>
     </a-table>
-  </div>
+  </basic-container>
 </template>
 
 <script>
