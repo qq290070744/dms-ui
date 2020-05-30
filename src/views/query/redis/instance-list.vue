@@ -36,8 +36,7 @@ export default {
     return {
       table: {
         rowKey: 'id',
-        columns,
-        size: 'small'
+        columns
       }
     }
   },
