@@ -15,7 +15,14 @@
       </a-form>
     </div>
     <div class="table">
-      <a-table :columns="columns" :data-source="roleList" rowKey="id">
+      <a-table
+        :columns="columns"
+        :data-source="roleList"
+        rowKey="id"
+        :pagination="pagination"
+        @change="handleTableChange"
+        :loading="loading"
+      >
         <template slot="operation" slot-scope="text, record">
           <a-button type="primary" @click="handleEdit(record)" size="small">
             编辑
@@ -79,16 +86,29 @@ export default {
   data() {
     return {
       columns,
-      roleList: []
+      roleList: [],
+      pagination: {
+        current: 1,
+        pageSize: 10
+      },
+      loading: false
     }
   },
   components: {
     CreateModal
   },
   methods: {
-    fetchRoles() {
-      getRoles().then(res => {
+    fetchData() {
+      this.loading = true
+      getRoles({
+        page: this.pagination.current,
+        page_size: this.pagination.pageSize
+      }).then(res => {
+        const pagination = { ...this.pagination }
+        pagination.total = res.total
         this.roleList = res.records || []
+        this.pagination = pagination
+        this.loading = false
       })
     },
     handleCreate() {
@@ -105,17 +125,23 @@ export default {
         onOk() {
           deleteRole(record.id).then(() => {
             _this.$message.success('删除成功！')
-            _this.fetchRoles()
+            _this.fetchData()
           })
         }
       })
     },
     modalSuccess() {
-      this.fetchRoles()
+      this.fetchData()
+    },
+    handleTableChange(pagination) {
+      const pager = { ...this.pagination }
+      pager.current = pagination.current
+      this.pagination = pager
+      this.fetchData()
     }
   },
   created() {
-    this.fetchRoles()
+    this.fetchData()
   }
 }
 </script>

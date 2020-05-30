@@ -15,7 +15,7 @@
       </a-form>
     </div>
     <div class="table">
-      <a-table :columns="columns" :data-source="menuList" rowKey="id">
+      <a-table :columns="columns" :data-source="menuList" rowKey="id" :loading="loading">
         <template slot="operation" slot-scope="text, record">
           <a-button type="primary" @click="handleAdd(record)" size="small">
             新增
@@ -52,7 +52,8 @@ const columns = [
   {
     title: '菜单名称',
     key: 'display_name',
-    dataIndex: 'display_name'
+    dataIndex: 'display_name',
+    width: '250px'
   },
   {
     title: '图标',
@@ -101,7 +102,8 @@ export default {
   data() {
     return {
       columns,
-      menuList: []
+      menuList: [],
+      loading: false
     }
   },
   components: {
@@ -136,8 +138,10 @@ export default {
       this.$refs.apiTransfer.open(record)
     },
     fetchMenuTree() {
+      this.loading = true
       getMenuTree().then(res => {
         this.menuList = res.children
+        this.loading = false
       })
     },
     modalSuccess() {

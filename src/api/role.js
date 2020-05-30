@@ -3,10 +3,11 @@ import { axios } from '@/utils/request'
 /**
  * 获取角色列表
  */
-export function getRoles() {
+export function getRoles(data) {
   return axios({
     url: '/auth/roles',
-    method: 'get'
+    method: 'get',
+    params: data
   })
 }
 /**
