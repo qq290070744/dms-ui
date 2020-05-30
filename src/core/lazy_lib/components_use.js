@@ -13,6 +13,7 @@ import {
   Input,
   InputNumber,
   Button,
+  Empty,
   Switch,
   Radio,
   Checkbox,
@@ -24,6 +25,7 @@ import {
   Modal,
   Table,
   Tabs,
+  Tree,
   Icon,
   Badge,
   Popover,
@@ -46,7 +48,10 @@ import {
   Skeleton,
   Popconfirm,
   message,
-  notification
+  notification,
+  Transfer,
+  FormModel,
+  Descriptions,
 } from 'ant-design-vue'
 // import VueCropper from 'vue-cropper'
 
@@ -55,6 +60,7 @@ Vue.use(Layout)
 Vue.use(Input)
 Vue.use(InputNumber)
 Vue.use(Button)
+Vue.use(Empty)
 Vue.use(Switch)
 Vue.use(Radio)
 Vue.use(Checkbox)
@@ -65,6 +71,7 @@ Vue.use(Row)
 Vue.use(Col)
 Vue.use(Modal)
 Vue.use(Table)
+Vue.use(Tree)
 Vue.use(Tabs)
 Vue.use(Icon)
 Vue.use(Badge)
@@ -89,6 +96,9 @@ Vue.use(Skeleton)
 Vue.use(Popconfirm)
 // Vue.use(VueCropper)
 Vue.use(notification)
+Vue.use(Transfer)
+Vue.use(FormModel)
+Vue.use(Descriptions)
 
 Vue.prototype.$confirm = Modal.confirm
 Vue.prototype.$message = message

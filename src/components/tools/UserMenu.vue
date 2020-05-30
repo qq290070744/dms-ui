@@ -8,13 +8,13 @@
           <span>{{ nickname }}</span>
         </span>
         <a-menu slot="overlay" class="user-dropdown-menu-wrapper">
-          <a-menu-item key="1">
+          <!-- <a-menu-item key="1">
             <router-link :to="{ name: 'settings' }">
               <a-icon type="setting"/>
               <span>账户设置</span>
             </router-link>
-          </a-menu-item>
-          <a-menu-divider/>
+          </a-menu-item> -->
+          <!-- <a-menu-divider/> -->
           <a-menu-item key="3">
             <a href="javascript:;" @click="handleLogout">
               <a-icon type="logout"/>

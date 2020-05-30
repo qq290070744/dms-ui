@@ -1,7 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
-
 console.log(`API_URL: ${process.env.VUE_APP_API_BASE_URL}`)
 
 function resolve (dir) {
@@ -33,6 +33,7 @@ const vueConfig = {
   configureWebpack: {
     // webpack plugins
     plugins: [
+      new MonacoWebpackPlugin(),
       // Ignore all locale files of moment.js
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ],
@@ -88,6 +89,7 @@ const vueConfig = {
 
   devServer: {
     disableHostCheck: true,
+    // host: 'local-dms.perfectdiary.com',
     port: 8024,
     proxy: {
       '/admin': {

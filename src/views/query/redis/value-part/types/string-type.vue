@@ -1,27 +1,48 @@
 <template>
   <type-content class="redis-value-string">
     <div slot="function">
-      <label for="">查看方式：</label><a-select v-model="view" :options="views"></a-select>
+      <label for="">查看方式：</label><a-select v-model="view" :options="views" size="small"></a-select>
+      <work-order-action
+        :disabled="!modify && !modifiedTtl"
+        :extraParams="extraParams"
+        :genActionObject="genActionObject"
+        @success="onSuccess"
+        title="创建工单"
+      />
     </div>
-    <a-textarea class="redis-value-string--input" readOnly @change="onChange" :value="renderValue" resize="false"/>
+    <div class="redis-value-string--content">
+      <editable-cell :value="renderValue" @update:status="onChange" :key="refresh"></editable-cell>
+    </div>
   </type-content>
 </template>
 
 <script>
+import EditableCell from './editable-cell'
 import TypeContent from './type-content'
+import WorkOrderAction from '../../work-order-action'
 import { defaultRedisObject } from '../../utils'
+import { genActions } from './gen-cmd'
+import { REDIS_TYPE } from '../../../utils'
 export default {
   components: {
+    WorkOrderAction,
+    EditableCell,
     TypeContent
   },
   props: {
     redisObject: {
       default: defaultRedisObject,
       type: Object
+    },
+    modifiedTtl: {
+      type: [Number, String],
+      default: null
     }
   },
   data () {
     return {
+      REDIS_TYPE,
+      refresh: 0,
       modify: '',
       view: 0,
       views: [{ value: 0, label: 'text' }, { value: 1, label: 'json' }]
@@ -31,30 +52,46 @@ export default {
     originValue () {
       return this.redisObject && this.redisObject.value
     },
-    currValue () {
-      return this.modify || this.originValue
-    },
     jsonValue () {
       return this.parseToJson()
     },
     renderValue () {
-      return this.view ? this.jsonValue : this.currValue
-    }
+      return this.view ? this.jsonValue : this.originValue
+    },
+    extraParams () {
+      if (this.redisObject) {
+        const { instId, dbName } = this.redisObject
+        return {
+          inst_id: instId,
+          db_name: dbName,
+          type: this.REDIS_TYPE
+        }
+      }
+      return {}
+    },
   },
   methods: {
-    onChange (e) {
-      console.log(e)
-    },
-    submit () {
-      // 未检测到修改，无需提交。
-      // key: devops:test:string:key:2  value: test1 dbName: 1
+    onChange (_s, value) {
+      this.modify = value
     },
     parseToJson () {
-      const jsonObj = JSON.parse(this.currValue)
-      if (jsonObj) {
+      try {
+        const jsonObj = JSON.parse(this.originValue)
         return JSON.stringify(jsonObj, null, 2)
+      } catch (e) {
+        return this.originValue
       }
-      return this.currValue
+    },
+    genActionObject () {
+      return genActions('string', {
+        key: this.redisObject.key,
+        modified: this.modify ? { value: this.modify, oldValue: this.originValue } : undefined,
+        ttl: this.modifiedTtl
+      })
+    },
+    onSuccess () {
+      this.modify = ''
+      this.refresh++
     }
   }
 }
@@ -62,9 +99,11 @@ export default {
 
 <style lang="less">
 .redis-value-string {
-  &--input.ant-input {
+  &--content {
     height: 100%;
-    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 4px 11px;
   }
 }
 </style>

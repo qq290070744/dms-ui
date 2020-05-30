@@ -1,73 +1,46 @@
-<template>
-  <type-content class="redis-value-hash">
-    <a-table
-      :columns="columns"
-      :dataSource="currValue"
-      rowKey="field"
-      v-bind="tableOptions">
-      <template #index="text, record, index">
-        <span>{{ index + 1 }}</span>
-      </template>
-      <template #field="text, record">
-        <editable-cell :value="record.field"></editable-cell>
-      </template>
-      <template #value="text">
-        <editable-cell :value="text"></editable-cell>
-      </template>
-    </a-table>
-  </type-content>
-</template>
-
 <script>
-import EditableCell from './editable-cell'
-import TypeContent from './type-content'
-import { defaultRedisObject } from '../../utils'
-import { typeMixins } from './type-mixins'
+import { typeMixins, genUniqueId, ADDED, genColumns } from './type-mixins'
+
 export default {
-  components: {
-    TypeContent,
-    EditableCell
-  },
   mixins: [typeMixins],
-  props: {
-    redisObject: {
-      default: defaultRedisObject,
-      type: Object
-    }
-  },
   data () {
     return {
-      modify: '',
-      columns: [{
-        title: '序号',
-        width: 60,
-        scopedSlots: { customRender: 'index' }
-      }, {
+      columns: genColumns([{
         title: 'Field',
         dataIndex: 'field',
+        width: 200,
         scopedSlots: { customRender: 'field' }
       }, {
         title: 'Value',
         dataIndex: 'value',
         scopedSlots: { customRender: 'value' }
-      }]
-    }
-  },
-  computed: {
-    originValue () {
-      return this.redisObject ? this.redisObject.value : {}
-    },
-    currValue () {
-      return Object.keys(this.originValue).map(key => ({ field: key, value: this.originValue[key] }))
+      }])
     }
   },
   methods: {
-    onChange (e) {
-      console.log(e)
+    _initValue () {
+      const originValue = this.redisObject ? (this.redisObject.value || {}) : {}
+      this.dataSource = Object.keys(originValue).map(key => ({ key: genUniqueId(), field: key, value: originValue[key], status: '' }))
     },
-    submit () {
-      // 未检测到修改，无需提交。
-      // key: devops:test:string:key:2  value: test1 dbName: 1
+    addRecord () {
+      this.pushDataSource.push(
+        { key: genUniqueId(), field: '', value: '', status: ADDED }
+      )
+      this._fixHeight()
+    },
+    /**
+     * render function
+     */
+    renderFuncRow () {
+      return (
+        <div>
+          <a-button size="small" onClick={this.addRecord}>添加</a-button>
+          { this.renderActionButton('hash') }
+        </div>
+      )
+    },
+    renderTable () {
+      return this._renderTable(['field', 'value'])
     }
   }
 }
