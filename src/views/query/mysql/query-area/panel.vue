@@ -80,7 +80,7 @@ export default {
       return editorVm ? editorVm.getValue().replace(/[\n\s\t]+/g, ' ') : ''
     },
     clickQuery () {
-      const sql = 'select * from sys_action' // this.getValue()
+      const sql = this.getValue()
       this.query(sql)
     },
     query (sql) {
