@@ -3,7 +3,6 @@ const webpack = require('webpack')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
 
-
 const parallel = process.env.VUE_APP_PARALLEL_BUILD !== 'off'
 
 function resolve (dir) {

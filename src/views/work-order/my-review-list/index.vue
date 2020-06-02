@@ -1,7 +1,7 @@
 <template>
-  <div class="my-review-list">
+  <basic-container class="my-review-list">
     <work-order-list :dataSource="dataSource"></work-order-list>
-  </div>
+  </basic-container>
 </template>
 
 <script>

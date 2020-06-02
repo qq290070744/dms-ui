@@ -1,10 +1,13 @@
 <template>
-  <a-drawer title="工单详情" @close="close" placement="left" :visible="showDrawer" width="600">
+  <a-modal title="工单详情" @cancel="close" :visible="showDrawer" :width="'60vw'" :footer="null">
     <div class="ant-descriptions">
       <h3 class="ant-descriptions-title">执行命令</h3>
       <monaco-editor :key="uid" :readOnly="true" :value="sql"></monaco-editor>
     </div>
-    <a-descriptions title="主要信息">
+
+    <a-divider />
+
+    <a-descriptions title="主要信息" :bordered="true">
       <a-descriptions-item label="创建人">
         {{ workOrder.username }}
       </a-descriptions-item>
@@ -19,13 +22,19 @@
       </a-descriptions-item>
       <a-descriptions-item label="状态">
         {{ orderStatus[workOrder.status] }}
+        <a @click="reload" v-if="isExecuting">刷新</a>
       </a-descriptions-item>
       <a-descriptions-item label="备注">
         {{ workOrder.text }}
       </a-descriptions-item>
     </a-descriptions>
-    <template v-if="execResult">
-      <a-descriptions :key="row.id" :title="row.sql" v-for="row in execResult">
+
+    <ddl-osc :order="workOrder"></ddl-osc>
+
+    <template v-if="execResult.length">
+      <a-divider />
+      <h3>sql 执行状态</h3>
+      <a-descriptions :key="row.id" :title="row.sql" v-for="row in execResult" :bordered="true">
         <a-descriptions-item label="状态">
           {{ row.state }}
         </a-descriptions-item>
@@ -40,24 +49,30 @@
         </a-descriptions-item>
       </a-descriptions>
     </template>
-    <a-modal :visible="doReject" @ok="submitReject" @cancel="doReject = false">
-      <p>填写驳回理由</p>
-      <a-textarea v-model="rejectReason"></a-textarea>
-    </a-modal>
+
+    <a-divider />
+
     <div v-if="!executed && UNREVIEW_STATUS === workOrder.status">
       <a-button type="primary" @click="exec">执行命令</a-button>
       <a-button @click="doReject = true">驳回</a-button>
     </div>
-  </a-drawer>
+
+    <a-modal :visible="doReject" @ok="submitReject" @cancel="doReject = false">
+      <p>填写驳回理由</p>
+      <a-textarea v-model="rejectReason"></a-textarea>
+    </a-modal>
+  </a-modal>
 </template>
 
 <script>
 import MonacoEditor from '@/components/monaco-editor'
-import { orderType, orderStatus, UNREVIEW_STATUS, HAS_RESULT_STATUS, execType } from './utils'
-import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder } from '../../api/work-order'
+import DdlOsc from './ddl-osc'
+import { orderType, orderStatus, UNREVIEW_STATUS, execType, ORDER_EXECUTING } from './utils'
+import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder, getWorkOrder } from '../../api/work-order'
 export default {
   components: {
-    MonacoEditor
+    MonacoEditor,
+    DdlOsc
   },
   props: {
     dataSource: {
@@ -73,18 +88,19 @@ export default {
       execResult: [],
       executed: false,
       doReject: false,
-      rejectReason: ''
+      rejectReason: '',
+      innerDataSource: null,
     }
   },
   computed: {
     workOrder () {
-      return this.dataSource || {}
+      return this.innerDataSource || this.dataSource || {}
     },
     showDrawer () {
       return !!this.dataSource
     },
     uid () {
-      return this.workOrder.id
+      return this.workOrder.id || 0
     },
     sql () {
       try {
@@ -93,34 +109,48 @@ export default {
       } catch (e) {
         return this.workOrder.sql
       }
+    },
+    isExecuting () {
+      return this.workOrder.status === ORDER_EXECUTING
     }
   },
   watch: {
-    uid () {
-      if (HAS_RESULT_STATUS.includes(this.workOrder.status)) {
-        this.queryResult()
+    uid (val) {
+      if (val) {
+        this.reload()
       }
     }
   },
   methods: {
     close () {
+      this.innerDataSource = null
       this.$emit('close')
     },
     queryResult () {
       queryWorkOrderExection(this.workOrder.work_id).then((result) => {
-        this.execResult = result || []
-        this.executed = true
+        if (Array.isArray(result)) {
+          this.execResult = result
+        }
       })
     },
     exec () {
       const { work_id: id, type } = this.workOrder
       execWorkOrder(id, execType[type]).then((result) => {
-        this.execResult = result || []
+        if (Array.isArray(result)) {
+          this.execResult = result
+        }
+        this.reload()
         this.executed = true
-        this.$emit('executed')
       }, (result) => {
-        this.queryResult()
+        this.reload()
+        this.executed = true
       })
+    },
+    reload () {
+      getWorkOrder(this.workOrder.work_id).then((result) => {
+        this.innerDataSource = result
+      })
+      this.queryResult()
     },
     submitReject () {
       rejectWorkOrder(this.workOrder.work_id, this.rejectReason).then(() => {

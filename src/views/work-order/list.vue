@@ -1,9 +1,13 @@
 <script>
-import { orderType, orderStatus } from './utils'
+import { orderType } from './utils'
 import WorkOrderDetail from './detail'
+import FilterForm from './filter-form'
+import StatusTag from './status-tag'
 export default {
   components: {
-    WorkOrderDetail
+    WorkOrderDetail,
+    FilterForm,
+    StatusTag
   },
   props: {
     dataSource: {
@@ -40,8 +44,8 @@ export default {
       {
         title: '状态',
         dataIndex: 'status',
-        customRender: (text, record, index) => {
-          return <span>{orderStatus[text]}</span>
+        customRender: (status, record, index) => {
+          return <status-tag status={status} />
         }
       },
       {
@@ -71,6 +75,7 @@ export default {
     return {
       innerSource: null,
       currOrder: null,
+      loading: false,
       pagination: {},
       columns,
     }
@@ -86,24 +91,39 @@ export default {
   methods: {
     getSource (parameters = {}) {
       if (typeof this.dataSource === 'function') {
-        parameters = { type: 2, ...this.pagination, ...parameters }
-
+        parameters = { ...this.pagination, ...parameters }
+        this.loading = true
         this.dataSource(parameters).then((result) => {
-          const { records, ...pagination } = result
-          this.pagination = pagination
+          this.loading = false
+          const { records, current, pageSize, total } = result
+          this.pagination = { current, pageSize, total }
           this.innerSource = records
         })
       }
+    },
+    onTableChange ({ current }) {
+      this.pagination.current = current
+      this.getSource()
+    },
+    onCloseWO () {
+      this.currOrder = null
+      this.getSource()
     }
   },
   render () {
     return (
       <div>
-        <work-order-detail onExecuted={ () => { this.getSource() } } dataSource={this.currOrder} onClose={() => { this.currOrder = null }}/>
+        <work-order-detail
+          dataSource={this.currOrder} onClose={ this.onCloseWO }
+        />
+        <filter-form onFilter={ this.getSource }/>
         <a-table
           rowKey="id"
+          loading={this.loading}
           dataSource={this.finalDataSource}
+          pagination={this.pagination}
           columns={this.columns}
+          onChange={this.onTableChange}
         />
       </div>
     )

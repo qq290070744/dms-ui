@@ -7,6 +7,10 @@
 <script>
 import * as monaco from 'monaco-editor'
 import { waitRefShow } from '../../utils/util'
+import throttle from 'lodash.throttle'
+
+const HAS_REGISTER = {}
+
 export default {
   props: {
     language: {
@@ -89,6 +93,12 @@ export default {
           this.$emit('ctrl-enter', this.getValue())
         })
       }
+      if (this.$listeners.change) {
+        const change = throttle(() => {
+          this.$listeners.change(this.getValue())
+        }, 200)
+        this.editor.getModel().onDidChangeContent(change)
+      }
     },
     genSuggestion (suggestionStrs, detail) {
       return suggestionStrs.map((kw) => {
@@ -116,9 +126,14 @@ export default {
       }
     },
     registerSuggention () {
+      const lang = this.language
+      if (HAS_REGISTER[lang]) {
+        return
+      }
+      HAS_REGISTER[lang] = true
       this.registerLanguageSuggention()
       const that = this
-      monaco.languages.registerCompletionItemProvider(this.language, {
+      monaco.languages.registerCompletionItemProvider(lang, {
         provideCompletionItems (model, position) {
           const word = model.getWordUntilPosition(position)
           const range = {

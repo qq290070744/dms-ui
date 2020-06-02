@@ -23,6 +23,9 @@ const Result = Vue.extend({
       return [
         { title: '#', width: 40, customRender: (_text, _record, index) => <span>{ index + 1 }</span> },
         ...this.title.map(title => {
+          if (typeof title === 'object') {
+            return title
+          }
           return {
             title,
             dataIndex: title,
