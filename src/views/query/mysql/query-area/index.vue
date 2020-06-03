@@ -2,8 +2,8 @@
   <div class="query-area">
     <h3>当前选中数据库：{{ database && database.name }}</h3>
     <a-tabs v-model="activeKey" type="editable-card" size="small" @edit="onEdit">
-      <a-tab-pane v-for="pane in panes" :key="pane.key" :tab="pane.title" :closable="pane.key === activeKey">
-        <query-panel v-bind="$attrs" :uid="pane.key"></query-panel>
+      <a-tab-pane v-for="pane in panes" :key="pane.key" :tab="pane.title" :closable="!pane.fixed && pane.key === activeKey">
+        <query-panel v-bind="$attrs" :uid="pane.key" :type="pane.key"></query-panel>
       </a-tab-pane>
     </a-tabs>
   </div>
@@ -18,7 +18,11 @@ export default {
   data () {
     return {
       activeKey: 'tab',
-      panes: [{ key: 'tab', title: '查询窗口' }],
+      panes: [
+        { key: 'DDL', title: 'DDL窗口', fixed: true },
+        { key: 'DML', title: 'DML窗口', fixed: true },
+        { key: 'tab', title: '查询窗口' }
+      ],
       newTabIndex: 1
     }
   },
