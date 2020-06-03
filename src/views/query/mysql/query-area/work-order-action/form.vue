@@ -65,7 +65,7 @@ export default {
   },
   mounted () {
     queryApprovalUser().then((result) => {
-      this.auditors = result.map(u => ({ label: u.name, value: u.id }))
+      this.auditors = result
     })
   },
   methods: {

@@ -15,6 +15,10 @@ export default {
       default () {
         return []
       }
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -68,7 +72,10 @@ export default {
         title: '操作',
         width: 200,
         customRender: (text, record, index) => {
-          return <a onClick={() => { this.currOrder = record }}>详情</a>
+          return <span>
+            <a class="ys-modal-trigger" onClick={() => { this.currOrder = record }}>详情</a>
+            { this.$scopedSlots.operation && this.$scopedSlots.operation(record) }
+          </span>
         }
       }
     ]
@@ -114,9 +121,9 @@ export default {
     return (
       <div>
         <work-order-detail
-          dataSource={this.currOrder} onClose={ this.onCloseWO }
+          dataSource={this.currOrder} onClose={ this.onCloseWO } readOnly={ this.readOnly }
         />
-        <filter-form onFilter={ this.getSource }/>
+        <filter-form class="filter-area" onFilter={ (p) => this.getSource({ ...p, current: 1 }) }/>
         <a-table
           rowKey="id"
           loading={this.loading}
@@ -131,6 +138,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.filter-area {
+  margin-bottom: 10px;
+}
 </style>

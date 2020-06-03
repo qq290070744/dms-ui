@@ -1,5 +1,5 @@
 export const orderStatus = ['驳回', '执行成功', '待审核', '执行中', '执行失败', '撤销']
-export const UNREVIEW_STATUS = '2'
+export const PENDING_WO = '2'
 export const HAS_RESULT_STATUS = ['1', '3', '4']
 export const ORDER_EXECUTING = '3'
 

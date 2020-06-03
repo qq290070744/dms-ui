@@ -7,9 +7,12 @@
 
     <a-divider />
 
-    <a-descriptions title="主要信息" :bordered="true">
+    <a-descriptions title="主要信息" :bordered="true" size="small">
       <a-descriptions-item label="创建人">
         {{ workOrder.username }}
+      </a-descriptions-item>
+      <a-descriptions-item label="审核人">
+        {{ workOrder.assigned }}
       </a-descriptions-item>
       <a-descriptions-item label="类型">
         {{ orderType[workOrder.type] }}
@@ -34,7 +37,7 @@
     <template v-if="execResult.length">
       <a-divider />
       <h3>sql 执行状态</h3>
-      <a-descriptions :key="row.id" :title="row.sql" v-for="row in execResult" :bordered="true">
+      <a-descriptions v-for="row in execResult" :key="row.id" :title="row.sql" :bordered="true" size="small">
         <a-descriptions-item label="状态">
           {{ row.state }}
         </a-descriptions-item>
@@ -52,7 +55,7 @@
 
     <a-divider />
 
-    <div v-if="!executed && UNREVIEW_STATUS === workOrder.status">
+    <div v-if="!readOnly && !executed && PENDING_WO === workOrder.status">
       <a-button type="primary" @click="exec">执行命令</a-button>
       <a-button @click="doReject = true">驳回</a-button>
     </div>
@@ -67,7 +70,7 @@
 <script>
 import MonacoEditor from '@/components/monaco-editor'
 import DdlOsc from './ddl-osc'
-import { orderType, orderStatus, UNREVIEW_STATUS, execType, ORDER_EXECUTING } from './utils'
+import { orderType, orderStatus, PENDING_WO, execType, ORDER_EXECUTING } from './utils'
 import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder, getWorkOrder } from '../../api/work-order'
 export default {
   components: {
@@ -78,13 +81,17 @@ export default {
     dataSource: {
       type: Object,
       default: null
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
       orderType,
       orderStatus,
-      UNREVIEW_STATUS,
+      PENDING_WO,
       execResult: [],
       executed: false,
       doReject: false,
@@ -148,7 +155,7 @@ export default {
     },
     reload () {
       getWorkOrder(this.workOrder.work_id).then((result) => {
-        this.innerDataSource = result
+        this.innerDataSource = result[0] || result
       })
       this.queryResult()
     },

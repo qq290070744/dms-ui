@@ -5,6 +5,14 @@ export function createWorkOrder (params) {
   return axios.post('/work_order/submit_work_order', params)
 }
 
+export function changeAuditor (params) {
+  return axios.post('/work_order/mod_assigned', params)
+}
+
+export function cancelWorkOrder (params) {
+  return axios.post('/work_order/undo_work_order', params)
+}
+
 export function myReviewWorkOrder (params) {
   return axios.get('/work_order/my_assigned_order', { params: transform(params) }).then((data) => {
     return genPage(data, params)
