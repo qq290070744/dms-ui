@@ -53,6 +53,15 @@ export function beautySql (params) {
   return axios.post('/work_order/mysql/beauty', params)
 }
 
+export function mergeAlterSql (params) {
+  return axios.post('/work_order/mysql/alter_merge', params)
+}
+
+// 获取sql优化建议 信息
+export function sqlSuggestions (params) {
+  return axios.post('/work_order/mysql/get_optimization_suggestions', params)
+}
+
 const checkedResultColumns = [
   { title: '检测语句', dataIndex: 'sql' },
   { title: '错误等级', dataIndex: 'error_level' },

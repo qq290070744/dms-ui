@@ -12,13 +12,19 @@
         <div :class="['function-row', {'has-result': resultRecords}]">
           <a-button type="danger" @click="beauty">美化</a-button>
           <template v-if="inQuery">
+            <a-popover v-model="suggestion.visible" title="优化建议" trigger="click">
+              <v-markdown :source="suggestion.content" slot="content" class="ys-suggestions"></v-markdown>
+              <a-button type="primary" @click="clickSuggestions">优化建议</a-button>
+            </a-popover>
             <a-button type="primary" @click="clickQuery">查询</a-button>
             <span class="query-time" v-if="latency">查询耗时：{{ latency }}</span>
             <span class="query-time" v-if="resultRecords">总数据量：{{ resultRecords.length }}</span>
           </template>
           <template v-else>
             <a-button type="danger" @click="clickCheck">检查语句</a-button>
-            <modal-trigger :disabled="!lastCheck.valid" title="提交工单" >
+            <a-button type="primary" @click="clickMergeAlter">Alter 语句合并</a-button>
+
+            <modal-trigger :disabled="!lastCheck.valid" title="提交工单" type="primary">
               <template #default="{ register }">
                 <work-order-form :sql="lastCheck.sql" :register="register" :exParams="extraParams"></work-order-form>
               </template>
@@ -40,8 +46,9 @@ import ModalTrigger from '../work-order-action/modal-trigger'
 import WorkOrderForm from '../work-order-action/form'
 import SqlResult from './result'
 import { querySql } from '@/api/mysql-query'
-import { beautySql, checkSql } from '@/api/work-order'
+import { beautySql, checkSql, mergeAlterSql, sqlSuggestions } from '@/api/work-order'
 import { MYSQL_DML_TYPE, MYSQL_DDL_TYPE } from '../../utils'
+import VMarkdown from 'vue-markdown'
 
 export default {
   components: {
@@ -49,7 +56,8 @@ export default {
     SplitResize,
     SqlResult,
     ModalTrigger,
-    WorkOrderForm
+    WorkOrderForm,
+    VMarkdown
   },
   props: {
     databases: {
@@ -80,6 +88,11 @@ export default {
       lastCheck: {
         sql: '',
         valid: false
+      },
+      suggestion: {
+        visible: false,
+        sql: '',
+        content: ''
       }
     }
   },
@@ -105,6 +118,9 @@ export default {
         inst_id: this.instId,
         type: map[this.type]
       }
+    },
+    inDDL () {
+      return this.type === 'DDL'
     },
     inQuery () {
       return !(['DDL', 'DML'].includes(this.type))
@@ -150,17 +166,30 @@ export default {
         this.lastCheck = { sql, valid: false }
       })
     },
+    clickMergeAlter () {
+      const sql = this.getValue()
+      mergeAlterSql({ sql }).then((result) => {
+        console.log(result)
+        this.$refs.editor.setValue(result)
+      })
+    },
     beauty () {
       const sql = this.getValue()
       beautySql({ sql }).then((result) => {
         this.$refs.editor.setValue(result)
       })
     },
-    genActionObject () {
-      return {}
-    },
-    onSuccess () {
-
+    clickSuggestions () {
+      const sql = this.getValue()
+      if (this.suggestion.sql === sql) {
+        this.suggestion.visible = true
+        return
+      }
+      sqlSuggestions(this.genParams(sql)).then((result) => {
+        console.log(result)
+        this.suggestion.content = result
+        this.suggestion.visible = true
+      })
     }
   }
 }
@@ -196,6 +225,12 @@ export default {
   .query-time {
     margin-left: 8px;
   }
+}
+.ys-suggestions {
+  padding: 8px;
+  width: 400px;
+  max-height: 400px;
+  overflow: auto;
 }
 
 </style>
