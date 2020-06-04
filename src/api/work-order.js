@@ -29,6 +29,10 @@ export function getWorkOrder (workId) {
   return axios.get('/work_order/get_audit_order_details', { params: { work_id: workId } })
 }
 
+export function getRollbackSql (workId) {
+  return axios.get('/work_order/get_order_rollbacks', { params: { work_id: workId } })
+}
+
 export function workOrderByKey (keyname) {
   return axios.post('/work_order/q_redis_key', { keyname })
 }

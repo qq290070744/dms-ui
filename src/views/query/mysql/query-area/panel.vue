@@ -36,8 +36,8 @@
 <script>
 import MonacoEditor from '@/components/monaco-editor'
 import SplitResize from '@/components/split-resize'
-import ModalTrigger from './work-order-action/modal-trigger'
-import WorkOrderForm from './work-order-action/form'
+import ModalTrigger from '../work-order-action/modal-trigger'
+import WorkOrderForm from '../work-order-action/form'
 import SqlResult from './result'
 import { querySql } from '@/api/mysql-query'
 import { beautySql, checkSql } from '@/api/work-order'

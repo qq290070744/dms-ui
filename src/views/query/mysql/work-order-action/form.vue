@@ -88,13 +88,4 @@ export default {
 .ant-btn {
   margin-left: 100px;
 }
-.commands-wrapper {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 4px;
-  box-sizing: border-box;
-}
-.commands-content {
-  height: 300px;
-}
 </style>
