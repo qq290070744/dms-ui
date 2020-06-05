@@ -1,13 +1,20 @@
 <script>
-import { orderType } from './utils'
+import { orderType, FINISHED_WO } from './utils'
 import WorkOrderDetail from './detail'
 import FilterForm from './filter-form'
 import StatusTag from './status-tag'
+
+import RollbackAction from './rollback-action'
+import WorkOrderForm from '@/views/query/mysql/work-order-action/form'
+import { isMysqlType } from '../query/utils'
+
 export default {
   components: {
     WorkOrderDetail,
     FilterForm,
-    StatusTag
+    StatusTag,
+    WorkOrderForm,
+    RollbackAction
   },
   props: {
     dataSource: {
@@ -74,6 +81,12 @@ export default {
         customRender: (text, record, index) => {
           return <span>
             <a class="ys-modal-trigger" onClick={() => { this.currOrder = record }}>详情</a>
+            {
+              this.canRollback(record) &&
+              <rollback-action onSuccess={this.onRollbacked} workId={record.work_id} scopedSlots={{
+                default: ({ register, sql, exParams }) => <work-order-form sql={sql} register={register} exParams={ exParams } />
+              }} />
+            }
             { this.$scopedSlots.operation && this.$scopedSlots.operation(record) }
           </span>
         }
@@ -114,6 +127,12 @@ export default {
     },
     onCloseWO () {
       this.currOrder = null
+      this.getSource()
+    },
+    canRollback (record) {
+      return isMysqlType(record.type) && record.status === FINISHED_WO
+    },
+    onRollbacked () {
       this.getSource()
     }
   },

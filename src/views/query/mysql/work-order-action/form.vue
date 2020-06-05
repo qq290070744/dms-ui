@@ -74,6 +74,7 @@ export default {
         this.formOption.form.validateFields((err, values) => {
           if (err) {
             reject(err)
+            return
           }
           values.sql = this.sql
           resolve(createWorkOrder({ ...values, ...this.exParams }))
@@ -87,14 +88,5 @@ export default {
 <style scoped>
 .ant-btn {
   margin-left: 100px;
-}
-.commands-wrapper {
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 4px;
-  box-sizing: border-box;
-}
-.commands-content {
-  height: 300px;
 }
 </style>

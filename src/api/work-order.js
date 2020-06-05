@@ -29,6 +29,10 @@ export function getWorkOrder (workId) {
   return axios.get('/work_order/get_audit_order_details', { params: { work_id: workId } })
 }
 
+export function getRollbackSql (workId) {
+  return axios.get('/work_order/get_order_rollbacks', { params: { work_id: workId }, timeout: 60 * 1000 })
+}
+
 export function workOrderByKey (keyname) {
   return axios.post('/work_order/q_redis_key', { keyname })
 }
@@ -47,6 +51,15 @@ export function queryWorkOrderExection (id) {
 
 export function beautySql (params) {
   return axios.post('/work_order/mysql/beauty', params)
+}
+
+export function mergeAlterSql (params) {
+  return axios.post('/work_order/mysql/alter_merge', params)
+}
+
+// 获取sql优化建议 信息
+export function sqlSuggestions (params) {
+  return axios.post('/work_order/mysql/get_optimization_suggestions', params)
 }
 
 const checkedResultColumns = [

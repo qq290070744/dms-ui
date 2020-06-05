@@ -2,7 +2,7 @@
   <a-modal title="工单详情" @cancel="close" :visible="showDrawer" :width="'60vw'" :footer="null">
     <div class="ant-descriptions">
       <h3 class="ant-descriptions-title">执行命令</h3>
-      <monaco-editor :key="uid" :readOnly="true" :value="sql"></monaco-editor>
+      <monaco-editor :key="uid" :readOnly="true" :value="sql" :language="language"></monaco-editor>
     </div>
 
     <a-divider />
@@ -20,14 +20,17 @@
       <a-descriptions-item label="数据库名">
         {{ workOrder.data_base }}
       </a-descriptions-item>
-      <a-descriptions-item label="数据库机器源">
-        {{ workOrder.source }}
+      <a-descriptions-item label="机器实例名称">
+        {{ workOrder.inst_name }}
       </a-descriptions-item>
       <a-descriptions-item label="状态">
         {{ orderStatus[workOrder.status] }}
         <a @click="reload" v-if="isExecuting">刷新</a>
       </a-descriptions-item>
-      <a-descriptions-item label="备注">
+      <a-descriptions-item :span="3" v-if="workOrder.rejected" label="驳回信息">
+        {{ workOrder.rejected }}
+      </a-descriptions-item>
+      <a-descriptions-item :span="3" label="备注">
         {{ workOrder.text }}
       </a-descriptions-item>
     </a-descriptions>
@@ -72,6 +75,7 @@ import MonacoEditor from '@/components/monaco-editor'
 import DdlOsc from './ddl-osc'
 import { orderType, orderStatus, PENDING_WO, execType, ORDER_EXECUTING } from './utils'
 import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder, getWorkOrder } from '../../api/work-order'
+import { parseLanguage } from '../query/utils'
 export default {
   components: {
     MonacoEditor,
@@ -119,6 +123,9 @@ export default {
     },
     isExecuting () {
       return this.workOrder.status === ORDER_EXECUTING
+    },
+    language () {
+      return parseLanguage(this.workOrder.type)
     }
   },
   watch: {
