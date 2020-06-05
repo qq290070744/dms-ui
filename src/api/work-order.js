@@ -30,7 +30,7 @@ export function getWorkOrder (workId) {
 }
 
 export function getRollbackSql (workId) {
-  return axios.get('/work_order/get_order_rollbacks', { params: { work_id: workId } })
+  return axios.get('/work_order/get_order_rollbacks', { params: { work_id: workId }, timeout: 60 * 1000 })
 }
 
 export function workOrderByKey (keyname) {

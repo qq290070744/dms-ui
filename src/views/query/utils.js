@@ -10,3 +10,11 @@ export function isMysqlType (type) {
     MYSQL_DML_TYPE
   ].includes(type)
 }
+
+export function parseLanguage (type) {
+  if (isMysqlType(type)) {
+    return 'mysql'
+  }
+
+  return 'redis'
+}

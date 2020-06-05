@@ -15,7 +15,8 @@ export default Vue.extend({
       rFlag: 0,
       formVm: null,
       title: '回滚',
-      sql: ''
+      sql: '',
+      exParams: {}
     }
   },
   methods: {
@@ -29,7 +30,10 @@ export default Vue.extend({
       } else {
         this.fetching = true
         getRollbackSql(this.workId)
-          .then(({ sql }) => {
+          .then((result) => {
+            // eslint-disable-next-line
+            const { type, inst_id, db_name, sql } = result
+            this.exParams = { type, inst_id, db_name }
             this.fetching = false
             this.sql = sql
             this.rFlag++
@@ -58,7 +62,8 @@ export default Vue.extend({
             rFlag: this.rFlag,
             close: this.handleCancel,
             register: (formVm) => { this.formVm = formVm },
-            sql: this.sql
+            sql: this.sql,
+            exParams: this.exParams
           })}
         </a-modal>
       )

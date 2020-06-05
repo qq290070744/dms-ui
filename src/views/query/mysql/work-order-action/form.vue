@@ -74,6 +74,7 @@ export default {
         this.formOption.form.validateFields((err, values) => {
           if (err) {
             reject(err)
+            return
           }
           values.sql = this.sql
           resolve(createWorkOrder({ ...values, ...this.exParams }))

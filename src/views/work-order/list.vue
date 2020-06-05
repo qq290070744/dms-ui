@@ -83,8 +83,8 @@ export default {
             <a class="ys-modal-trigger" onClick={() => { this.currOrder = record }}>详情</a>
             {
               this.canRollback(record) &&
-              <rollback-action workId={record.work_id} scopedSlots={{
-                default: ({ register, sql }) => <work-order-form sql={sql} register={register} exParams={ this.getParams(record) } />
+              <rollback-action onSuccess={this.onRollbacked} workId={record.work_id} scopedSlots={{
+                default: ({ register, sql, exParams }) => <work-order-form sql={sql} register={register} exParams={ exParams } />
               }} />
             }
             { this.$scopedSlots.operation && this.$scopedSlots.operation(record) }
@@ -129,13 +129,11 @@ export default {
       this.currOrder = null
       this.getSource()
     },
-    getParams (record) {
-      // eslint-disable-next-line
-      const { type, inst_id, db_name } = record
-      return { type, inst_id, db_name }
-    },
     canRollback (record) {
       return isMysqlType(record.type) && record.status === FINISHED_WO
+    },
+    onRollbacked () {
+      this.getSource()
     }
   },
   render () {
