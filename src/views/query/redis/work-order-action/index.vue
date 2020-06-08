@@ -41,7 +41,7 @@ export default {
         return
       }
       queryApprovalUser().then((result) => {
-        this.auditors = result.map(u => ({ label: u.name, value: u.id }))
+        this.auditors = result
       })
       const actionObject = typeof this.genActionObject === 'function' ? this.genActionObject() : { actions: [], commands: [] }
       this.currActionObject = actionObject
