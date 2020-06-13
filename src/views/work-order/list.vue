@@ -62,6 +62,7 @@ export default {
       {
         title: '备注',
         dataIndex: 'text',
+        width: 300,
       },
       {
         title: '审核人',

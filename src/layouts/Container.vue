@@ -14,5 +14,8 @@ export default {
 .container {
   background: #fff;
   padding: 20px;
+  height: 100%;
+  overflow: auto;
+  position: relative;
 }
 </style>
