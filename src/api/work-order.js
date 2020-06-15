@@ -92,6 +92,11 @@ export function checkSql (params) {
 export function getDDLOsc (workId) {
   return axios.get('/work_order/mysql/get_osc', { params: { work_id: workId } })
 }
+
 export function operateOsc (SQLSHA1, action) {
   return axios.post(`/work_order/mysql/${action}_osc`, { SQLSHA1 })
+}
+
+export function getFinished (params) {
+  return axios.get('/work_order/get_completed_order', params)
 }

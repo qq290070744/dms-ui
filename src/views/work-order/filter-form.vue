@@ -21,15 +21,15 @@ export default {
       orderTypeOptions,
       orderStatusOptions,
       formData: {
-        type: null,
-        status: null
+        type: undefined,
+        status: undefined
       }
     }
   },
   computed: {
     dirty () {
       const fd = this.formData
-      return Object.keys(fd).findIndex(k => fd[k] !== null) > -1
+      return Object.keys(fd).findIndex(k => fd[k] !== undefined) > -1
     }
   },
   methods: {
