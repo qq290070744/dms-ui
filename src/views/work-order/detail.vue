@@ -60,7 +60,7 @@
 
     <div v-if="!readOnly && !executed && PENDING_WO === workOrder.status">
       <a-button type="primary" @click="exec">执行命令</a-button>
-      <a-button @click="doReject = true">驳回</a-button>
+      <a-button @click="doReject = true" type="danger">驳回</a-button>
     </div>
 
     <a-modal :visible="doReject" @ok="submitReject" @cancel="doReject = false">

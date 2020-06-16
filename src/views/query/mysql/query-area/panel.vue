@@ -132,8 +132,8 @@ export default {
     },
     getValue () {
       const editorVm = this.$refs.editor
-
-      return editorVm ? editorVm.getValue().replace(/[\n\s\t]+/g, ' ') : ''
+      // .replace(/[\n\s\t]+/g, ' ')
+      return editorVm ? editorVm.getValue() : ''
     },
     clickQuery () {
       const sql = this.getValue()
