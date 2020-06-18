@@ -135,12 +135,16 @@ export default {
     },
     onRollbacked () {
       this.getSource()
+    },
+    genKey () {
+      return this.currOrder ? this.currOrder.id : 0
     }
   },
   render () {
     return (
       <div>
         <work-order-detail
+          key={this.genKey()}
           dataSource={this.currOrder} onClose={ this.onCloseWO } readOnly={ this.readOnly }
         />
         <filter-form class="filter-area" onFilter={ (p) => this.getSource({ ...p, current: 1 }) }/>
