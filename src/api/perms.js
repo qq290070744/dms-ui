@@ -1,10 +1,11 @@
 import { axios } from '@/utils/request'
 import { genPage, transform } from './utils'
 // 实例列表
-export function getInstance() {
+export function getInstance(params) {
   return axios({
-    url: '/common/v1/instances',
-    method: 'get'
+    url: '/common/v1/instances/self',
+    method: 'get',
+    params
   })
 }
 // 过滤后的库表树

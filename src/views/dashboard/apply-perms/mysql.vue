@@ -62,9 +62,11 @@ export default {
     this.form = this.$form.createForm(this)
   },
   mounted () {
-    getInstance()
+    getInstance({
+      type: this.INSTANCE_TYPE.MYSQL
+    })
       .then((res) => {
-        this.instances = res.filter((d) => d.type === this.INSTANCE_TYPE.MYSQL).map(({ id, name, host }) => ({ label: `${host}(${name})`, value: id }))
+        this.instances = res.map(({ id, name, host }) => ({ label: `${host}(${name})`, value: id }))
       })
   },
   methods: {

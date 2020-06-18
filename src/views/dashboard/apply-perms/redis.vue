@@ -61,9 +61,11 @@ export default {
     this.form = this.$form.createForm(this)
   },
   mounted () {
-    getInstance()
+    getInstance({
+      type: this.INSTANCE_TYPE.REDIS
+    })
       .then((res) => {
-        this.instances = res.filter((d) => d.type === this.INSTANCE_TYPE.REDIS).map(({ id, name }) => ({ label: name, value: id }))
+        this.instances = res.map(({ id, name }) => ({ label: name, value: id }))
         this.emptyInstace = !this.instances.length
       })
   },
