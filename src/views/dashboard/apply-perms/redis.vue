@@ -1,6 +1,7 @@
 <template>
   <div>
-    <x-result v-if="success" @again="reset" v-on="$listeners"></x-result>
+    <a-empty v-if="emptyInstace" description="没有可选 REDIS 实例或者你已有所有实例权限"/>
+    <x-result v-else-if="success" @again="reset" v-on="$listeners"></x-result>
     <a-form v-else v-bind="layout" :form="form">
       <a-form-item label="实例">
         <a-select
@@ -51,6 +52,7 @@ export default {
         wrapperCol: { span: 14 },
       },
       instances: [],
+      emptyInstace: false,
       loading: false,
       INSTANCE_TYPE
     }
@@ -62,6 +64,7 @@ export default {
     getInstance()
       .then((res) => {
         this.instances = res.filter((d) => d.type === this.INSTANCE_TYPE.REDIS).map(({ id, name }) => ({ label: name, value: id }))
+        this.emptyInstace = !this.instances.length
       })
   },
   methods: {
@@ -86,6 +89,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.ant-empty {
+  margin-top: 200px;
+}
 </style>
