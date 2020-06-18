@@ -34,7 +34,7 @@ export function getUserInfo(id) {
  */
 export function getDatabase() {
   return axios({
-    url: '/common/v1/dbs',
+    url: '/common/v1/instances',
     method: 'get'
   })
 }

@@ -52,6 +52,7 @@ import {
   Transfer,
   FormModel,
   Descriptions,
+  Result
 } from 'ant-design-vue'
 // import VueCropper from 'vue-cropper'
 
@@ -99,6 +100,7 @@ Vue.use(notification)
 Vue.use(Transfer)
 Vue.use(FormModel)
 Vue.use(Descriptions)
+Vue.use(Result)
 
 Vue.prototype.$confirm = Modal.confirm
 Vue.prototype.$message = message

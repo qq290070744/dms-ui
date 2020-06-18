@@ -9,6 +9,7 @@ export function genPage (data, parameter) {
     ...parameter,
     ...data
   }
+  console.log(parameter, data)
 
   !data.records && (data.records = [])
   !data.total && (data.total = data.records.length)
