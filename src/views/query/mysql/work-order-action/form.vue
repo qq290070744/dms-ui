@@ -16,7 +16,8 @@
     <a-form-item label="工单说明">
       <a-textarea
         v-decorator="[
-          'remark'
+          'remark',
+          { rules: [{ required: true, message: '工单说明不能为空' }] },
         ]"
       ></a-textarea>
     </a-form-item>
