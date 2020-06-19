@@ -129,9 +129,12 @@ export default {
     }
   },
   watch: {
-    uid (val) {
-      if (val) {
-        this.reload()
+    uid: {
+      immediate: true,
+      handler (val) {
+        if (val) {
+          this.reload()
+        }
       }
     }
   },

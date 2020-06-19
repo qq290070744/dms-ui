@@ -74,10 +74,14 @@ const checkedResultColumns = [
 
 export function checkSql (params) {
   return new Promise((resolve, reject) => {
-    axios.post('/work_order/mysql/check_sql', params, {
+    axios({
+      method: 'post',
+      url: '/work_order/mysql/check_sql',
+      data: params,
       customErrorHandler ({ data }) {
         return data
-      }
+      },
+      silent: true
     }).then((result) => {
       if (result.code) {
         // eslint-disable-next-line

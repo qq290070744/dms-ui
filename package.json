@@ -19,7 +19,7 @@
     "@antv/data-set": "^0.10.2",
     "@riophae/vue-treeselect": "^0.4.0",
     "ant-design-vue": "1.5.5",
-    "axios": "^0.19.2",
+    "axios": "0.18.1",
     "core-js": "^3.6.5",
     "enquire.js": "^2.1.6",
     "js-cookie": "^2.2.1",
