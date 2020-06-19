@@ -59,6 +59,7 @@ export default {
       {
         title: '申请天数',
         dataIndex: 'expired_day',
+        width: 100,
         customRender: (v) => {
           return <span>{v}天</span>
         }
@@ -76,19 +77,20 @@ export default {
         }
       },
       {
+        title: '申请人',
+        dataIndex: 'applicant',
+        width: 100
+      },
+      {
+        title: '审核人',
+        dataIndex: 'auditor',
+        width: 100
+      },
+      {
         title: '创建时间',
         dataIndex: 'created_time',
         customRender: (v) => {
           return v.replace('T', ' ').slice(0, 19)
-        }
-      },
-      {
-        title: '操作',
-        width: 200,
-        customRender: (text, record, index) => {
-          return <span>
-            { this.$scopedSlots.operation && this.$scopedSlots.operation(record) }
-          </span>
         }
       }
     ]
@@ -107,6 +109,19 @@ export default {
   },
   created () {
     this.getSource()
+  },
+  mounted () {
+    if (this.$scopedSlots.operation) {
+      this.columns.push({
+        title: '操作',
+        width: 200,
+        customRender: (text, record, index) => {
+          return <span>
+            { this.$scopedSlots.operation && this.$scopedSlots.operation(record) }
+          </span>
+        }
+      })
+    }
   },
   methods: {
     getSource (parameters = {}) {
