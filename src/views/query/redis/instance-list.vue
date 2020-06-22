@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     const columns = [{
@@ -40,11 +40,18 @@ export default {
       }
     }
   },
+  beforeRouteEnter (_f, _t, next) {
+    // 重新获取用户信息，以获取新的授权实例
+    next((vm) => vm.GetInfo())
+  },
   computed: {
     ...mapGetters(['resources']),
     redisInstances () {
       return this.resources ? (this.resources.redis || []) : []
     }
+  },
+  methods: {
+    ...mapActions(['GetInfo'])
   }
 }
 </script>

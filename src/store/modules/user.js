@@ -64,13 +64,6 @@ const user = {
           /** 这里需要根据接口定义对角色、权限列表进行修改，目前接口未定暂时不处理 */
           if (role /** && perms.length > 0 */) {
             role.permissions = perms
-            // role.permissions.map(per => {
-            //   if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
-            //     const action = per.actionEntitySet.map(action => { return action.action })
-            //     per.actionList = action
-            //   }
-            // })
-            // role.permissionList = role.permissions.map(permission => { return permission.permissionId })
             commit('SET_ROLES', role)
             commit('SET_INFO', user)
             commit('SET', ['resources', resources])
