@@ -102,5 +102,6 @@ export function operateOsc (SQLSHA1, action) {
 }
 
 export function getFinished (params) {
-  return axios.get('/work_order/get_completed_order', params)
+  return axios.get('/work_order/get_completed_order', { params: transform(params) })
+    .then((data) => genPage(data, params))
 }
