@@ -105,3 +105,10 @@ export function getFinished (params) {
   return axios.get('/work_order/get_completed_order', { params: transform(params) })
     .then((data) => genPage(data, params))
 }
+
+export function urge (workId) {
+  return axios.get(
+    '/work_order/hurry',
+    { params: { work_id: workId } }
+  )
+}

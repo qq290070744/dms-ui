@@ -19,8 +19,9 @@
     <work-order-list :dataSource="dataSource" :readOnly="true">
       <template #operation="record">
         <a class="ys-modal-trigger" v-if="record.status === PENDING_WO" @click="() => showChangeAuditor(record)">更换审核人</a>
+        <a class="ys-modal-trigger" v-if="record.status === PENDING_WO" @click="() => urge(record)">催一催</a>
         <a-popconfirm v-if="record.status === PENDING_WO" title="是否撤销该工单？" @confirm="() => cancelOrder(record)">
-          <a class="ys-modal-trigger">撤销</a>
+          <a class="ys-modal-trigger cancel-work-order">撤销</a>
         </a-popconfirm>
       </template>
     </work-order-list>
@@ -28,7 +29,7 @@
 </template>
 
 <script>
-import { mySubmitWorkOrder, changeAuditor, cancelWorkOrder } from '@/api/work-order'
+import { mySubmitWorkOrder, changeAuditor, cancelWorkOrder, urge } from '@/api/work-order'
 import WorkOrderList from '../list'
 import { queryApprovalUser } from '@/api/users'
 import { PENDING_WO } from '../utils'
@@ -81,11 +82,18 @@ export default {
         record.status = result.status
         this.$message.success('撤销工单成功')
       })
+    },
+    urge (record) {
+      urge(record.work_id).then(() => {
+        this.$message.success('已发送邮件到审核人')
+      })
     }
   }
 }
 </script>
 
-<style>
-
+<style scoped>
+.cancel-work-order {
+  color: #ff6666;
+}
 </style>
