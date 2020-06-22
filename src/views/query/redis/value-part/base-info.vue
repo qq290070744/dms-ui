@@ -25,6 +25,9 @@
         :addonAfter="'(s)'"
       />
     </span>
+    <a-tooltip placement="top" title="双击进入编辑模式，按 ESC 退出">
+      <a-icon type="question-circle" />
+    </a-tooltip>
   </div>
 </template>
 
