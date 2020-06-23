@@ -22,7 +22,7 @@
           </template>
           <template v-else>
             <a-button type="danger" @click="clickCheck">检查语句</a-button>
-            <a-button type="primary" @click="clickMergeAlter">Alter 语句合并</a-button>
+            <a-button type="primary" v-if="inDDL" @click="clickMergeAlter">Alter 语句合并</a-button>
 
             <modal-trigger :disabled="!lastCheck.valid" title="提交工单" type="primary">
               <template #default="{ register }">
