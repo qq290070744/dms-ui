@@ -40,20 +40,13 @@
     <template v-if="execResult.length">
       <a-divider />
       <h3>sql 执行状态</h3>
-      <a-descriptions v-for="row in execResult" :key="row.id" :title="row.sql" :bordered="true" size="small">
-        <a-descriptions-item label="状态">
-          {{ row.state }}
-        </a-descriptions-item>
-        <a-descriptions-item label="影响行数">
-          {{ row.affectrow }}
-        </a-descriptions-item>
-        <a-descriptions-item label="错误信息">
-          {{ row.error }}
-        </a-descriptions-item>
-        <a-descriptions-item label="执行时间">
-          {{ row.time }}秒
-        </a-descriptions-item>
-      </a-descriptions>
+      <a-table
+        :columns="execResultColumns"
+        :dataSource="execResult"
+        rowKey="id"
+        :bordered="true"
+        size="small"
+      />
     </template>
 
     <a-divider />
@@ -101,6 +94,13 @@ export default {
       doReject: false,
       rejectReason: '',
       innerDataSource: null,
+      execResultColumns: [
+        { dataIndex: 'sql', title: 'SQL', width: 200 },
+        { dataIndex: 'state', title: '状态' },
+        { dataIndex: 'affectrow', title: '影响行数' },
+        { dataIndex: 'error', title: '错误信息', width: 200 },
+        { dataIndex: 'time', title: '执行时间', width: 80, render: (v) => <span>{v}秒</span> },
+      ]
     }
   },
   computed: {

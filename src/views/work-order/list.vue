@@ -97,6 +97,7 @@ export default {
       innerSource: null,
       currOrder: null,
       loading: false,
+      filterForm: {},
       pagination: {},
       columns,
     }
@@ -112,7 +113,8 @@ export default {
   methods: {
     getSource (parameters = {}) {
       if (typeof this.dataSource === 'function') {
-        parameters = { ...this.pagination, ...parameters }
+        const { current = 1, pageSize = 10 } = this.pagination
+        parameters = { current, pageSize, ...this.filterForm, ...parameters }
         this.loading = true
         this.dataSource(parameters).then((result) => {
           this.loading = false
@@ -121,6 +123,10 @@ export default {
           this.innerSource = records
         })
       }
+    },
+    onFilter (p) {
+      this.filterForm = p
+      this.getSource({ ...p, current: 1 })
     },
     onTableChange ({ current }) {
       this.pagination.current = current
@@ -147,7 +153,7 @@ export default {
           key={this.genKey()}
           dataSource={this.currOrder} onClose={ this.onCloseWO } readOnly={ this.readOnly }
         />
-        <filter-form class="filter-area" onFilter={ (p) => this.getSource({ ...p, current: 1 }) }/>
+        <filter-form class="filter-area" onFilter={this.onFilter}/>
         <a-table
           rowKey="id"
           loading={this.loading}

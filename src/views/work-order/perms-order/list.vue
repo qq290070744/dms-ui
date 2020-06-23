@@ -32,6 +32,7 @@ export default {
       {
         title: '主机',
         dataIndex: 'host',
+        width: 200,
         customRender: (v, record) => {
           return <span>{v}({record.name})</span>
         }
@@ -39,6 +40,7 @@ export default {
       {
         title: '实例类型',
         dataIndex: 'type',
+        width: 100,
         customRender: (v) => {
           return <span>{type[v]}</span>
         }
@@ -46,7 +48,6 @@ export default {
       {
         title: '权限申请',
         dataIndex: 'schema',
-        width: 400,
         customRender: (v, record) => {
           return Array.isArray(v)
             ? <span>
@@ -66,11 +67,13 @@ export default {
       },
       {
         title: '申请原因',
-        dataIndex: 'reason'
+        dataIndex: 'reason',
+        width: 250,
       },
       {
         title: '状态',
         dataIndex: 'status',
+        width: 80,
         customRender: (v) => {
           const [text, color] = statusMap[v - 1] || []
           return <a-tag color={color}>{text}</a-tag>
@@ -89,6 +92,7 @@ export default {
       {
         title: '创建时间',
         dataIndex: 'created_time',
+        width: 180,
         customRender: (v) => {
           return v.replace('T', ' ').slice(0, 19)
         }
