@@ -56,8 +56,7 @@ module.exports = {
       }
     ],
     'comma-dangle': ['error', 'only-multiline'],
-    'space-before-function-paren': 0,
-    'camelcase': ['error', { ignoreDestructuring: true } ]
+    'space-before-function-paren': 0
   },
   parserOptions: {
     parser: 'babel-eslint'
