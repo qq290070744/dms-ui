@@ -65,6 +65,7 @@
 
 <script>
 import MonacoEditor from '@/components/monaco-editor'
+import { Modal } from 'ant-design-vue'
 import DdlOsc from './ddl-osc'
 import { orderType, orderStatus, PENDING_WO, execType, ORDER_EXECUTING } from './utils'
 import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder, getWorkOrder } from '../../api/work-order'
@@ -95,11 +96,21 @@ export default {
       rejectReason: '',
       innerDataSource: null,
       execResultColumns: [
-        { dataIndex: 'sql', title: 'SQL', width: 200 },
+        {
+          dataIndex: 'sql',
+          title: 'SQL',
+          width: 200,
+          customRender: this.rContent
+        },
         { dataIndex: 'state', title: '状态' },
         { dataIndex: 'affectrow', title: '影响行数' },
-        { dataIndex: 'error', title: '错误信息', width: 200 },
-        { dataIndex: 'time', title: '执行时间', width: 80, render: (v) => <span>{v}秒</span> },
+        {
+          dataIndex: 'error',
+          title: '错误信息',
+          width: 200,
+          customRender: this.rContent
+        },
+        { dataIndex: 'time', title: '执行时间', width: 80, customRender: (v) => <span>{v}秒</span> },
       ]
     }
   },
@@ -175,6 +186,23 @@ export default {
         this.$emit('executed')
         this.doReject = false
         this.close()
+      })
+    },
+    rContent (text) {
+      if (text.length > 350) {
+        return <span>
+          {text.slice(0, 300)}...
+          <a-button type="link" onClick={() => this.showFull(text)}>查看完整</a-button>
+        </span>
+      } else {
+        return text
+      }
+    },
+    showFull (text) {
+      Modal.info({
+        icon: () => '',
+        content: <p style="white-space: pre">{text}</p>,
+        width: '50vw'
       })
     }
   }
