@@ -201,7 +201,7 @@ export default {
     showFull (text) {
       Modal.info({
         icon: () => '',
-        content: <p style="white-space: pre">{text}</p>,
+        content: <p style="white-space: pre-line">{text}</p>,
         width: '50vw'
       })
     }
