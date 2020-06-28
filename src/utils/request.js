@@ -64,6 +64,10 @@ service.interceptors.response.use((response) => {
   // 处理业务逻辑
   if (responseData.code !== undefined && responseData.msg !== undefined) {
     if (responseData.code !== VALID_CODE) {
+      const customErrorHandler = response.config && response.config.customErrorHandler
+      if (customErrorHandler) {
+        return customErrorHandler(response)
+      }
       return err(responseData.msg)
     } else {
       // 返回真正的业务数据

@@ -15,6 +15,7 @@
         :extraParams="extraParams"
         title="创建命令行工单"
       />
+      <a-button type="primary" size="small" @click="triggerSearch">搜索</a-button>
     </div>
     <a-table
       v-bind="finalTableOption"
@@ -153,6 +154,9 @@ export default {
     closeCreate () {
       this.creating = false
       this.$emit('row-change', null)
+    },
+    triggerSearch () {
+      this.$emit('trigger-search')
     }
   }
 }
@@ -165,8 +169,10 @@ export default {
 }
 .function-row {
   margin: 8px 0;
-  .ant-btn {
-    margin-right: 4px;
+  .ant-btn+.work-order-action,
+  .work-order-action+.ant-btn
+  {
+    margin-left: 8px;
   }
 }
 </style>

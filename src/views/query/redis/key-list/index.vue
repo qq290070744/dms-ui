@@ -23,6 +23,7 @@
       @create="startCreate"
       @row-change="queryValue"
       @page-change="queryKeyType"
+      @trigger-search="loadData(searchStr)"
     />
   </div>
 </template>

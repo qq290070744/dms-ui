@@ -9,18 +9,33 @@
       :confirm-loading="confirmLoading"
       width="800px"
     >
-      <a-tree
-        checkable
-        :load-data="onLoadData"
-        :tree-data="treeData"
-        v-model="checkedKeys"
-        @check="onCheck"
-      />
+      <SplitWindow>
+        <template #aside>
+          <div class="inst-wrap">
+            <a-tree
+              :tree-data="instTreeData"
+              @select="onSelect"
+              defaultExpandAll
+              :default-selected-keys="defaultSelectedKeys"
+            />
+          </div>
+        </template>
+        <div class="db-wrap">
+          <a-button class="select-all" type="primary" @click="handleSelectAll" v-if="treeData.length > 0">全选</a-button>
+          <a-tree
+            checkable
+            :tree-data="treeData"
+            v-model="checkedKeys"
+            @check="onCheck"
+          />
+        </div>
+      </SplitWindow>
     </a-modal>
   </div>
 </template>
 
 <script>
+import SplitWindow from '@/components/split-resize'
 import { getDatabaseById, associatedChema, getAuthByUserId } from '@/api/userList'
 
 export default {
@@ -36,30 +51,23 @@ export default {
       confirmLoading: false,
       userId: null,
       treeData: [],
-      checkedKeys: []
+      instTreeData: [],
+      checkedKeys: [],
+      currentInstId: null,
+      defaultSelectedKeys: []
     }
+  },
+  components: {
+    SplitWindow
   },
   methods: {
     handleOpenModal(record) {
       this.visible = true
       this.userId = record.id
-      getAuthByUserId({
-        user_id: this.userId
-      }).then(res => {
-        if (res && res.length > 0) {
-          const checkedKeys = []
-          res.map(item => {
-            item.schemas.map(dbItem => {
-              dbItem.tables.map(tbItem => {
-                checkedKeys.push(tbItem.key)
-              })
-            })
-          })
-          this.checkedKeys = checkedKeys
-        } else {
-          this.checkedKeys = []
-        }
-      })
+      this.currentInstId = null
+      this.checkedKeys = []
+      this.defaultSelectedKeys = []
+      this.treeData = []
     },
     handleOk() {
       this.confirmLoading = true
@@ -68,6 +76,7 @@ export default {
       )
       associatedChema({
         user_id: this.userId,
+        inst_id: this.currentInstId,
         struct
       })
         .then(() => {
@@ -81,25 +90,6 @@ export default {
     },
     handleCancel() {
       this.visible = false
-    },
-    onLoadData(node) {
-      return new Promise(resolve => {
-        const {
-          dataRef: { children, id }
-        } = node
-        if (children) {
-          resolve()
-          return
-        }
-        getDatabaseById({
-          inst_id: id
-        }).then(res => {
-          const childNode = this.dealNodeData(res.Schemas, id)
-          node.dataRef.children = childNode
-          this.treeData = [...this.treeData]
-          resolve()
-        })
-      })
     },
     dealNodeData(data = [], instId) {
       const dbList = []
@@ -128,25 +118,108 @@ export default {
     },
     onCheck(checkedKeys, e) {
       this.checkedKeys = checkedKeys
+    },
+    onSelect(checkedKeys, e) {
+      const currentInstId = checkedKeys.map(Number)[0]
+      if (!e.selected || currentInstId === this.currentInstId) {
+        return
+      }
+      this.currentInstId = currentInstId
+      this.fetchTreeAndResource(currentInstId)
+    },
+    fetchTreeAndResource(currentInstId) {
+      this.checkedKeys = []
+      getDatabaseById({
+        inst_id: currentInstId
+      }).then(res => {
+        const childNode = this.dealNodeData(res.Schemas)
+        this.treeData = childNode
+        getAuthByUserId({
+          inst_id: currentInstId,
+          user_id: this.userId
+        }).then(res => {
+          if (res && res.length > 0) {
+            const checkedKeys = []
+            res.map(item => {
+              if (item) {
+                item.schemas.map(dbItem => {
+                  dbItem.tables.map(tbItem => {
+                    checkedKeys.push(tbItem.key)
+                  })
+                })
+              }
+            })
+            this.checkedKeys = checkedKeys
+          } else {
+            this.checkedKeys = []
+          }
+        })
+      })
+    },
+    handleSelectAll() {
+      const selectKey = []
+      this.treeData.map(item => {
+        if (item.children && item.children.length > 0) {
+          item.children.map(childItem => {
+            selectKey.push(childItem.key)
+          })
+        }
+      })
+      this.checkedKeys = selectKey
     }
   },
   watch: {
     databaseSource(val) {
-      const list = []
+      const instList = []
+      const instObj = {}
+      const mapDbType = {
+        1: 'mysql',
+        2: 'redis',
+        3: 'mongodb',
+        4: 'pgsql'
+      }
       val.map(item => {
         if (item.type === 1) {
-          list.push({
-            ...item,
-            treeType: 'inst',
-            isLeaf: item.type !== 1
-          })
+          if (instObj[item.type]) {
+            instList.map(instItem => {
+              if (instItem.type === item.type) {
+                instItem.children.push({
+                  ...item,
+                  treeType: 'inst',
+                  isLeaf: true
+                })
+              }
+            })
+          } else {
+            instList.push({
+              title: mapDbType[item.type],
+              key: mapDbType[item.type],
+              type: item.type,
+              selectable: false,
+              children: [
+                {
+                  ...item,
+                  treeType: 'inst',
+                  isLeaf: true
+                }
+              ]
+            })
+            instObj[item.type] = true
+          }
         }
       })
-      this.treeData = list
+      this.instTreeData = instList
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
+.inst-wrap {
+  min-height: 400px;
+}
+.select-all {
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
 </style>

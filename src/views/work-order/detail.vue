@@ -1,12 +1,18 @@
 <template>
-  <a-drawer title="工单详情" @close="close" placement="left" :visible="showDrawer" width="600">
+  <a-modal title="工单详情" @cancel="close" :visible="showDrawer" :width="'60vw'" :footer="null">
     <div class="ant-descriptions">
       <h3 class="ant-descriptions-title">执行命令</h3>
-      <monaco-editor :key="uid" :readOnly="true" :value="sql"></monaco-editor>
+      <monaco-editor :key="uid" :readOnly="true" :value="sql" :language="language"></monaco-editor>
     </div>
-    <a-descriptions title="主要信息">
+
+    <a-divider />
+
+    <a-descriptions title="主要信息" :bordered="true" size="small">
       <a-descriptions-item label="创建人">
         {{ workOrder.username }}
+      </a-descriptions-item>
+      <a-descriptions-item label="审核人">
+        {{ workOrder.assigned }}
       </a-descriptions-item>
       <a-descriptions-item label="类型">
         {{ orderType[workOrder.type] }}
@@ -14,77 +20,109 @@
       <a-descriptions-item label="数据库名">
         {{ workOrder.data_base }}
       </a-descriptions-item>
-      <a-descriptions-item label="数据库机器源">
-        {{ workOrder.source }}
+      <a-descriptions-item label="机器实例名称">
+        {{ workOrder.inst_name }}
       </a-descriptions-item>
       <a-descriptions-item label="状态">
         {{ orderStatus[workOrder.status] }}
+        <a @click="reload" v-if="isExecuting">刷新</a>
       </a-descriptions-item>
-      <a-descriptions-item label="备注">
+      <a-descriptions-item :span="3" v-if="workOrder.rejected" label="驳回信息">
+        {{ workOrder.rejected }}
+      </a-descriptions-item>
+      <a-descriptions-item :span="3" label="备注">
         {{ workOrder.text }}
       </a-descriptions-item>
     </a-descriptions>
-    <template v-if="execResult">
-      <a-descriptions :key="row.id" :title="row.sql" v-for="row in execResult">
-        <a-descriptions-item label="状态">
-          {{ row.state }}
-        </a-descriptions-item>
-        <a-descriptions-item label="影响行数">
-          {{ row.affectrow }}
-        </a-descriptions-item>
-        <a-descriptions-item label="错误信息">
-          {{ row.error }}
-        </a-descriptions-item>
-        <a-descriptions-item label="执行时间">
-          {{ row.time }}秒
-        </a-descriptions-item>
-      </a-descriptions>
+
+    <ddl-osc :order="workOrder"></ddl-osc>
+
+    <template v-if="execResult.length">
+      <a-divider />
+      <h3>sql 执行状态</h3>
+      <a-table
+        :columns="execResultColumns"
+        :dataSource="execResult"
+        rowKey="id"
+        :bordered="true"
+        size="small"
+      />
     </template>
+
+    <a-divider />
+
+    <div v-if="!readOnly && !executed && PENDING_WO === workOrder.status">
+      <a-button type="primary" @click="exec">执行命令</a-button>
+      <a-button @click="doReject = true" type="danger">驳回</a-button>
+    </div>
+
     <a-modal :visible="doReject" @ok="submitReject" @cancel="doReject = false">
       <p>填写驳回理由</p>
       <a-textarea v-model="rejectReason"></a-textarea>
     </a-modal>
-    <div v-if="!executed && UNREVIEW_STATUS === workOrder.status">
-      <a-button type="primary" @click="exec">执行命令</a-button>
-      <a-button @click="doReject = true">驳回</a-button>
-    </div>
-  </a-drawer>
+  </a-modal>
 </template>
 
 <script>
 import MonacoEditor from '@/components/monaco-editor'
-import { orderType, orderStatus, UNREVIEW_STATUS, HAS_RESULT_STATUS, execType } from './utils'
-import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder } from '../../api/work-order'
+import { Modal } from 'ant-design-vue'
+import DdlOsc from './ddl-osc'
+import { orderType, orderStatus, PENDING_WO, execType, ORDER_EXECUTING } from './utils'
+import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder, getWorkOrder } from '../../api/work-order'
+import { parseLanguage } from '../query/utils'
 export default {
   components: {
-    MonacoEditor
+    MonacoEditor,
+    DdlOsc
   },
   props: {
     dataSource: {
       type: Object,
       default: null
+    },
+    readOnly: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {
       orderType,
       orderStatus,
-      UNREVIEW_STATUS,
+      PENDING_WO,
       execResult: [],
       executed: false,
       doReject: false,
-      rejectReason: ''
+      rejectReason: '',
+      innerDataSource: null,
+      execResultColumns: [
+        {
+          dataIndex: 'sql',
+          title: 'SQL',
+          width: 200,
+          customRender: this.rContent
+        },
+        { dataIndex: 'state', title: '状态' },
+        { dataIndex: 'affectrow', title: '影响行数' },
+        {
+          dataIndex: 'error',
+          title: '错误信息',
+          width: 200,
+          customRender: this.rContent
+        },
+        { dataIndex: 'time', title: '执行时间', width: 80, customRender: (v) => <span>{v}秒</span> },
+      ]
     }
   },
   computed: {
     workOrder () {
-      return this.dataSource || {}
+      return this.innerDataSource || this.dataSource || {}
     },
     showDrawer () {
       return !!this.dataSource
     },
     uid () {
-      return this.workOrder.id
+      return this.workOrder.id || 0
     },
     sql () {
       try {
@@ -93,34 +131,54 @@ export default {
       } catch (e) {
         return this.workOrder.sql
       }
+    },
+    isExecuting () {
+      return this.workOrder.status === ORDER_EXECUTING
+    },
+    language () {
+      return parseLanguage(this.workOrder.type)
     }
   },
   watch: {
-    uid () {
-      if (HAS_RESULT_STATUS.includes(this.workOrder.status)) {
-        this.queryResult()
+    uid: {
+      immediate: true,
+      handler (val) {
+        if (val) {
+          this.reload()
+        }
       }
     }
   },
   methods: {
     close () {
+      this.innerDataSource = null
       this.$emit('close')
     },
     queryResult () {
       queryWorkOrderExection(this.workOrder.work_id).then((result) => {
-        this.execResult = result || []
-        this.executed = true
+        if (Array.isArray(result)) {
+          this.execResult = result
+        }
       })
     },
     exec () {
       const { work_id: id, type } = this.workOrder
       execWorkOrder(id, execType[type]).then((result) => {
-        this.execResult = result || []
+        if (Array.isArray(result)) {
+          this.execResult = result
+        }
+        this.reload()
         this.executed = true
-        this.$emit('executed')
       }, (result) => {
-        this.queryResult()
+        this.reload()
+        this.executed = true
       })
+    },
+    reload () {
+      getWorkOrder(this.workOrder.work_id).then((result) => {
+        this.innerDataSource = result[0] || result
+      })
+      this.queryResult()
     },
     submitReject () {
       rejectWorkOrder(this.workOrder.work_id, this.rejectReason).then(() => {
@@ -128,6 +186,23 @@ export default {
         this.$emit('executed')
         this.doReject = false
         this.close()
+      })
+    },
+    rContent (text) {
+      if (text.length > 350) {
+        return <span>
+          {text.slice(0, 300)}...
+          <a-button type="link" onClick={() => this.showFull(text)}>查看完整</a-button>
+        </span>
+      } else {
+        return text
+      }
+    },
+    showFull (text) {
+      Modal.info({
+        icon: () => '',
+        content: <p style="white-space: pre-line">{text}</p>,
+        width: '50vw'
       })
     }
   }

@@ -2,7 +2,8 @@ const path = require('path')
 const webpack = require('webpack')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
-console.log(`API_URL: ${process.env.VUE_APP_API_BASE_URL}`)
+
+const parallel = process.env.VUE_APP_PARALLEL_BUILD !== 'off'
 
 function resolve (dir) {
   return path.join(__dirname, dir)
@@ -24,12 +25,14 @@ const assetsCDN = {
     '//cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js',
     '//cdn.jsdelivr.net/npm/vue-router@3.1.3/dist/vue-router.min.js',
     '//cdn.jsdelivr.net/npm/vuex@3.1.1/dist/vuex.min.js',
-    '//cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'
+    '//cdn.jsdelivr.net/npm/axios@0.18.1/dist/axios.min.js'
   ]
 }
 
 // vue.config.js
 const vueConfig = {
+  parallel,
+
   configureWebpack: {
     // webpack plugins
     plugins: [

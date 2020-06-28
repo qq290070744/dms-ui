@@ -81,6 +81,11 @@ export default {
     doStartEdit () {
       this.editable = true
     },
+    onKeyup (e) {
+      if (e.key === 'Escape') {
+        e.target.blur()
+      }
+    },
     onSave () {
       // 如果为空，则重置
       if (/^[\n\s\t]*$/.test(this.modifiedValue)) {
@@ -100,7 +105,7 @@ export default {
     },
     // render
     renderInput () {
-      const on = { blur: this.onSave, change: this.onChange }
+      const on = { blur: this.onSave, change: this.onChange, keyup: this.onKeyup }
       const directives = [{ name: 'focus' }]
       return <div class={this.classes}>
         <a-textarea class='editable-cell--input' { ...{ on, directives } } value={this.currValue}/>
