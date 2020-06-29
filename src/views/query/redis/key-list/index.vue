@@ -10,7 +10,7 @@
       </a-row>
       <a-row :gutter="8">
         <a-col :span="18">
-          <a-input-search placeholder="输入关键字，按回车搜索" v-model="searchStr" @search="loadData(searchStr)" size="small"></a-input-search>
+          <a-input-search placeholder="输入关键字，点击下面按钮搜索" v-model="searchStr" size="small"></a-input-search>
         </a-col>
         <a-col :span="6">
           <a-checkbox v-model="exactSearch">精确搜索</a-checkbox>
@@ -23,7 +23,7 @@
       @create="startCreate"
       @row-change="queryValue"
       @page-change="queryKeyType"
-      @trigger-search="loadData(searchStr)"
+      :search="() => loadData(searchStr)"
     />
   </div>
 </template>
