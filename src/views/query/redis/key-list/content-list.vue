@@ -15,7 +15,7 @@
         :extraParams="extraParams"
         title="创建命令行工单"
       />
-      <a-button type="primary" size="small" @click="triggerSearch">搜索</a-button>
+      <a-button type="primary" size="small" @click="triggerSearch" :loading="searchLoading">搜索</a-button>
     </div>
     <a-table
       v-bind="finalTableOption"
@@ -47,10 +47,15 @@ export default {
     extraParams: {
       type: Object,
       default () { return {} }
+    },
+    search: {
+      type: Function,
+      default: null
     }
   },
   data () {
     return {
+      searchLoading: false,
       creating: false,
       activedRow: {},
       selectedRowKeys: [],
@@ -156,7 +161,12 @@ export default {
       this.$emit('row-change', null)
     },
     triggerSearch () {
-      this.$emit('trigger-search')
+      this.searchLoading = true
+      this.search().then(() => {
+        this.searchLoading = false
+      }, () => {
+        this.searchLoading = false
+      })
     }
   }
 }
