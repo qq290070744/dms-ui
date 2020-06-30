@@ -7,7 +7,13 @@
           <div class="dbtb-tree-content">
             <div
               v-for="d in dbtbList"
-              :class="['dbtb-db', {'is-table': d.parent, expanded: (!!d.children && !collapseMap[d.key]) || (d.parent && !collapseMap[d.parent.key])}]"
+              :class="[
+                'dbtb-db',
+                {
+                  'is-table': d.parent,
+                  expanded: (!!d.children && expandedMap[d.key]) || (d.parent && expandedMap[d.parent.key])
+                }
+              ]"
               :key="d.key"
             >
               <a-icon type="right" v-if="!d.parent" @click="collapse(d)"></a-icon>
@@ -64,7 +70,7 @@ export default {
         }
       }],
       pagination: { size: 'small' },
-      collapseMap: {},
+      expandedMap: {},
       selectedMap: {},
       selectedDBCount: {},
       indeterminate: {},
@@ -88,7 +94,7 @@ export default {
   },
   methods: {
     getDBTB (instId) {
-      this.collapseMap = {}
+      this.expandedMap = {}
       this.selectedMap = {}
       this.selectedDBCount = {}
       this.indeterminate = {}
@@ -126,7 +132,7 @@ export default {
     },
 
     collapse (d) {
-      this.$set(this.collapseMap, d.key, !this.collapseMap[d.key])
+      this.$set(this.expandedMap, d.key, !this.expandedMap[d.key])
     },
 
     rmSelect (d) {
