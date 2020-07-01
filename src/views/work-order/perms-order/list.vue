@@ -1,13 +1,11 @@
 <script>
 import { Modal } from 'ant-design-vue'
-const statusMap = [
-  ['待审核', '#2db7f5'],
-  ['已驳回', '#ff6666'],
-  ['已通过', '#00c024'],
-]
-const type = ['', 'MySql', 'Redis', 'MongoDb', 'PolarDB']
+import { types, statusMap } from './utils'
+import FilterForm from './filter'
 export default {
-  components: {},
+  components: {
+    FilterForm
+  },
   props: {
     dataSource: {
       type: [Array, Function],
@@ -42,7 +40,7 @@ export default {
         dataIndex: 'type',
         width: 100,
         customRender: (v) => {
-          return <span>{type[v]}</span>
+          return <span>{types[v]}</span>
         }
       },
       {
@@ -102,6 +100,7 @@ export default {
       innerSource: null,
       currOrder: null,
       loading: false,
+      filterForm: {},
       pagination: {},
       columns,
     }
@@ -128,9 +127,14 @@ export default {
     }
   },
   methods: {
+    onFilter (p) {
+      this.filterForm = p
+      this.getSource({ ...p, current: 1 })
+    },
     getSource (parameters = {}) {
       if (typeof this.dataSource === 'function') {
-        parameters = { ...this.pagination, ...parameters }
+        const { current = 1, pageSize = 10 } = this.pagination
+        parameters = { current, pageSize, ...this.filterForm, ...parameters }
         this.loading = true
         this.dataSource(parameters).then((result) => {
           this.loading = false
@@ -145,9 +149,23 @@ export default {
       this.getSource()
     },
     showAllSchema (schemas) {
+      const tree = Object.values(
+        schemas
+          .reduce((result, { db_name: db, tb_name: tb }) => {
+            if (!result[db]) {
+              result[db] = {
+                key: db,
+                title: db,
+                children: []
+              }
+            }
+            result[db].children.push({ key: db + '@@' + tb, title: tb })
+            return result
+          }, {})
+      )
       Modal.info({
         content: () => {
-          return schemas.map(info => <a-tag size="medium">{info.db_name}/{info.tb_name}</a-tag>)
+          return <a-directory-tree treeData={tree}/>
         },
         icon: () => '',
         title: '所有库表申请列表(待优化)',
@@ -158,6 +176,7 @@ export default {
   render () {
     return (
       <div>
+        <filter-form onFilter={this.onFilter}/>
         <a-table
           rowKey="id"
           loading={this.loading}

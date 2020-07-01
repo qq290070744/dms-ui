@@ -8,6 +8,7 @@
  */
 import Vue from 'vue'
 import {
+  AutoComplete,
   ConfigProvider,
   Layout,
   Input,
@@ -56,6 +57,7 @@ import {
 } from 'ant-design-vue'
 // import VueCropper from 'vue-cropper'
 
+Vue.use(AutoComplete)
 Vue.use(ConfigProvider)
 Vue.use(Layout)
 Vue.use(Input)
