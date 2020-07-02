@@ -5,4 +5,4 @@ export const statusMap = [
 ]
 export const types = ['', 'MySql', 'Redis', 'MongoDb', 'PolarDB']
 
-export const statusOptions = statusMap.map(([label], value) => ({ label, value }))
+export const statusOptions = statusMap.map(([label], value) => ({ label, value: value + 1 }))
