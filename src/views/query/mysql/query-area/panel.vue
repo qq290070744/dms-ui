@@ -1,5 +1,5 @@
 <template>
-  <split-resize class="ys-query-panel" :vertical="true" :autoStart="true" :asideWidth="320">
+  <split-resize class="ys-query-panel" :vertical="true" :autoStart="true" :asideWidth="450">
     <monaco-editor
       language="mysql"
       :height="450"
@@ -16,7 +16,7 @@
               <v-markdown :source="suggestion.content" slot="content" class="ys-suggestions"></v-markdown>
               <a-button type="primary" @click="clickSuggestions">优化建议</a-button>
             </a-popover>
-            <a-button type="primary" @click="clickQuery">查询</a-button>
+            <a-button type="primary" @click="clickQuery" :loading="querying">查询</a-button>
             <span class="query-time" v-if="latency">查询耗时：{{ latency }}</span>
             <span class="query-time" v-if="resultRecords">总数据量：{{ resultRecords.length }}</span>
           </template>
@@ -85,6 +85,7 @@ export default {
     return {
       result: {},
       queryCount: 0,
+      querying: false,
       lastCheck: {
         sql: '',
         valid: false
@@ -132,7 +133,6 @@ export default {
     },
     getValue () {
       const editorVm = this.$refs.editor
-      // .replace(/[\n\s\t]+/g, ' ')
       return editorVm ? editorVm.getValue() : ''
     },
     clickQuery () {
@@ -140,14 +140,24 @@ export default {
       this.query(sql)
     },
     query (sql) {
+      if (this.querying) {
+        return
+      }
       if (/^\s*$/.test(sql)) {
         this.$message.warning('请输入 Mysql 查询语句进行查询')
         return
       }
-      querySql(this.genParams(sql)).then((result) => {
-        this.queryCount++
-        this.result = result
-      })
+      this.querying = true
+      querySql(
+        this.genParams(sql)
+      )
+        .then((result) => {
+          this.queryCount++
+          this.result = result
+        })
+        .finally(() => {
+          this.querying = false
+        })
     },
     clickCheck () {
       const sql = this.getValue()
@@ -169,7 +179,6 @@ export default {
     clickMergeAlter () {
       const sql = this.getValue()
       mergeAlterSql({ sql }).then((result) => {
-        console.log(result)
         this.$refs.editor.setValue(result)
       })
     },
@@ -186,7 +195,6 @@ export default {
         return
       }
       sqlSuggestions(this.genParams(sql)).then((result) => {
-        console.log(result)
         this.suggestion.content = result
         this.suggestion.visible = true
       })
@@ -233,4 +241,7 @@ export default {
   overflow: auto;
 }
 
+::v-deep .split-resize--aside {
+  overflow: auto;
+}
 </style>
