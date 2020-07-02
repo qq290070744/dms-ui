@@ -1,6 +1,19 @@
 <template>
   <div class="query-area">
-    <h3>当前选中数据库：{{ database && database.name }}</h3>
+    <h3 class="title">
+      <span>当前选中数据库：{{ database && database.name }}</span>
+      <a-tooltip placement="right">
+        <template #title>
+          <p>
+            1. 字段含有中文请添加单引号，例如 '测试'。
+          </p>
+          <p>
+            2. 不支持 group by 显示排序语法，请使用 order by 排序，例如 group by 'date' order by 'date'。
+          </p>
+        </template>
+        <span class="tips"><a-icon type="question-circle" ></a-icon> 查询限制 </span>
+      </a-tooltip>
+    </h3>
     <a-tabs v-model="activeKey" type="editable-card" size="small" @edit="onEdit">
       <a-tab-pane v-for="pane in panes" :key="pane.key" :tab="pane.title" :closable="!pane.fixed && pane.key === activeKey">
         <query-panel v-bind="$attrs" :uid="pane.key" :type="pane.key"></query-panel>
@@ -72,8 +85,12 @@ export default {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  h3 {
+  h3.title {
     margin: 8px;
+  }
+  .tips {
+    margin-left: 12px;
+    color: #ff6666;
   }
   .ant-tabs {
     flex: 1;
