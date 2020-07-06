@@ -4,29 +4,13 @@
       <a-col :span="9">
         <div class="dbtb-tree">
           <div class="dbtb-tree-title">可选库表</div>
-          <div class="dbtb-tree-content">
-            <div
-              v-for="d in dbtbList"
-              :class="[
-                'dbtb-db',
-                {
-                  'is-table': d.parent,
-                  expanded: (!!d.children && expandedMap[d.key]) || (d.parent && expandedMap[d.parent.key])
-                }
-              ]"
-              :key="d.key"
-            >
-              <a-icon type="right" v-if="!d.parent" @click="collapse(d)"></a-icon>
-              <a-tag size="small" :color="d.parent ? '': '#2db7f5'">{{ d.parent ? '表' : '库' }}</a-tag>
-              <a-checkbox
-                :indeterminate="!!indeterminate[d.key]"
-                :checked="!!selectedMap[d.key]"
-                @change="(e) => check(e, d)"
-              >
-                {{ d.name }}
-              </a-checkbox>
-            </div>
-          </div>
+          <virtual-list
+            class="dbtb-tree-content"
+            :data-key="'key'"
+            :data-sources="visibleList"
+            :data-component="itemComponent"
+            :extraProps="{ expandedMap, indeterminate, selectedMap, collapse, check }"
+          />
         </div>
       </a-col>
       <a-col :span="15">
@@ -47,7 +31,12 @@
 
 <script>
 import { getDatabaseSchema } from '@/api/perms'
+import itemComponent from './item'
+import VirtualList from 'vue-virtual-scroll-list'
 export default {
+  components: {
+    VirtualList
+  },
   props: {
     instId: {
       type: Number,
@@ -56,6 +45,7 @@ export default {
   },
   data () {
     return {
+      itemComponent,
       columns: [{
         title: '库名',
         dataIndex: 'db_name',
@@ -80,6 +70,12 @@ export default {
   computed: {
     list () {
       return Object.values(this.selectedMap).filter(v => typeof v === 'object' && v !== null)
+    },
+    visibleList () {
+      return this.dbtbList
+        .filter((d) =>
+          !!d.children || (d.parent && this.expandedMap[d.parent.key])
+        )
     }
   },
   watch: {
@@ -171,42 +167,42 @@ export default {
     }
   }
 }
-.dbtb-db {
-  height: 36px;
-  overflow: hidden;
-  white-space: nowrap;
-  color: rgba(0,0,0,.45);
-  // border-bottom: 1px solid #ccc;
+// .dbtb-db {
+//   height: 36px;
+//   overflow: hidden;
+//   white-space: nowrap;
+//   color: rgba(0,0,0,.45);
+//   // border-bottom: 1px solid #ccc;
 
-  .anticon.anticon-right {
-    transition: .3s all;
-    margin-left: 8px;
-    cursor: pointer;
-  }
+//   .anticon.anticon-right {
+//     transition: .3s all;
+//     margin-left: 8px;
+//     cursor: pointer;
+//   }
 
-  &.expanded {
-    .anticon.anticon-right {
-      transform: rotate(90deg);
-    }
-  }
+//   &.expanded {
+//     .anticon.anticon-right {
+//       transform: rotate(90deg);
+//     }
+//   }
 
-  .ant-tag {
-    margin-left: 8px;
-    margin-right: 4px;
-  }
+//   .ant-tag {
+//     margin-left: 8px;
+//     margin-right: 4px;
+//   }
 
-  &:hover {
-    background: #f5f5f5;
-  }
-}
-.dbtb-db.is-table {
-  padding-left: 32px;
-  transition: .3s all;
-  display: none;
-  &.expanded {
-    display: block;
-  }
-}
+//   &:hover {
+//     background: #f5f5f5;
+//   }
+// }
+// .dbtb-db.is-table {
+//   padding-left: 32px;
+//   transition: .3s all;
+//   display: none;
+//   &.expanded {
+//     display: block;
+//   }
+// }
 .ant-empty {
   height: 100%;
   display: flex;

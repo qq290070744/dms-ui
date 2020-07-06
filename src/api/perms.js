@@ -8,6 +8,7 @@ export function getInstance(params) {
     params
   })
 }
+
 // 过滤后的库表树
 export function getDatabaseSchema (instId) {
   return axios({
