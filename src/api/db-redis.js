@@ -15,7 +15,7 @@ export function page (parameter = {}) {
 export function create (params) {
   return ping(params).then(() => {
     return axios.post(p(), params)
-  })
+  }, (e) => Promise.reject(e))
 }
 
 export function update (params) {
