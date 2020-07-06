@@ -1,7 +1,8 @@
 <template>
   <div>
     <x-result v-if="success" @again="reset" v-on="$listeners"></x-result>
-    <a-form v-else v-bind="layout" :form="form">
+    <!-- https://www.antdv.com/components/form-cn/#selfUpdate -->
+    <a-form v-else v-bind="layout" :form="form" :selfUpdate="true">
       <a-form-item label="实例">
         <a-select v-decorator="['inst_id', {rules: [{ required: true, message: '实例不能为空' }]}]" :options="instances" @change="(v) => { instId = v }"></a-select>
       </a-form-item>
