@@ -148,7 +148,7 @@ export default {
     },
     genActionObject () {
       const commands = this.selectedRowKeys.map((key) => {
-        return 'DEL ' + key
+        return `DEL "${key}"`
       })
       return { commands, actions: [] }
     },
