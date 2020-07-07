@@ -1,5 +1,5 @@
 <template>
-  <a-form v-bind="formOption">
+  <a-form v-bind="formOption" :form="form">
     <a-form-item label="名称">
       <a-input
         v-decorator="[
@@ -51,21 +51,12 @@
         ]"
       ></a-input>
     </a-form-item>
-    <a-form-item>
-      <a-button type="primary" @click="submit" :loading="loading">
-        提交
-      </a-button>
-    </a-form-item>
   </a-form>
 </template>
 
 <script>
 export default {
   props: {
-    send: {
-      default: null,
-      type: Function
-    },
     initial: {
       default () { return {} },
       type: Object
@@ -73,33 +64,18 @@ export default {
     mysql: {
       default: false,
       type: Boolean
+    },
+    form: {
+      type: Object,
+      default: null
     }
-  },
-  created () {
-    this.formOption.form = this.$form.createForm(this)
   },
   data () {
     return {
-      loading: false,
       formOption: {
-        form: null,
         labelCol: { span: 4 },
         wrapperCol: { span: 14 },
       }
-    }
-  },
-  methods: {
-    submit () {
-      this.formOption.form.validateFields((err, values) => {
-        if (!err) {
-          this.loading = true
-          this.$asyncEmit('submit', values).then(() => {
-            this.formOption.form.resetFields()
-          }).finally(() => {
-            this.loading = false
-          })
-        }
-      })
     }
   }
 }

@@ -2,11 +2,11 @@
   <basic-container class="y-instances">
     <!-- create -->
     <div class="y-instances--function-row">
-      <form-wrapper>
-        <template #default="{close}">
-          <create-record :mysql="true" @submit="(payload) => create(payload, close)"></create-record>
+      <x-modal title="创建" :onOk="create">
+        <template #default="{registerForm}" >
+          <x-form :registerForm="registerForm" :fields="mysqlFields"></x-form>
         </template>
-      </form-wrapper>
+      </x-modal>
     </div>
     <!-- data list -->
     <a-table v-bind="table" @change="load">
@@ -14,14 +14,15 @@
         <span>{{ index + 1 }}</span>
       </template>
       <template #handler="text, record, index">
-        <form-wrapper placement="left">
-          <template #default="{close}">
-            <create-record :mysql="true" :initial="record" @submit="(payload) => update(payload, close, record)"></create-record>
+        <x-modal title="编辑" :onOk="(d) => update(d, record)">
+          <template #default="{registerForm}">
+            <x-form
+              :registerForm="registerForm"
+              :fields="mysqlFields"
+              :initialValues="record"
+            />
           </template>
-          <template #open="{show}">
-            <a-button type="primary" @click="() => show()">编辑</a-button>
-          </template>
-        </form-wrapper>
+        </x-modal>
         <a-popconfirm
           title="是否删除该实例?"
           @confirm="remove(record)"
@@ -40,13 +41,14 @@ import {
   update as iUpdate,
   remove as iRemove
 } from '@/api/db-mysql'
-import CreateRecord from '../redis/create'
-import FormWrapper from '../redis/form-wrapper'
+import XModal from '@/components/Modal'
+import XForm from '@/components/Modal/form'
 import { calcTableBodyHeight } from '../../../utils/util'
+import { mysqlFields } from '../redis/form'
 export default {
   components: {
-    FormWrapper,
-    CreateRecord
+    XForm,
+    XModal
   },
   data () {
     return {
@@ -92,7 +94,8 @@ export default {
             scopedSlots: { customRender: 'handler' }
           }
         ]
-      }
+      },
+      mysqlFields
     }
   },
   mounted () {
@@ -112,28 +115,20 @@ export default {
         this.autoHeight()
       })
     },
-    create ({ payload, resolve, reject }, closeDrawer) {
-      return iCreate(payload).then(() => {
-        this.$message.success('创建成功')
-        resolve()
-        closeDrawer()
+    create (payload) {
+      const req = iCreate(payload)
+      req.then(() => {
         this.load()
-      }, (e) => {
-        this.$message.warn(e.message || '创建失败')
-        reject()
       })
+      return req
     },
-    update ({ payload, resolve, reject }, closeDrawer, record) {
+    update (payload, record) {
       payload.id = record.id
-      return iUpdate(payload).then(() => {
-        this.$message.success('编辑成功')
-        resolve()
-        closeDrawer()
+      const req = iUpdate(payload)
+      req.then(() => {
         this.load()
-      }, (e) => {
-        this.$message.warn(e.message || '编辑失败')
-        reject()
       })
+      return req
     },
     remove (record) {
       iRemove(record).then(() => {

@@ -4,14 +4,12 @@
       <monaco-editor :value="sql" ref="editor" readOnly language="mysql"></monaco-editor>
     </a-form-item>
     <a-form-item label="审核人">
-      <a-select
+      <auditor-selector
         v-decorator="[
           'auditor_id',
-          { rules: [{ required: true, message: '审核人不能为空' }] },
+          { rules: [{ required: true, message: '审核人不能为空' }] }
         ]"
-        placeholder="请选择审核人"
-        :options="auditors"
-      ></a-select>
+      />
     </a-form-item>
     <a-form-item label="工单说明">
       <a-textarea
@@ -26,12 +24,13 @@
 
 <script>
 import MonacoEditor from '@/components/monaco-editor'
-import { queryApprovalUser } from '@/api/users'
+import AuditorSelector from '@/components/AuditorSelector'
 import { createWorkOrder } from '@/api/work-order'
 
 export default {
   components: {
-    MonacoEditor
+    MonacoEditor,
+    AuditorSelector
   },
   props: {
     exParams: {
@@ -60,14 +59,8 @@ export default {
         form: null,
         labelCol: { span: 4 },
         wrapperCol: { span: 20 },
-      },
-      auditors: []
+      }
     }
-  },
-  mounted () {
-    queryApprovalUser().then((result) => {
-      this.auditors = result
-    })
   },
   methods: {
     submit () {
