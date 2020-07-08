@@ -1,18 +1,15 @@
 <template>
   <div class="container">
     <div class="search">
-      <a-form layout="inline">
-        <a-form-item label="角色名称">
-          <a-input placeholder="请输入角色名称" allow-clear> </a-input>
-        </a-form-item>
-        <a-form-item label="角色状态">
-          <a-input placeholder="角色状态"> </a-input>
-        </a-form-item>
+      <a-form-model :form="filter" layout="inline">
+        <a-form-model-item label="角色名称">
+          <a-input v-model="filter.q" placeholder="请输入角色名称" allow-clear> </a-input>
+        </a-form-model-item>
         <a-form-item>
-          <a-button type="primary" @click="handleSearch">搜索</a-button>
+          <a-button type="primary" @click="fetchData">搜索</a-button>
           <a-button type="primary" @click="handleCreate">新增</a-button>
         </a-form-item>
-      </a-form>
+      </a-form-model>
     </div>
     <div class="table">
       <a-table
@@ -91,6 +88,9 @@ export default {
         current: 1,
         pageSize: 10
       },
+      filter: {
+        q: ''
+      },
       loading: false
     }
   },
@@ -102,7 +102,8 @@ export default {
       this.loading = true
       getRoles({
         page: this.pagination.current,
-        page_size: this.pagination.pageSize
+        page_size: this.pagination.pageSize,
+        q: this.filter.q
       }).then(res => {
         const pagination = { ...this.pagination }
         pagination.total = res.total
@@ -114,7 +115,6 @@ export default {
     handleCreate() {
       this.$refs.createModal.handleCreate()
     },
-    handleSearch() {},
     handleEdit(record) {
       this.$refs.createModal.handleEdit(record)
     },
