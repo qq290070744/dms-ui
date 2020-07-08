@@ -1,5 +1,5 @@
 <template>
-  <split-resize class="ys-query-panel" :vertical="true" :autoStart="true" :asideWidth="450">
+  <split-resize class="ys-query-panel" :vertical="true" :autoStart="true" :asideWidth="500">
     <monaco-editor
       language="mysql"
       :height="450"

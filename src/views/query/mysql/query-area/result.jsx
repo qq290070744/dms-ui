@@ -15,7 +15,9 @@ const Result = Vue.extend({
       uid: 0,
       rowKey: '__DMS_QYERY_UID__',
       dataSource: [],
-      scroll: { y: 400, x: 1000 }
+      scroll: { y: 400, x: 1000 },
+      hScroll: 0,
+      scrollTarget: null
     }
   },
   computed: {
@@ -55,6 +57,19 @@ const Result = Vue.extend({
         const { top } = body.getBoundingClientRect()
         this.scroll.y = window.innerHeight - top - 16
       }
+    },
+    getScrollTarget () {
+      if (!this.scrollTarget) {
+        this.scrollTarget = this.$el.querySelector('.ant-table-body')
+      }
+      return this.scrollTarget
+    },
+    onMousewheel (e) {
+      if (e.ctrlKey) {
+        e.preventDefault()
+        this.hScroll += e.deltaY / 2
+        this.getScrollTarget().scrollLeft = this.hScroll
+      }
     }
   },
   render () {
@@ -73,6 +88,9 @@ const Result = Vue.extend({
           pageSizeOptions: ['10', '50', '100', '200']
         },
         scroll: this.scroll
+      }}
+      nativeOn={{
+        mousewheel: this.onMousewheel
       }}
     />
   }

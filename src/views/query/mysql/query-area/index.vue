@@ -3,15 +3,8 @@
     <h3 class="title">
       <span>当前选中数据库：{{ database && database.name }}</span>
       <a-tooltip placement="right">
-        <template #title>
-          <p>
-            1. 字段含有中文请添加单引号，例如 '测试'。
-          </p>
-          <p>
-            2. 不支持 group by 显示排序语法，请使用 order by 排序，例如 group by 'date' order by 'date'。
-          </p>
-        </template>
-        <span class="tips"><a-icon type="question-circle" ></a-icon> 查询限制 </span>
+        <query-tips slot="title" />
+        <span class="tips"><a-icon type="question-circle" ></a-icon> 查询需知 </span>
       </a-tooltip>
     </h3>
     <a-tabs v-model="activeKey" type="editable-card" size="small" @edit="onEdit">
@@ -24,9 +17,11 @@
 
 <script>
 import QueryPanel from './panel'
+import QueryTips from './tips'
 export default {
   components: {
-    QueryPanel
+    QueryPanel,
+    QueryTips
   },
   data () {
     return {
@@ -38,6 +33,9 @@ export default {
       ],
       newTabIndex: 1
     }
+  },
+  mounted () {
+    this.showTips()
   },
   computed: {
     database () {
@@ -74,6 +72,23 @@ export default {
       }
       this.panes = panes
       this.activeKey = activeKey
+    },
+    showTips () {
+      if (!this.$ls.get('mysql-tips-hidden')) {
+        this.$notification.info({
+          message: '查询需知',
+          description: (
+            <div>
+              <query-tips />
+              <a-checkbox onChange={(v) => {
+                this.$ls.set('mysql-tips-hidden', v.target.checked)
+              }}>
+                不再提示
+              </a-checkbox>
+            </div>
+          )
+        })
+      }
     }
   }
 }
