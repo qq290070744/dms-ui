@@ -1,6 +1,6 @@
 <template>
   <div class="redis-key">
-    <p class="redis-key--title">对象列表</p>
+    <h3>Redis 实例: {{ instanceName }}</h3>
     <div class="redis-key--function-area">
       <a-row :gutter="8">
         <a-col :span="18">
@@ -10,7 +10,7 @@
       </a-row>
       <a-row :gutter="8">
         <a-col :span="18">
-          <a-input-search placeholder="输入关键字，点击下面按钮搜索" v-model="searchStr" size="small"></a-input-search>
+          <a-input placeholder="输入关键字，点击下面按钮搜索" v-model="searchStr" size="small"></a-input>
         </a-col>
         <a-col :span="6">
           <a-checkbox v-model="exactSearch">精确搜索</a-checkbox>
@@ -33,6 +33,7 @@ import RedisContentKeyList from './content-list'
 import * as redisApi from '@/api/redis-query'
 import { defaultRedisObject } from '../utils'
 import { REDIS_TYPE } from '../../utils'
+import { mapGetters } from 'vuex'
 const genDBList = () => {
   return Array(50).fill(1).map((_v, i) => ({ value: i, label: 'DB' + i }))
 }
@@ -59,6 +60,11 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['resourceMap']),
+    instanceName () {
+      const inst = this.resourceMap['redis'] && this.resourceMap['redis'][this.instId]
+      return inst && inst.name
+    },
     instId () {
       return Number(this.$route.params.instance_id)
     },

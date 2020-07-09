@@ -1,5 +1,5 @@
 <template>
-  <a-modal title="工单详情" @cancel="close" :visible="showDrawer" :width="'60vw'" :footer="null">
+  <a-modal title="工单详情" @cancel="close" :visible="showDrawer" :width="'80vw'" :footer="null">
     <div class="ant-descriptions">
       <h3 class="ant-descriptions-title">执行命令</h3>
       <monaco-editor :key="uid" :readOnly="true" :value="sql" :language="language"></monaco-editor>
@@ -39,7 +39,7 @@
 
     <template v-if="execResult.length">
       <a-divider />
-      <h3>sql 执行状态</h3>
+      <h3>sql 执行状态 - (总共{{ execResult.length }}条)</h3>
       <a-table
         :columns="execResultColumns"
         :dataSource="execResult"
@@ -99,16 +99,18 @@ export default {
         {
           dataIndex: 'sql',
           title: 'SQL',
-          width: 200,
+          width: 300,
           customRender: this.rContent
         },
-        { dataIndex: 'state', title: '状态' },
-        { dataIndex: 'affectrow', title: '影响行数' },
+        { dataIndex: 'state', title: '状态', width: 80 },
+        { dataIndex: 'affectrow', title: '影响行数', width: 80 },
         {
           dataIndex: 'error',
           title: '错误信息',
           width: 200,
-          customRender: this.rContent
+          customRender: this.rContent,
+          filters: [{ text: '只看有内容的', value: 'content' }],
+          onFilter: (value, { error }) => value && error,
         },
         { dataIndex: 'time', title: '执行时间', width: 80, customRender: (v) => <span>{v}秒</span> },
       ]

@@ -1,5 +1,5 @@
 <template>
-  <split-resize class="ys-query-panel" :vertical="true" :autoStart="true" :asideWidth="450">
+  <split-resize class="ys-query-panel" :vertical="true" :autoStart="true" :asideWidth="500">
     <monaco-editor
       language="mysql"
       :height="450"
@@ -140,7 +140,7 @@ export default {
       this.query(sql)
     },
     query (sql) {
-      if (this.querying) {
+      if (!this.inQuery || this.querying) {
         return
       }
       if (/^\s*$/.test(sql)) {

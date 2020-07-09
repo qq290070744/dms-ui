@@ -1,5 +1,6 @@
 <template>
   <split-resize class="ys-mysql-database" :asideWidth="150" :vertical="true" :autoStart="true">
+    <h3>Mysql 实例: {{ instanceName }}</h3>
     <a-directory-tree
       class="ys-mysql-database--tree"
       v-bind="options"
@@ -25,6 +26,7 @@
 <script>
 import { dbs, tables, fields } from '@/api/mysql-query'
 import SplitResize from '@/components/split-resize'
+import { mapGetters } from 'vuex'
 export default {
   components: {
     SplitResize
@@ -60,6 +62,11 @@ export default {
   computed: {
     instId () {
       return Number(this.$route.params.instance_id)
+    },
+    ...mapGetters(['resourceMap']),
+    instanceName () {
+      const inst = this.resourceMap['mysql'] && this.resourceMap['mysql'][this.instId]
+      return inst && inst.name
     },
     currTableName () {
       if (!this.selectedTable) {

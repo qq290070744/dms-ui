@@ -3,6 +3,21 @@ import { login, getInfo, logout } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
+const toMap = (res = {}) => {
+  return Object.keys(res)
+    .reduce((map, key) => {
+      map[key] = res[key]
+        .reduce(
+          (m, value) => ({
+            ...m,
+            [value.id]: value
+          }),
+          {}
+        )
+      return map
+    }, {})
+}
+
 const user = {
   state: {
     token: '',
@@ -11,7 +26,8 @@ const user = {
     avatar: '',
     roles: [],
     info: {},
-    resources: {}
+    resources: {},
+    resourceMap: {}
   },
 
   mutations: {
@@ -67,6 +83,7 @@ const user = {
             commit('SET_ROLES', role)
             commit('SET_INFO', user)
             commit('SET', ['resources', resources])
+            commit('SET', ['resourceMap', toMap(resources)])
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }
