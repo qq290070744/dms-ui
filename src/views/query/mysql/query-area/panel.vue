@@ -140,7 +140,7 @@ export default {
       this.query(sql)
     },
     query (sql) {
-      if (this.querying) {
+      if (!this.inQuery || this.querying) {
         return
       }
       if (/^\s*$/.test(sql)) {
