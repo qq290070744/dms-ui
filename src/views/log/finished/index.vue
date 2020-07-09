@@ -33,13 +33,9 @@
 
 <script>
 import { getFinished as getLog } from '@/api/work-order'
-import { orderTypeOptions, orderType } from '../../work-order/utils'
-import StatusTag from '../../work-order/status-tag'
+import { DMS_ORDER_TYPE, DMS_MODIFY_ORDER_STATUS } from '@/utils/const'
 
 export default {
-  components: {
-    StatusTag
-  },
   data() {
     const columns = [
       {
@@ -53,7 +49,7 @@ export default {
         title: '类型',
         dataIndex: 'type',
         customRender: (text) => {
-          return orderType[text]
+          return DMS_ORDER_TYPE.$$label[text]
         }
       },
       {
@@ -68,7 +64,8 @@ export default {
         title: '状态',
         dataIndex: 'status',
         customRender: (status, record, index) => {
-          return <status-tag status={status} />
+          const item = DMS_MODIFY_ORDER_STATUS.$map[status]
+          return <a-tag color={item.color}>{ item.label }</a-tag>
         }
       },
       {
@@ -102,7 +99,7 @@ export default {
         username: '',
         assigned: ''
       },
-      orderTypeOptions
+      orderTypeOptions: DMS_ORDER_TYPE.$items
     }
   },
   methods: {

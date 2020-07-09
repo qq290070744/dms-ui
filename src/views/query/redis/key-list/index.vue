@@ -32,7 +32,7 @@
 import RedisContentKeyList from './content-list'
 import * as redisApi from '@/api/redis-query'
 import { defaultRedisObject } from '../utils'
-import { REDIS_TYPE } from '../../utils'
+import { DMS_ORDER_TYPE } from '@/utils/const'
 import { mapGetters } from 'vuex'
 const genDBList = () => {
   return Array(50).fill(1).map((_v, i) => ({ value: i, label: 'DB' + i }))
@@ -43,7 +43,7 @@ export default {
   },
   data () {
     return {
-      REDIS_TYPE,
+      REDIS_TYPE: DMS_ORDER_TYPE.Redis,
       redisTotol: 0,
       redis: {
         db: 0,

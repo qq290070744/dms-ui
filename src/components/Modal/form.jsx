@@ -1,6 +1,7 @@
 import AForm from 'ant-design-vue/es/form'
 
 export default {
+  name: 'XForm',
   props: {
     ...AForm.props,
     fields: {
@@ -18,6 +19,10 @@ export default {
     registerForm: {
       type: Function,
       default: () => () => undefined
+    },
+    button: {
+      type: String,
+      default: '|'
     }
   },
   data () {
@@ -27,12 +32,36 @@ export default {
   },
   created () {
     this.formVm = this.$form.createForm(this)
-    this.registerForm(this.formVm)
+    if (typeof this.registerForm === 'function') {
+      this.registerForm(this.formVm)
+    }
   },
   methods: {
+    onSubmit () {
+      this.formVm.validateFields((err, values) => {
+        if (err) {
+          return
+        }
+        this.$emit('submit', values)
+        this.$emit('filter', values)
+      })
+    },
+    onCancel () {
+      this.formVm.resetFields(this.initialValues)
+      this.$emit('submit', this.initialValues)
+      this.$emit('filter', this.initialValues)
+    },
+    rButton () {
+      const [defaultSubmitText, defaultCancelText] = this.$listeners.filter ? ['筛选', '重置'] : ['保存', '取消']
+      const [submitText, cancelText] = this.button.split('|')
+      return <a-form-item>
+        <a-button type="primary" onClick={this.onSubmit}>{submitText || defaultSubmitText}</a-button>
+        {(this.$listeners.cancel || cancelText) && <el-button onClick={this.onCancel}>{cancelText || defaultCancelText}</el-button>}
+      </a-form-item>
+    },
     rItems () {
       const { getFieldDecorator } = this.formVm
-      return this.fields
+      const items = this.fields
         .map((field) => {
           const [prop, label, settings = {}] = field
           const {
@@ -41,6 +70,7 @@ export default {
             attrs = {},
             required = false,
             defaultValue,
+            onChange,
             ...resetSettings
           } = settings
 
@@ -55,14 +85,25 @@ export default {
             resetSettings.initialValue = this.initialValues[prop] || defaultValue
           }
 
+          const on = {
+            change: (v) => {
+              if (typeof onChange === 'function') {
+                onChange(v, this.formVm)
+              }
+            }
+          }
           return <a-form-item label={label}>
             {
               getFieldDecorator(prop, resetSettings)(
-                <component {...{ props, attrs }}></component>
+                <component {...{ props, attrs, on }}></component>
               )
             }
           </a-form-item>
         })
+      const buttons = this.$listeners.submit || this.$listeners.filter
+        ? this.rButton()
+        : undefined
+      return buttons ? [...items, buttons] : items
     }
   },
   render () {
@@ -73,10 +114,10 @@ export default {
       form,
       ...rest
     } = this.$props
+    const layout = this.layout === 'inline' ? {} : { labelCol, wrapperCol }
     const props = {
       ...rest,
-      labelCol,
-      wrapperCol,
+      ...layout,
       form: this.formVm
     }
     return <a-form props={props}>

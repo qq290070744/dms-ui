@@ -1,18 +1,15 @@
 <script>
-import { orderType, FINISHED_WO } from './utils'
 import WorkOrderDetail from './detail'
 import FilterForm from './filter-form'
-import StatusTag from './status-tag'
 
 import RollbackAction from './rollback-action'
 import WorkOrderForm from '@/views/query/mysql/work-order-action/form'
-import { isMysqlType } from '../query/utils'
+import { DMS_ORDER_TYPE, DMS_MODIFY_ORDER_STATUS, isMysqlOrder } from '@/utils/const'
 
 export default {
   components: {
     WorkOrderDetail,
     FilterForm,
-    StatusTag,
     WorkOrderForm,
     RollbackAction
   },
@@ -41,7 +38,7 @@ export default {
         title: '类型',
         dataIndex: 'type',
         customRender: (text) => {
-          return orderType[text]
+          return DMS_ORDER_TYPE.$label[text]
         }
       },
       {
@@ -56,7 +53,8 @@ export default {
         title: '状态',
         dataIndex: 'status',
         customRender: (status, record, index) => {
-          return <status-tag status={status} />
+          const item = DMS_MODIFY_ORDER_STATUS.$map[status]
+          return <a-tag color={item.color}>{ item.label }</a-tag>
         }
       },
       {
@@ -137,7 +135,7 @@ export default {
       this.getSource()
     },
     canRollback (record) {
-      return isMysqlType(record.type) && record.status === FINISHED_WO
+      return isMysqlOrder(record.type) && record.status === DMS_ORDER_TYPE.SUCCESS
     },
     onRollbacked () {
       this.getSource()

@@ -14,12 +14,12 @@
 </template>
 
 <script>
-import { orderTypeOptions, orderStatusOptions } from './utils'
+import { DMS_ORDER_TYPE, DMS_MODIFY_ORDER_STATUS } from '@/utils/const'
 export default {
   data () {
     return {
-      orderTypeOptions,
-      orderStatusOptions,
+      orderTypeOptions: DMS_ORDER_TYPE.$items,
+      orderStatusOptions: DMS_MODIFY_ORDER_STATUS.$items,
       formData: {
         type: undefined,
         status: undefined

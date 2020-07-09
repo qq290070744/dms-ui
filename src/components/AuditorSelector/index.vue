@@ -5,6 +5,7 @@
 <script>
 import { queryApprovalUser } from '@/api/users'
 export default {
+  name: 'XAuditorSelector',
   props: {
     value: {
       type: [Number, String],

@@ -17,6 +17,10 @@
               <a-button type="primary" @click="clickSuggestions">优化建议</a-button>
             </a-popover>
             <a-button type="primary" @click="clickQuery" :loading="querying">查询</a-button>
+            <apply-export
+              v-show="resultRecords && exportParams"
+              :extra="exportParams"
+            />
             <span class="query-time" v-if="latency">查询耗时：{{ latency }}</span>
             <span class="query-time" v-if="resultRecords">总数据量：{{ resultRecords.length }}</span>
           </template>
@@ -47,9 +51,12 @@ import WorkOrderForm from '../work-order-action/form'
 import SqlResult from './result'
 import { querySql } from '@/api/mysql-query'
 import { beautySql, checkSql, mergeAlterSql, sqlSuggestions } from '@/api/work-order'
-import { MYSQL_DML_TYPE, MYSQL_DDL_TYPE } from '../../utils'
 import VMarkdown from 'vue-markdown'
+import ApplyExport from '@/views/work-order/exports/apply'
+import { DMS_ORDER_TYPE } from '@/utils/const'
 
+const MYSQL_DML_TYPE = DMS_ORDER_TYPE['MySQL-DML']
+const MYSQL_DDL_TYPE = DMS_ORDER_TYPE['MySQL-DDL']
 export default {
   components: {
     MonacoEditor,
@@ -57,7 +64,8 @@ export default {
     SqlResult,
     ModalTrigger,
     WorkOrderForm,
-    VMarkdown
+    VMarkdown,
+    ApplyExport
   },
   props: {
     databases: {
@@ -86,6 +94,7 @@ export default {
       result: {},
       queryCount: 0,
       querying: false,
+      lastQuery: '',
       lastCheck: {
         sql: '',
         valid: false
@@ -113,18 +122,20 @@ export default {
       return typeof latency === 'number' ? (latency + '毫秒') : null
     },
     extraParams () {
-      const map = { DDL: MYSQL_DDL_TYPE, DML: MYSQL_DML_TYPE }
       return {
         db_name: this.database.name,
         inst_id: this.instId,
-        type: map[this.type]
+        type: this.type
       }
     },
     inDDL () {
-      return this.type === 'DDL'
+      return this.type === MYSQL_DDL_TYPE
     },
     inQuery () {
-      return !(['DDL', 'DML'].includes(this.type))
+      return !([MYSQL_DDL_TYPE, MYSQL_DML_TYPE].includes(this.type))
+    },
+    exportParams () {
+      return { db_name: this.database.name, inst_id: this.instId, command: this.lastQuery }
     }
   },
   methods: {
@@ -152,6 +163,7 @@ export default {
         this.genParams(sql)
       )
         .then((result) => {
+          this.lastQuery = sql
           this.queryCount++
           this.result = result
         })

@@ -18,6 +18,7 @@
 <script>
 import QueryPanel from './panel'
 import QueryTips from './tips'
+import { DMS_ORDER_TYPE } from '@/utils/const'
 export default {
   components: {
     QueryPanel,
@@ -27,8 +28,8 @@ export default {
     return {
       activeKey: 'tab',
       panes: [
-        { key: 'DDL', title: 'DDL窗口', fixed: true },
-        { key: 'DML', title: 'DML窗口', fixed: true },
+        { key: DMS_ORDER_TYPE['MySQL-DDL'], title: 'DDL窗口', fixed: true },
+        { key: DMS_ORDER_TYPE['MySQL-DML'], title: 'DML窗口', fixed: true },
         { key: 'tab', title: '查询窗口' }
       ],
       newTabIndex: 1

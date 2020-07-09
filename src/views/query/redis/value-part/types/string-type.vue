@@ -22,7 +22,7 @@ import TypeContent from './type-content'
 import WorkOrderAction from '../../work-order-action'
 import { defaultRedisObject } from '../../utils'
 import { genActions } from './gen-cmd'
-import { REDIS_TYPE } from '../../../utils'
+import { DMS_ORDER_TYPE } from '@/utils/const'
 export default {
   components: {
     WorkOrderAction,
@@ -41,7 +41,7 @@ export default {
   },
   data () {
     return {
-      REDIS_TYPE,
+      REDIS_TYPE: DMS_ORDER_TYPE.Redis,
       refresh: 0,
       modify: '',
       view: 0,

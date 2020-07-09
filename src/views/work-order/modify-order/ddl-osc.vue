@@ -7,9 +7,10 @@
 </template>
 
 <script>
-import { MYSQL_DDL_TYPE } from '../query/utils'
-import { getDDLOsc, operateOsc } from '../../api/work-order'
-import { ORDER_EXECUTING } from './utils'
+import { getDDLOsc, operateOsc } from '@/api/work-order'
+import { DMS_MODIFY_ORDER_STATUS, DMS_ORDER_TYPE } from '@/utils/const'
+
+const MYSQL_DDL_TYPE = DMS_ORDER_TYPE['MySQL-DDL']
 export default {
   props: {
     order: {
@@ -75,7 +76,9 @@ export default {
   },
   computed: {
     isValidDDL () {
-      return this.order && this.order.type === MYSQL_DDL_TYPE && this.order.status === ORDER_EXECUTING
+      return this.order &&
+        this.order.type === MYSQL_DDL_TYPE &&
+        this.order.status === DMS_MODIFY_ORDER_STATUS.IN_PROGRESS
     }
   },
   watch: {

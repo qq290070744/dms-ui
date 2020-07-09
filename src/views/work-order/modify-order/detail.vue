@@ -67,9 +67,8 @@
 import MonacoEditor from '@/components/monaco-editor'
 import { Modal } from 'ant-design-vue'
 import DdlOsc from './ddl-osc'
-import { orderType, orderStatus, PENDING_WO, execType, ORDER_EXECUTING } from './utils'
-import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder, getWorkOrder } from '../../api/work-order'
-import { parseLanguage } from '../query/utils'
+import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder, getWorkOrder } from '@/api/work-order'
+import { DMS_MODIFY_ORDER_STATUS, DMS_ORDER_TYPE, dmsBaseOrderType } from '@/utils/const'
 export default {
   components: {
     MonacoEditor,
@@ -87,9 +86,9 @@ export default {
   },
   data () {
     return {
-      orderType,
-      orderStatus,
-      PENDING_WO,
+      orderType: DMS_ORDER_TYPE.$label,
+      orderStatus: DMS_MODIFY_ORDER_STATUS.$label,
+      PENDING_WO: DMS_MODIFY_ORDER_STATUS.CHECK_PENDING,
       execResult: [],
       executed: false,
       doReject: false,
@@ -135,10 +134,10 @@ export default {
       }
     },
     isExecuting () {
-      return this.workOrder.status === ORDER_EXECUTING
+      return this.workOrder.status === DMS_MODIFY_ORDER_STATUS.IN_PROGRESS
     },
     language () {
-      return parseLanguage(this.workOrder.type)
+      return dmsBaseOrderType(this.workOrder.type)
     }
   },
   watch: {
@@ -157,24 +156,26 @@ export default {
       this.$emit('close')
     },
     queryResult () {
-      queryWorkOrderExection(this.workOrder.work_id).then((result) => {
-        if (Array.isArray(result)) {
-          this.execResult = result
-        }
-      })
+      queryWorkOrderExection(this.workOrder.work_id)
+        .then((result) => {
+          if (Array.isArray(result)) {
+            this.execResult = result
+          }
+        })
     },
     exec () {
       const { work_id: id, type } = this.workOrder
-      execWorkOrder(id, execType[type]).then((result) => {
-        if (Array.isArray(result)) {
-          this.execResult = result
-        }
-        this.reload()
-        this.executed = true
-      }, (result) => {
-        this.reload()
-        this.executed = true
-      })
+      execWorkOrder(id, dmsBaseOrderType(type))
+        .then((result) => {
+          if (Array.isArray(result)) {
+            this.execResult = result
+          }
+          this.reload()
+          this.executed = true
+        }, (result) => {
+          this.reload()
+          this.executed = true
+        })
     },
     reload () {
       getWorkOrder(this.workOrder.work_id).then((result) => {
