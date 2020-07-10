@@ -22,12 +22,13 @@ export default {
     },
     button: {
       type: String,
-      default: '|'
+      default: ''
     }
   },
   data () {
     return {
-      formVm: null
+      formVm: null,
+      invisible: new Set()
     }
   },
   created () {
@@ -47,16 +48,36 @@ export default {
       })
     },
     onCancel () {
-      this.formVm.resetFields(this.initialValues)
+      const keys = Object.keys(this.initialValues)
+      this.formVm.resetFields(keys.length ? keys : undefined)
       this.$emit('submit', this.initialValues)
       this.$emit('filter', this.initialValues)
     },
+    hide (keys = []) {
+      for (const key of keys) {
+        this.invisible.add(key)
+      }
+    },
+    show (keys = []) {
+      for (const key of keys) {
+        this.invisible.delete(key)
+      }
+    },
     rButton () {
-      const [defaultSubmitText, defaultCancelText] = this.$listeners.filter ? ['筛选', '重置'] : ['保存', '取消']
-      const [submitText, cancelText] = this.button.split('|')
+      const [
+        defaultSubmitText,
+        defaultCancelText
+      ] = this.$listeners.filter ? ['筛选', '重置'] : ['保存', '取消']
+      const [
+        submitText = defaultSubmitText,
+        cancelText = defaultCancelText
+      ] = this.button ? this.button.split('|') : []
       return <a-form-item>
-        <a-button type="primary" onClick={this.onSubmit}>{submitText || defaultSubmitText}</a-button>
-        {(this.$listeners.cancel || cancelText) && <el-button onClick={this.onCancel}>{cancelText || defaultCancelText}</el-button>}
+        <a-button type="primary" onClick={this.onSubmit}>{submitText}</a-button>
+        {
+          (this.$listeners.cancel || cancelText) &&
+          <a-button onClick={this.onCancel}>{cancelText}</a-button>
+        }
       </a-form-item>
     },
     rItems () {
@@ -64,6 +85,9 @@ export default {
       const items = this.fields
         .map((field) => {
           const [prop, label, settings = {}] = field
+          if (this.invisible.has(prop)) {
+            return
+          }
           const {
             component = 'a-input',
             props = {},
@@ -84,11 +108,11 @@ export default {
           if (resetSettings.initialValue === undefined) {
             resetSettings.initialValue = this.initialValues[prop] || defaultValue
           }
-
+          const { show, hide } = this
           const on = {
             change: (v) => {
               if (typeof onChange === 'function') {
-                onChange(v, this.formVm)
+                onChange(v, this.formVm, { show, hide })
               }
             }
           }

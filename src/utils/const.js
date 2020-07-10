@@ -61,8 +61,8 @@ export const DMS_ORDER_TYPE = new Enum([
 ])
 
 export function dmsBaseOrderType (value) {
-  const key = DMS_ORDER_TYPE.$map[value].key
-  return key.replace(/-.+$/, '').toLowerCase()
+  const item = DMS_ORDER_TYPE.$map[value]
+  return item ? item.key.replace(/-.+$/, '').toLowerCase() : ''
 }
 
 export function isMysqlOrder (value) {
@@ -74,9 +74,9 @@ export const DMS_MODIFY_ORDER_STATUS = new Enum([
   { key: 'REJECT', label: '已驳回', color: '#ff6666' },
   { key: 'SUCCESS', label: '执行成功', color: '#00c024' },
   { key: 'CHECK_PENDING', label: '待审核', color: '#2db7f5' },
-  { key: 'IN_PROGRESS', label: '待审核', color: '#2db7f5' },
-  { key: 'FAIL', label: '待审核', color: '#ff6666' },
-  { key: 'CANCEL', label: '待审核', color: '#bbb' },
+  { key: 'IN_PROGRESS', label: '执行中', color: '#2db7f5' },
+  { key: 'FAIL', label: '执行失败', color: '#ff6666' },
+  { key: 'CANCEL', label: '撤销', color: '#bbb' },
 ])
 
 // 实例类型

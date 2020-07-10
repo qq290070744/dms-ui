@@ -135,7 +135,7 @@ export default {
       this.getSource()
     },
     canRollback (record) {
-      return isMysqlOrder(record.type) && record.status === DMS_ORDER_TYPE.SUCCESS
+      return isMysqlOrder(record.type) && record.status === DMS_MODIFY_ORDER_STATUS.SUCCESS
     },
     onRollbacked () {
       this.getSource()
