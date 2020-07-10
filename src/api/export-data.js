@@ -17,11 +17,11 @@ export function approveApply (order_id) {
     )
 }
 
-export function rejectApply (params) {
+export function rejectApply (order_id) {
   return axios
     .post(
       '/ticket/v1/data_export/reject',
-      params
+      { order_id }
     )
 }
 

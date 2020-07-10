@@ -1,5 +1,5 @@
 <template>
-  <x-modal title="申请数据导出" :onOk="create">
+  <x-modal title="申请数据导出" :silent="true" :onOk="create">
     <template #default="{registerForm}" >
       <x-form :registerForm="registerForm" :fields="fields"></x-form>
     </template>

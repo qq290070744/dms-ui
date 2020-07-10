@@ -54,6 +54,7 @@ export default {
         ev, this.finalAsideWidth, range,
         (width) => {
           this.innerAsideWidth = width
+          this.$emit('change', width)
         },
         this.vertical,
         this.autoStart

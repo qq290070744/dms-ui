@@ -96,6 +96,14 @@ export default {
         }
       },
       {
+        title: '下载链接',
+        dataIndex: 'download',
+        width: 100,
+        customRender: (v) => {
+          return v ? <a href={v}>下载</a> : '无'
+        }
+      },
+      {
         title: '申请人',
         dataIndex: 'applicant',
         width: 100
@@ -136,7 +144,10 @@ export default {
   methods: {
     doFilter (data) {
       this.queryParam = data
-      this.$refs.table.refresh(true)
+      this.refresh(true)
+    },
+    refresh (force = false) {
+      this.$refs.table.refresh(force)
     }
   }
 }

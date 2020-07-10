@@ -1,5 +1,6 @@
 <template>
   <data-list
+    ref="list"
     :page="page"
     :operation="operation"
   />
@@ -20,19 +21,25 @@ export default {
       page: myReviewList,
       operation: {
         title: '操作',
-        width: 100,
+        width: 150,
         customRender: (_t, { id, status }) => {
           if (status !== 1) {
             return
           }
-          return <action onPass={() => approveApply(id)} onReject={() => rejectApply(id)}/>
+          return <action
+            onPass={() => this.doAction(id, approveApply)}
+            onReject={() => this.doAction(id, rejectApply)}
+          />
         }
       }
     }
   },
   methods: {
-    pass ({ id }) {
-      approveApply(id)
+    doAction (id, action) {
+      action(id)
+        .then(() => {
+          this.$refs.list.refresh()
+        })
     }
   }
 }

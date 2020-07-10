@@ -1,5 +1,11 @@
 <template>
-  <split-resize class="ys-mysql-database" :asideWidth="150" :vertical="true" :autoStart="true">
+  <split-resize
+    class="ys-mysql-database"
+    :asideWidth="150"
+    :vertical="true"
+    :autoStart="true"
+    @change="(w) => { currTableHeight = w - 100 }"
+  >
     <h3>Mysql 实例: {{ instanceName }}</h3>
     <a-directory-tree
       class="ys-mysql-database--tree"
@@ -15,6 +21,7 @@
           size="small"
           :bordered="true"
           rowKey="uid"
+          :scroll="{x: 1000, y: currTableHeight}"
           :columns="columns"
           :dataSource="tableFields"
         />
@@ -27,6 +34,8 @@
 import { dbs, tables, fields } from '@/api/mysql-query'
 import SplitResize from '@/components/split-resize'
 import { mapGetters } from 'vuex'
+import { genHorizontalScroll } from '@/utils/util'
+const hScroll = genHorizontalScroll()
 export default {
   components: {
     SplitResize
@@ -38,10 +47,10 @@ export default {
       { title: 'Key', dataIndex: 'Key', width: 40 },
       { title: 'Null', dataIndex: 'Null', width: 40 },
       { title: 'Extra', dataIndex: 'Extra' },
-      // { title: '权限', dataIndex: 'Privileges' },
-      // { title: '字符集', dataIndex: 'Collation' },
-      // { title: '注释', dataIndex: 'Comment' },
-      // { title: '默认', dataIndex: 'Default' },
+      { title: '默认', dataIndex: 'Default' },
+      { title: '权限', dataIndex: 'Privileges' },
+      { title: '字符集', dataIndex: 'Collation' },
+      { title: '注释', dataIndex: 'Comment' },
     ]
     return {
       columns,
@@ -56,7 +65,8 @@ export default {
         blockNode: true,
         loadData: this.onLoadData,
         rowKey: 'uid'
-      }
+      },
+      currTableHeight: 50
     }
   },
   computed: {
@@ -78,6 +88,9 @@ export default {
   },
   mounted () {
     this.onLoadData()
+  },
+  beforeDestroy () {
+    hScroll.remove()
   },
   methods: {
     onLoadData (treeNode) {
@@ -108,9 +121,20 @@ export default {
         this.$emit('set-db', node.dataRef)
       } else if (level === 2) {
         this.selectedTable = node.dataRef
-        fields({ inst_id: this.instId, db_name: node.dataRef.db, tb_name: node.dataRef.name }).then((result) => {
+        fields({
+          inst_id: this.instId,
+          db_name: node.dataRef.db,
+          tb_name: node.dataRef.name
+        }).then((result) => {
           this.tableFields = result
           this.setFields()
+        })
+        hScroll.remove()
+        this.$nextTick(() => {
+          hScroll.add(
+            this.$el.querySelector('.ant-table-wrapper'),
+            this.$el.querySelector('.ant-table-body')
+          )
         })
       }
     },
@@ -127,18 +151,6 @@ export default {
   padding: 0 4px;
 }
 .ys-mysql-database--tree, .table-field-info {
-  overflow: auto;
   height: 100%;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  &:hover {
-    &::-webkit-scrollbar {
-      display: initial;
-    }
-  }
 }
-// .table-field-info {
-//   min-width: 300px;
-// }
 </style>
