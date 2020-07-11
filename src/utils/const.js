@@ -81,10 +81,10 @@ export const DMS_MODIFY_ORDER_STATUS = new Enum([
 
 // 实例类型
 export const DMS_INSTANCE_TYPE = new Enum([
-  'MySQL',
-  'Redis',
-  'MongoDB',
-  'PgSQL',
+  { key: 'MySQL', port: 3306 },
+  { key: 'Redis', port: 6379 },
+  { key: 'MongoDB', port: 27017 },
+  { key: 'PgSQL', port: 5432 },
   // 'msSQL',
 ], 1)
 

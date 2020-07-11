@@ -37,6 +37,18 @@ export default {
       this.registerForm(this.formVm)
     }
   },
+  mounted () {
+    this.fields.map(field => {
+      // eslint-disable-next-line no-unused-vars
+      const [prop, label, settings = {}] = field
+      const isInit = true
+      if (settings.onChange) {
+        const { show, hide } = this
+        settings.onChange(this.initialValues[prop], this.formVm, { show, hide }, isInit)
+        this.$forceUpdate()
+      }
+    })
+  },
   methods: {
     onSubmit () {
       this.formVm.validateFields((err, values) => {
