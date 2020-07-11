@@ -49,7 +49,7 @@ export default {
         title: '类型',
         dataIndex: 'type',
         customRender: (text) => {
-          return DMS_ORDER_TYPE.$$label[text]
+          return DMS_ORDER_TYPE.$label[text]
         }
       },
       {

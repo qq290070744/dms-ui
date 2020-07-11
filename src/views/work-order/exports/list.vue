@@ -96,9 +96,13 @@ export default {
         }
       },
       {
-        title: '下载链接',
-        dataIndex: 'download',
-        width: 100,
+        title: <a-tooltip placement="right">
+          <span slot="title">两小时内有效</span>
+          下载链接
+          <a-icon type="info-circle" style={{ marginLeft: '6px', color: '#ff6666' }}/>
+        </a-tooltip>,
+        dataIndex: 'download_url',
+        width: 120,
         customRender: (v) => {
           return v ? <a href={v}>下载</a> : '无'
         }
