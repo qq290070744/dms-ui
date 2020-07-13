@@ -28,7 +28,7 @@ export default {
   data () {
     return {
       formVm: null,
-      invisible: new Set()
+      invisible: {}
     }
   },
   created () {
@@ -44,8 +44,8 @@ export default {
       const isInit = true
       if (settings.onChange) {
         const { show, hide } = this
-        settings.onChange(this.initialValues[prop], this.formVm, { show, hide }, isInit)
-        this.$forceUpdate()
+        settings.onChange(this.initialValues[prop], this.formVm, { show, hide, isInit })
+        // this.$forceUpdate()
       }
     })
   },
@@ -67,12 +67,12 @@ export default {
     },
     hide (keys = []) {
       for (const key of keys) {
-        this.invisible.add(key)
+        this.$set(this.invisible, key, true)
       }
     },
     show (keys = []) {
       for (const key of keys) {
-        this.invisible.delete(key)
+        this.$set(this.invisible, key, false)
       }
     },
     rButton () {
@@ -97,7 +97,7 @@ export default {
       const items = this.fields
         .map((field) => {
           const [prop, label, settings = {}] = field
-          if (this.invisible.has(prop)) {
+          if (this.invisible[prop]) {
             return
           }
           const {

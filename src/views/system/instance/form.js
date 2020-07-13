@@ -20,7 +20,7 @@ const base = () => [
     props: {
       options: DMS_INSTANCE_TYPE.$items
     },
-    onChange: (v, _, { show, hide }, isInit) => {
+    onChange: (v, _, { show, hide, isInit }) => {
       if (v === DMS_INSTANCE_TYPE.Redis) {
         hide(['username'])
       } else {
