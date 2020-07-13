@@ -1,46 +1,54 @@
 <template>
   <div class="query-area">
     <h3 class="title">
-      <span>当前选中数据库：{{ database && database.name }}</span>
-      <a-tooltip placement="right">
-        <query-tips slot="title" />
+      <span>当前选中数据库：<slot name="title"></slot></span>
+      <a-tooltip placement="right" v-if="tips">
+        <template slot="title">
+          <slot name="tips"></slot>
+        </template>
         <span class="tips"><a-icon type="question-circle" ></a-icon> 查询需知 </span>
       </a-tooltip>
     </h3>
     <a-tabs v-model="activeKey" type="editable-card" size="small" @edit="onEdit">
-      <a-tab-pane v-for="pane in panes" :key="pane.key" :tab="pane.title" :closable="!pane.fixed && pane.key === activeKey">
-        <query-panel v-bind="$attrs" :uid="pane.key" :type="pane.key"></query-panel>
+      <a-tab-pane
+        v-for="pane in finalPanes"
+        :key="pane.key"
+        :tab="pane.title"
+        :closable="!pane.fixed && pane.key === activeKey"
+      >
+        <slot :uid="pane.key" :type="pane.key"></slot>
       </a-tab-pane>
     </a-tabs>
   </div>
 </template>
 
 <script>
-import QueryPanel from './panel'
-import QueryTips from './tips'
-import { DMS_ORDER_TYPE } from '@/utils/const'
 export default {
-  components: {
-    QueryPanel,
-    QueryTips
+  props: {
+    fixedPanes: {
+      type: Array,
+      default: () => [],
+    },
+    tips: {
+      type: Object,
+      default: null
+    },
   },
   data () {
     return {
       activeKey: 'tab',
       panes: [
-        { key: DMS_ORDER_TYPE['MySQL-DDL'], title: 'DDL窗口', fixed: true },
-        { key: DMS_ORDER_TYPE['MySQL-DML'], title: 'DML窗口', fixed: true },
         { key: 'tab', title: '查询窗口' }
       ],
       newTabIndex: 1
     }
   },
   mounted () {
-    this.showTips()
+    this.tips && this.showTips()
   },
   computed: {
-    database () {
-      return this.$attrs.database
+    finalPanes () {
+      return [...this.fixedPanes, ...this.panes]
     }
   },
   methods: {

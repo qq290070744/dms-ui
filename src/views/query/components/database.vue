@@ -6,7 +6,7 @@
     :autoStart="true"
     @change="(w) => { currTableHeight = w - 100 }"
   >
-    <h3>Mysql 实例: {{ instanceName }}</h3>
+    <h3>{{ type }} 实例 | {{ instanceName }}</h3>
     <a-directory-tree
       class="ys-mysql-database--tree"
       v-bind="options"
@@ -31,7 +31,6 @@
 </template>
 
 <script>
-import { dbs, tables, fields } from '@/api/mysql-query'
 import SplitResize from '@/components/split-resize'
 import { mapGetters } from 'vuex'
 import { genHorizontalScroll } from '@/utils/util'
@@ -39,6 +38,17 @@ const hScroll = genHorizontalScroll()
 export default {
   components: {
     SplitResize
+  },
+  props: {
+    api: {
+      default: () => ({}),
+      required: true,
+      type: Object
+    },
+    type: {
+      type: String,
+      default: 'MySql'
+    }
   },
   data () {
     const columns = [
@@ -54,7 +64,6 @@ export default {
     ]
     return {
       columns,
-      currMysqlObject: null,
       selectedTable: null,
       tableFields: [],
       options: {
@@ -75,7 +84,8 @@ export default {
     },
     ...mapGetters(['resourceMap']),
     instanceName () {
-      const inst = this.resourceMap['mysql'] && this.resourceMap['mysql'][this.instId]
+      const type = this.type.toLowerCase()
+      const inst = this.resourceMap[type] && this.resourceMap[type][this.instId]
       return inst && inst.name
     },
     currTableName () {
@@ -95,7 +105,7 @@ export default {
   methods: {
     onLoadData (treeNode) {
       if (!treeNode) {
-        dbs({ inst_id: this.instId }).then((result) => {
+        this.api.dbs({ inst_id: this.instId }).then((result) => {
           this.options.treeData = result
           this.$emit('init-db', result)
         })
@@ -105,11 +115,16 @@ export default {
       return new Promise((resolve) => {
         if (treeNode.dataRef.level === 1) {
           this.$emit('set-db', treeNode.dataRef)
-          tables({ inst_id: this.instId, db_name: treeNode.dataRef.name }).then((result) => {
-            treeNode.dataRef.children = result
-            this.options.treeData = [...this.options.treeData]
-            resolve()
-          })
+          this.api
+            .tables({
+              inst_id: this.instId,
+              db_name: treeNode.dataRef.name
+            })
+            .then((result) => {
+              treeNode.dataRef.children = result
+              this.options.treeData = [...this.options.treeData]
+              resolve()
+            })
         } else {
           resolve()
         }
@@ -121,21 +136,23 @@ export default {
         this.$emit('set-db', node.dataRef)
       } else if (level === 2) {
         this.selectedTable = node.dataRef
-        fields({
-          inst_id: this.instId,
-          db_name: node.dataRef.db,
-          tb_name: node.dataRef.name
-        }).then((result) => {
-          this.tableFields = result
-          this.setFields()
-        })
+        this.api
+          .fields({
+            inst_id: this.instId,
+            db_name: node.dataRef.db,
+            tb_name: node.dataRef.name
+          }).then((result) => {
+            this.tableFields = result
+            this.setFields()
+          })
         hScroll.remove()
-        this.$nextTick(() => {
-          hScroll.add(
-            this.$el.querySelector('.ant-table-wrapper'),
-            this.$el.querySelector('.ant-table-body')
-          )
-        })
+        this
+          .$nextTick(() => {
+            hScroll.add(
+              this.$el.querySelector('.ant-table-wrapper'),
+              this.$el.querySelector('.ant-table-body')
+            )
+          })
       }
     },
     setFields () {

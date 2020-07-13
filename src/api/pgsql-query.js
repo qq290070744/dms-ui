@@ -1,7 +1,6 @@
 import { genDBApi } from './base-db-query'
 
-const Ver = 'v1'
-const Prefix = '/query/' + Ver + '/mysql'
+const Prefix = 'work_order/pgsql'
 
 const p = (path) => Prefix + (path || '')
 

@@ -1,6 +1,6 @@
 <template>
   <instance-template
-    resourceKey="redis"
+    resourceKey="pgsql"
   />
 </template>
 
