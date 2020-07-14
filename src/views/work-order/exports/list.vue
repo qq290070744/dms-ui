@@ -87,6 +87,11 @@ export default {
         width: 250,
       },
       {
+        title: 'SQL语句',
+        dataIndex: 'command',
+        width: 300
+      },
+      {
         title: '状态',
         dataIndex: 'status',
         width: 80,
