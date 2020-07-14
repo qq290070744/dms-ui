@@ -65,7 +65,6 @@
 
 <script>
 import MonacoEditor from '@/components/monaco-editor'
-import { Modal } from 'ant-design-vue'
 import DdlOsc from './ddl-osc'
 import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder, getWorkOrder } from '@/api/work-order'
 import { DMS_MODIFY_ORDER_STATUS, DMS_ORDER_TYPE, dmsBaseOrderType } from '@/utils/const'
@@ -99,7 +98,7 @@ export default {
           dataIndex: 'sql',
           title: 'SQL',
           width: 300,
-          customRender: this.rContent
+          customRender: (text) => <XTableCellEllipsis text={text}/>
         },
         { dataIndex: 'state', title: '状态', width: 80 },
         { dataIndex: 'affectrow', title: '影响行数', width: 80 },
@@ -107,7 +106,7 @@ export default {
           dataIndex: 'error',
           title: '错误信息',
           width: 200,
-          customRender: this.rContent,
+          customRender: (text) => <XTableCellEllipsis text={text}/>,
           filters: [{ text: '只看有内容的', value: 'content' }],
           onFilter: (value, { error }) => value && error,
         },
@@ -189,23 +188,6 @@ export default {
         this.$emit('executed')
         this.doReject = false
         this.close()
-      })
-    },
-    rContent (text) {
-      if (text.length > 350) {
-        return <span>
-          {text.slice(0, 300)}...
-          <a-button type="link" onClick={() => this.showFull(text)}>查看完整</a-button>
-        </span>
-      } else {
-        return text
-      }
-    },
-    showFull (text) {
-      Modal.info({
-        icon: () => '',
-        content: <p style="white-space: pre-line">{text}</p>,
-        width: '50vw'
       })
     }
   }

@@ -89,7 +89,8 @@ export default {
       {
         title: 'SQL语句',
         dataIndex: 'command',
-        width: 300
+        width: 300,
+        customRender: (text) => <XTableCellEllipsis text={text}/>
       },
       {
         title: '状态',
