@@ -130,9 +130,11 @@ export default {
           }
           return <a-form-item label={label}>
             {
-              getFieldDecorator(prop, resetSettings)(
-                <component {...{ props, attrs, on }}></component>
-              )
+              prop
+                ? getFieldDecorator(prop, resetSettings)(
+                  <component {...{ props, attrs, on }}></component>
+                )
+                : <component {...{ props, attrs, on }}></component>
             }
           </a-form-item>
         })

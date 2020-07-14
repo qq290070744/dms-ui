@@ -2,12 +2,14 @@ import XModal from './Modal'
 import XForm from './Modal/form'
 import XAuditorSelector from './AuditorSelector'
 import XTableCellEllipsis from './TableCellEllipsis'
+import XMonacoEditor from './monaco-editor'
 
 const comps = [
   XAuditorSelector,
   XModal,
   XForm,
-  XTableCellEllipsis
+  XTableCellEllipsis,
+  XMonacoEditor
 ]
 export default {
   install (Vue) {

@@ -22,7 +22,7 @@
           :bordered="true"
           rowKey="uid"
           :scroll="{x: 1000, y: currTableHeight}"
-          :columns="columns"
+          :columns="fieldColumns"
           :dataSource="tableFields"
         />
       </div>
@@ -48,6 +48,10 @@ export default {
     type: {
       type: String,
       default: 'MySql'
+    },
+    fields: {
+      type: Array,
+      default: null
     }
   },
   data () {
@@ -94,6 +98,9 @@ export default {
       }
       const { db, name } = this.selectedTable
       return `${db}.${name} 表字段信息`
+    },
+    fieldColumns () {
+      return this.fields || this.columns
     }
   },
   mounted () {

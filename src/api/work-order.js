@@ -72,11 +72,11 @@ const checkedResultColumns = [
   { title: '阶段状态', dataIndex: 'stage_status' },
 ]
 
-export function checkSql (params) {
+export function checkSql (params, type = 'mysql') {
   return new Promise((resolve, reject) => {
     axios({
       method: 'post',
-      url: '/work_order/mysql/check_sql',
+      url: `/work_order/${type}/check_sql`,
       data: params,
       customErrorHandler ({ data }) {
         return data

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { getRollbackSql } from '@/api/work-order'
+import { getRollbackSql, createWorkOrder } from '@/api/work-order'
 export default Vue.extend({
   props: {
     workId: {
@@ -45,11 +45,19 @@ export default Vue.extend({
       }
     },
     handleOk () {
-      if (this.disabled || !this.formVm || !this.formVm.submit) { return }
-      this.formVm.submit().then(() => {
-        this.$message.success(`${this.title}成功`)
-        this.handleCancel()
-        this.$emit('success')
+      if (this.disabled || !this.formVm) { return }
+      this.formVm.validateFields((err, values) => {
+        if (err) {
+          return
+        }
+        const apply = createWorkOrder({ ...values, ...this.exParams, sql: this.sql })
+        apply
+          .then(() => {
+            this.$message.success('工单已提交')
+            this.$emit('success')
+            this.handleCancel()
+          })
+        return apply
       })
     },
     handleCancel () {

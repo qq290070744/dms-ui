@@ -65,8 +65,8 @@ export function dmsBaseOrderType (value) {
   return item ? item.key.replace(/-.+$/, '').toLowerCase() : ''
 }
 
-export function isMysqlOrder (value) {
-  return dmsBaseOrderType(value) === 'mysql'
+export function canRollbackOrder (value) {
+  return DMS_ORDER_TYPE.PgSQL === value || dmsBaseOrderType(value) === 'mysql'
 }
 
 // 工单状态

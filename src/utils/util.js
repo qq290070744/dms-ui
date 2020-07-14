@@ -109,14 +109,12 @@ export function genHorizontalScroll () {
       }
     },
     add (listenEl, scrollEl = listenEl) {
-      console.log('add', listenEl)
       scroller.saver = 0
       scroller.listenEl = listenEl
       scroller.scrollEl = scrollEl
       listenEl.addEventListener('mousewheel', scroller.listener)
     },
     remove() {
-      console.log('remove', scroll.listenEl)
       if (scroll.listenEl) {
         scroll.listenEl.removeEventListener('mousewheel', scroll.listener)
       }

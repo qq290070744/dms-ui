@@ -8,14 +8,12 @@
         :api="dbApi"
       />
     </template>
-    <multi-pane v-if="currDatabase" :tips="QueryTips" :fixedPanes="panes">
+    <multi-pane v-if="currDatabase" :tips="true" :fixedPanes="panes">
       <span slot="title">{{ currDatabase && currDatabase.name }}</span>
       <template #default="scopedProps">
         <query-area
           v-bind="scopedProps"
-          :instId="instId"
-          :databases="databases"
-          :fields="currFields"
+          :suggestions="suggestions"
           :database="currDatabase"
         />
       </template>
@@ -37,6 +35,7 @@ import MultiPane from '../components/multi-pane'
 import DatabaseTree from '../components/database'
 import SplitResize from '@/components/split-resize'
 import { DMS_ORDER_TYPE } from '@/utils/const'
+import { genSuggestions } from '../components/utils'
 export default {
   components: {
     SplitResize,
@@ -54,7 +53,6 @@ export default {
   },
   data () {
     return {
-      QueryTips,
       panes: [
         { key: DMS_ORDER_TYPE['MySQL-DDL'], title: 'DDL窗口', fixed: true },
         { key: DMS_ORDER_TYPE['MySQL-DML'], title: 'DML窗口', fixed: true },
@@ -64,20 +62,47 @@ export default {
       databases: [],
       dbApi: {
         dbs, tables, fields
-      }
+      },
+      tipsDisplayed: false
     }
   },
   computed: {
     instId () {
       return Number(this.$route.params.instance_id)
+    },
+    suggestions () {
+      return genSuggestions(
+        this.databases,
+        this.currDatabase,
+        this.currFields
+      )
     }
   },
   methods: {
     setDB (db) {
       this.currDatabase = db
+      this.showTips()
     },
     initDB (dbs) {
       this.databases = dbs
+    },
+    showTips () {
+      if (!this.tipsDisplayed && !this.$ls.get('mysql-tips-hidden')) {
+        this.tipsDisplayed = true
+        this.$notification.info({
+          message: '查询需知',
+          description: (
+            <div>
+              <query-tips />
+              <a-checkbox onChange={(v) => {
+                this.$ls.set('mysql-tips-hidden', v.target.checked)
+              }}>
+                不再提示
+              </a-checkbox>
+            </div>
+          )
+        })
+      }
     }
   }
 }
@@ -87,18 +112,7 @@ export default {
 .mysql-query-container {
   height: 100%;
 }
-.mysql-key {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  min-width: 400px;
-  &--function-area, &--title {
-    padding: 0 8px;
-  }
-}
-.ant-row {
-  margin-top: 8px;
-}
+
 .empty {
   height: 100%;
   display: flex;

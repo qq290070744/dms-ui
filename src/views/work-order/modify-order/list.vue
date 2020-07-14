@@ -3,8 +3,8 @@ import WorkOrderDetail from './detail'
 import FilterForm from './filter-form'
 
 import RollbackAction from './rollback-action'
-import WorkOrderForm from '@/views/query/mysql/work-order-action/form'
-import { DMS_ORDER_TYPE, DMS_MODIFY_ORDER_STATUS, isMysqlOrder } from '@/utils/const'
+import WorkOrderForm from '@/views/query/components/work-order-action/form'
+import { DMS_ORDER_TYPE, DMS_MODIFY_ORDER_STATUS, canRollbackOrder } from '@/utils/const'
 
 export default {
   components: {
@@ -135,7 +135,7 @@ export default {
       this.getSource()
     },
     canRollback (record) {
-      return isMysqlOrder(record.type) && record.status === DMS_MODIFY_ORDER_STATUS.SUCCESS
+      return canRollbackOrder(record.type) && record.status === DMS_MODIFY_ORDER_STATUS.SUCCESS
     },
     onRollbacked () {
       this.getSource()

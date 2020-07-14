@@ -21,42 +21,41 @@ const redirectRouter = {
   query: '/query/redis', //  查询
   queryRedis: 'redis/instances', //  查询
   queryMysql: 'mysql/instances', //  查询
+  queryPgsql: 'pgsql/instances', //  查询
   dashboard: '/dashboard/Workplace' // 仪表盘
+}
+
+const genQueryInstanceRoute = (resourceNames = []) => {
+  return resourceNames
+    .reduce((routes, resourceName) => {
+      const lower = resourceName.toLowerCase()
+      const capitalize = lower.slice(0, 1).toUpperCase() + lower.slice(1)
+      const routeChildren = [
+        {
+          path: 'instances',
+          name: `query${capitalize}Instances`,
+          component: () => import(`@/views/query/${lower}/instance-list`),
+          meta: { title: `${resourceName}列表` }
+        },
+        {
+          path: ':instance_id',
+          name: `query${capitalize}Instance`,
+          component: () => import(`@/views/query/${lower}/instance`),
+          meta: { title: `${resourceName}实例` }
+        }
+      ]
+
+      routes[`query${capitalize}`] = routeChildren
+      return routes
+    },
+    {}
+    )
 }
 
 /**
  * 路由名匹配children
  */
-const mapChildrenByName = {
-  queryRedis: [
-    {
-      path: 'instances',
-      name: 'queryRedisInstances',
-      component: () => import('@/views/query/redis/instance-list'),
-      meta: { title: 'redis查询', keepAlive: true }
-    },
-    {
-      path: ':instance_id',
-      name: 'queryRedisInstance',
-      component: () => import('@/views/query/redis/instance'),
-      meta: { title: 'redis查询', keepAlive: true }
-    }
-  ],
-  queryMysql: [
-    {
-      path: 'instances',
-      name: 'queryMysqlInstances',
-      component: () => import('@/views/query/mysql/instance-list'),
-      meta: { title: 'mysql查询' }
-    },
-    {
-      path: ':instance_id',
-      name: 'queryMysqlInstance',
-      component: () => import('@/views/query/mysql/instance'),
-      meta: { title: 'mysql查询' }
-    }
-  ]
-}
+const mapChildrenByName = genQueryInstanceRoute(['Redis', 'MySQL', 'PgSQL'])
 
 /**
  * 动态生成菜单

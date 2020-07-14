@@ -12,6 +12,7 @@ import throttle from 'lodash.throttle'
 const HAS_REGISTER = {}
 
 export default {
+  name: 'XMonacoEditor',
   props: {
     language: {
       type: String,

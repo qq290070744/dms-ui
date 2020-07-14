@@ -30,7 +30,7 @@ export default {
       default: () => [],
     },
     tips: {
-      type: Object,
+      type: Boolean,
       default: null
     },
   },
@@ -42,9 +42,6 @@ export default {
       ],
       newTabIndex: 1
     }
-  },
-  mounted () {
-    this.tips && this.showTips()
   },
   computed: {
     finalPanes () {
@@ -81,23 +78,6 @@ export default {
       }
       this.panes = panes
       this.activeKey = activeKey
-    },
-    showTips () {
-      if (!this.$ls.get('mysql-tips-hidden')) {
-        this.$notification.info({
-          message: '查询需知',
-          description: (
-            <div>
-              <query-tips />
-              <a-checkbox onChange={(v) => {
-                this.$ls.set('mysql-tips-hidden', v.target.checked)
-              }}>
-                不再提示
-              </a-checkbox>
-            </div>
-          )
-        })
-      }
     }
   }
 }

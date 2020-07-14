@@ -1,7 +1,7 @@
 <template>
   <split-resize class="ys-query-panel" :vertical="true" :autoStart="true" :asideWidth="500">
     <monaco-editor
-      language="mysql"
+      language="pgsql"
       :height="450"
       ref="editor"
       :suggestions="suggestions"
@@ -30,9 +30,8 @@
             <span class="query-time" v-if="resultRecords">总数据量：{{ resultRecords.length }}</span>
           </template>
           <template v-else>
-            <check-action :params="buildSql" :cb="afterChecked" />
+            <check-action :params="buildSql" :cb="afterChecked" type="pgsql"/>
             <merge-action
-              v-if="inDDL"
               :params="buildSql"
               :cb="setValue"
             />
@@ -56,18 +55,16 @@ import MonacoEditor from '@/components/monaco-editor'
 import SplitResize from '@/components/split-resize'
 import SubmitWorkorder from '../../components/work-order-action/main'
 import SqlResult from '../../components/result.jsx'
+import { DMS_INSTANCE_TYPE } from '@/utils/const'
 import {
   BeautyAction,
   MergeAction,
   CheckAction,
   SuggestionAction
 } from '../../components/actions'
-import { querySql } from '@/api/mysql-query'
+import { querySql } from '@/api/pgsql-query'
 import ApplyExport from '@/views/work-order/exports/apply'
-import { DMS_ORDER_TYPE } from '@/utils/const'
 
-const MYSQL_DML_TYPE = DMS_ORDER_TYPE['MySQL-DML']
-const MYSQL_DDL_TYPE = DMS_ORDER_TYPE['MySQL-DDL']
 export default {
   components: {
     MonacoEditor,
@@ -124,11 +121,8 @@ export default {
         type: this.type
       }
     },
-    inDDL () {
-      return this.type === MYSQL_DDL_TYPE
-    },
     inQuery () {
-      return !([MYSQL_DDL_TYPE, MYSQL_DML_TYPE].includes(this.type))
+      return this.type !== DMS_INSTANCE_TYPE.PgSQL
     },
     exportParams () {
       return { db_name: this.database.name, inst_id: this.instId, command: this.lastQuery }

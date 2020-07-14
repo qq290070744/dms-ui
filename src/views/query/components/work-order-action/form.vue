@@ -4,7 +4,7 @@
       <monaco-editor :value="sql" ref="editor" readOnly language="mysql"></monaco-editor>
     </a-form-item>
     <a-form-item label="审核人">
-      <auditor-selector
+      <x-auditor-selector
         v-decorator="[
           'auditor_id',
           { rules: [{ required: true, message: '审核人不能为空' }] }
@@ -24,19 +24,12 @@
 
 <script>
 import MonacoEditor from '@/components/monaco-editor'
-import AuditorSelector from '@/components/AuditorSelector'
-import { createWorkOrder } from '@/api/work-order'
 
 export default {
   components: {
-    MonacoEditor,
-    AuditorSelector
+    MonacoEditor
   },
   props: {
-    exParams: {
-      type: Object,
-      default: null
-    },
     register: {
       type: Function,
       default: null
@@ -49,7 +42,7 @@ export default {
   created () {
     this.formOption.form = this.$form.createForm(this)
     if (this.register) {
-      this.register(this)
+      this.register(this.formOption.form)
     }
   },
   data () {
@@ -62,20 +55,6 @@ export default {
       }
     }
   },
-  methods: {
-    submit () {
-      return new Promise((resolve, reject) => {
-        this.formOption.form.validateFields((err, values) => {
-          if (err) {
-            reject(err)
-            return
-          }
-          values.sql = this.sql
-          resolve(createWorkOrder({ ...values, ...this.exParams }))
-        })
-      })
-    }
-  }
 }
 </script>
 
