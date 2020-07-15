@@ -150,7 +150,9 @@ export default {
 .ys-mysql-database {
   padding: 0 4px;
 }
-.ys-mysql-database--tree, .table-field-info {
+.ys-mysql-database--tree {
   height: 100%;
+  padding-bottom: 40px;
+  overflow: auto;
 }
 </style>
