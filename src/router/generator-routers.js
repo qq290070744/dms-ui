@@ -22,6 +22,7 @@ const redirectRouter = {
   queryRedis: 'redis/instances', //  查询
   queryMysql: 'mysql/instances', //  查询
   queryPgsql: 'pgsql/instances', //  查询
+  queryMongodb: 'mongodb/instances', //  查询
   dashboard: '/dashboard/Workplace' // 仪表盘
 }
 
@@ -55,8 +56,8 @@ const genQueryInstanceRoute = (resourceNames = []) => {
 /**
  * 路由名匹配children
  */
-const mapChildrenByName = genQueryInstanceRoute(['Redis', 'MySQL', 'PgSQL'])
-
+const mapChildrenByName = genQueryInstanceRoute(['Redis', 'MySQL', 'PgSQL', 'MongoDB'])
+console.log(mapChildrenByName)
 /**
  * 动态生成菜单
  * @param token
