@@ -18,9 +18,9 @@
 
     <work-order-list :dataSource="dataSource" :readOnly="true">
       <template #operation="record">
-        <a class="ys-modal-trigger" v-if="record.status === PENDING_WO" @click="() => showChangeAuditor(record)">更换审核人</a>
-        <a class="ys-modal-trigger" v-if="record.status === PENDING_WO" @click="() => urge(record)">催一催</a>
-        <a-popconfirm v-if="record.status === PENDING_WO" title="是否撤销该工单？" @confirm="() => cancelOrder(record)">
+        <a class="ys-modal-trigger" v-if="record.status === CHECK_PENDING" @click="() => showChangeAuditor(record)">更换审核人</a>
+        <a class="ys-modal-trigger" v-if="record.status === CHECK_PENDING" @click="() => urge(record)">催一催</a>
+        <a-popconfirm v-if="record.status === CHECK_PENDING" title="是否撤销该工单？" @confirm="() => cancelOrder(record)">
           <a class="ys-modal-trigger cancel-work-order">撤销</a>
         </a-popconfirm>
       </template>
@@ -30,9 +30,9 @@
 
 <script>
 import { mySubmitWorkOrder, changeAuditor, cancelWorkOrder, urge } from '@/api/work-order'
-import WorkOrderList from '../list'
+import WorkOrderList from '../modify-order/list'
 import { queryApprovalUser } from '@/api/users'
-import { PENDING_WO } from '../utils'
+import { DMS_MODIFY_ORDER_STATUS } from '@/utils/const'
 export default {
   components: {
     WorkOrderList,
@@ -47,7 +47,7 @@ export default {
       },
       record: null,
       showModal: false,
-      PENDING_WO,
+      CHECK_PENDING: DMS_MODIFY_ORDER_STATUS.CHECK_PENDING,
     }
   },
   created () {

@@ -1,6 +1,7 @@
 import AModal from 'ant-design-vue/es/modal'
 import omit from 'omit.js'
 export default {
+  name: 'XModal',
   props: {
     ...AModal.props,
     silent: {
@@ -37,12 +38,10 @@ export default {
     handleOk () {
       if (this.disabled || !this.form) { return }
       this.form.validateFields((err, values) => {
-        console.log(err, values)
         if (err) {
           return
         }
         const promise = this.onOk(values)
-        console.log(promise)
         if (promise instanceof Promise) {
           promise.then(() => {
             if (!this.silent) {

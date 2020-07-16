@@ -7,7 +7,7 @@
 
 <script>
 import { myReviewWorkOrder } from '@/api/work-order'
-import WorkOrderList from '../list'
+import WorkOrderList from '../modify-order/list'
 
 export default {
   components: {

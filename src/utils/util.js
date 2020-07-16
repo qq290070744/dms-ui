@@ -93,3 +93,36 @@ export function calcTableBodyHeight (tableEl, bottomPadding = 0) {
   const tbodyHeight = height - overflow - pagination - theadHeightOrigin - 16 - bottomPadding // padding-bottom
   return tbodyHeight
 }
+
+// ctrl + mousewheel 控制左右滚动
+export function genHorizontalScroll () {
+  const scroller = {
+    listenEl: null,
+    scrollEl: null,
+    saver: 0,
+    listener (e) {
+      console.log(e)
+      if (e.ctrlKey) {
+        e.preventDefault()
+        scroller.saver += e.deltaY
+        scroller.scrollEl.scrollLeft = scroller.saver
+      }
+    },
+    add (listenEl, scrollEl = listenEl) {
+      console.log('add', listenEl)
+      scroller.saver = 0
+      scroller.listenEl = listenEl
+      scroller.scrollEl = scrollEl
+      listenEl.addEventListener('mousewheel', scroller.listener)
+    },
+    remove() {
+      console.log('remove', scroll.listenEl)
+      if (scroll.listenEl) {
+        scroll.listenEl.removeEventListener('mousewheel', scroll.listener)
+      }
+    }
+  }
+  scroller.listener.bind(scroller)
+
+  return scroller
+}

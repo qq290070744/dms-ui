@@ -65,11 +65,9 @@
 
 <script>
 import MonacoEditor from '@/components/monaco-editor'
-import { Modal } from 'ant-design-vue'
 import DdlOsc from './ddl-osc'
-import { orderType, orderStatus, PENDING_WO, execType, ORDER_EXECUTING } from './utils'
-import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder, getWorkOrder } from '../../api/work-order'
-import { parseLanguage } from '../query/utils'
+import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder, getWorkOrder } from '@/api/work-order'
+import { DMS_MODIFY_ORDER_STATUS, DMS_ORDER_TYPE, dmsBaseOrderType } from '@/utils/const'
 export default {
   components: {
     MonacoEditor,
@@ -87,9 +85,9 @@ export default {
   },
   data () {
     return {
-      orderType,
-      orderStatus,
-      PENDING_WO,
+      orderType: DMS_ORDER_TYPE.$label,
+      orderStatus: DMS_MODIFY_ORDER_STATUS.$label,
+      PENDING_WO: DMS_MODIFY_ORDER_STATUS.CHECK_PENDING,
       execResult: [],
       executed: false,
       doReject: false,
@@ -100,7 +98,7 @@ export default {
           dataIndex: 'sql',
           title: 'SQL',
           width: 300,
-          customRender: this.rContent
+          customRender: (text) => <XTableCellEllipsis text={text}/>
         },
         { dataIndex: 'state', title: '状态', width: 80 },
         { dataIndex: 'affectrow', title: '影响行数', width: 80 },
@@ -108,7 +106,7 @@ export default {
           dataIndex: 'error',
           title: '错误信息',
           width: 200,
-          customRender: this.rContent,
+          customRender: (text) => <XTableCellEllipsis text={text}/>,
           filters: [{ text: '只看有内容的', value: 'content' }],
           onFilter: (value, { error }) => value && error,
         },
@@ -135,10 +133,10 @@ export default {
       }
     },
     isExecuting () {
-      return this.workOrder.status === ORDER_EXECUTING
+      return this.workOrder.status === DMS_MODIFY_ORDER_STATUS.IN_PROGRESS
     },
     language () {
-      return parseLanguage(this.workOrder.type)
+      return dmsBaseOrderType(this.workOrder.type)
     }
   },
   watch: {
@@ -157,24 +155,26 @@ export default {
       this.$emit('close')
     },
     queryResult () {
-      queryWorkOrderExection(this.workOrder.work_id).then((result) => {
-        if (Array.isArray(result)) {
-          this.execResult = result
-        }
-      })
+      queryWorkOrderExection(this.workOrder.work_id)
+        .then((result) => {
+          if (Array.isArray(result)) {
+            this.execResult = result
+          }
+        })
     },
     exec () {
       const { work_id: id, type } = this.workOrder
-      execWorkOrder(id, execType[type]).then((result) => {
-        if (Array.isArray(result)) {
-          this.execResult = result
-        }
-        this.reload()
-        this.executed = true
-      }, (result) => {
-        this.reload()
-        this.executed = true
-      })
+      execWorkOrder(id, dmsBaseOrderType(type))
+        .then((result) => {
+          if (Array.isArray(result)) {
+            this.execResult = result
+          }
+          this.reload()
+          this.executed = true
+        }, (result) => {
+          this.reload()
+          this.executed = true
+        })
     },
     reload () {
       getWorkOrder(this.workOrder.work_id).then((result) => {
@@ -188,23 +188,6 @@ export default {
         this.$emit('executed')
         this.doReject = false
         this.close()
-      })
-    },
-    rContent (text) {
-      if (text.length > 350) {
-        return <span>
-          {text.slice(0, 300)}...
-          <a-button type="link" onClick={() => this.showFull(text)}>查看完整</a-button>
-        </span>
-      } else {
-        return text
-      }
-    },
-    showFull (text) {
-      Modal.info({
-        icon: () => '',
-        content: <p style="white-space: pre-line">{text}</p>,
-        width: '50vw'
       })
     }
   }

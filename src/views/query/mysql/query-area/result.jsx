@@ -1,4 +1,7 @@
 import Vue from 'vue'
+import { genHorizontalScroll } from '@/utils/util'
+const hScroll = genHorizontalScroll()
+
 const Result = Vue.extend({
   props: {
     records: {
@@ -16,8 +19,6 @@ const Result = Vue.extend({
       rowKey: '__DMS_QYERY_UID__',
       dataSource: [],
       scroll: { y: 400, x: 1000 },
-      hScroll: 0,
-      scrollTarget: null
     }
   },
   computed: {
@@ -50,27 +51,13 @@ const Result = Vue.extend({
       }
     }
   },
-  methods: {
-    authScrollHeight () {
-      const body = this.$el.querySelector('.ant-table-body')
-      if (body) {
-        const { top } = body.getBoundingClientRect()
-        this.scroll.y = window.innerHeight - top - 16
-      }
-    },
-    getScrollTarget () {
-      if (!this.scrollTarget) {
-        this.scrollTarget = this.$el.querySelector('.ant-table-body')
-      }
-      return this.scrollTarget
-    },
-    onMousewheel (e) {
-      if (e.ctrlKey) {
-        e.preventDefault()
-        this.hScroll += e.deltaY / 2
-        this.getScrollTarget().scrollLeft = this.hScroll
-      }
-    }
+  mounted () {
+    this.$nextTick(() => {
+      hScroll.add(this.$el, this.$el.querySelector('.ant-table-body'))
+    })
+  },
+  beforeDestroy () {
+    hScroll.remove()
   },
   render () {
     const { dataSource, columns, rowKey } = this
@@ -88,9 +75,6 @@ const Result = Vue.extend({
           pageSizeOptions: ['10', '50', '100', '200']
         },
         scroll: this.scroll
-      }}
-      nativeOn={{
-        mousewheel: this.onMousewheel
       }}
     />
   }
