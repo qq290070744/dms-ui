@@ -1,4 +1,5 @@
 import { genDBApi } from './base-db-query'
+import { axios } from '@/utils/request'
 
 const Prefix = 'work_order/mongodb'
 
@@ -8,9 +9,12 @@ const {
   dbs,
   tables,
   fields,
-  indexes,
-  querySql
+  indexes
 } = genDBApi(p)
+
+function querySql (params) {
+  return axios.post(p('/mongo_data'), params)
+}
 
 export {
   dbs,

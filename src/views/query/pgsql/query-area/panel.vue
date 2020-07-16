@@ -168,7 +168,7 @@ export default {
         .then((result) => {
           this.lastQuery = sql
           this.queryCount++
-          this.result = result
+          this.result = result || {}
         })
         .finally(() => {
           this.querying = false

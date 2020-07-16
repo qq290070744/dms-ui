@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { dbs, tables, fields } from '@/api/pgsql-query'
+import { dbs, tables, fields, indexes } from '@/api/pgsql-query'
 import QueryArea from './query-area/panel'
 import MultiPane from '../components/multi-pane'
 import DatabaseTree from '../components/database'
@@ -58,7 +58,7 @@ export default {
       currFields: [],
       databases: [],
       dbApi: {
-        dbs, tables, fields
+        dbs, tables, fields, indexes
       },
       fields: [
         { title: 'Field', dataIndex: 'field', width: 60 },

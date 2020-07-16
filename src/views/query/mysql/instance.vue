@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { dbs, tables, fields } from '@/api/mysql-query'
+import { dbs, tables, fields, indexes } from '@/api/mysql-query'
 import QueryArea from './query-area/panel'
 import QueryTips from './query-area/tips'
 import MultiPane from '../components/multi-pane'
@@ -61,7 +61,7 @@ export default {
       currFields: [],
       databases: [],
       dbApi: {
-        dbs, tables, fields
+        dbs, tables, fields, indexes
       },
       tipsDisplayed: false
     }

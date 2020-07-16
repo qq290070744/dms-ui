@@ -1,10 +1,10 @@
 <template>
   <split-resize
     class="ys-mysql-database"
-    :asideWidth="150"
+    :asideWidth="280"
     :vertical="true"
     :autoStart="true"
-    @change="(w) => { currTableHeight = w - 100 }"
+    @change="(w) => { currTableHeight = w - 150 }"
   >
     <h3>{{ type }} 实例 | {{ instanceName }}</h3>
     <a-directory-tree
@@ -13,19 +13,28 @@
       @select="selectNode"
     />
     <template #aside>
-      <a-empty v-if="!currTableName" description="选择上面的表可以在此处展示表结构" />
-      <div class="table-field-info" v-else>
-        <p>{{ currTableName }}</p>
-        <a-table
-          class="mini-row-table"
-          size="small"
-          :bordered="true"
-          rowKey="uid"
-          :scroll="{x: 1000, y: currTableHeight}"
-          :columns="fieldColumns"
-          :dataSource="tableFields"
-        />
-      </div>
+      <a-empty v-if="!currTableInfo" description="选择上面的表可以在此处展示表结构" />
+      <template v-else>
+        <div class="table-field-info" v-if="COLUMN_FIELDS[type] && api.fields">
+          <p>{{ currTableInfo }}表字段信息</p>
+          <table-info
+            rowKey="uid"
+            :scroll="{x: 1000, y: currTableHeight / 2}"
+            :columns="COLUMN_FIELDS[type]"
+            :dataSource="tableFields"
+          />
+        </div>
+
+        <div class="table-field-info" v-if="COLUMN_INDEXES[type] && api.indexes">
+          <p>{{ currTableInfo }}表索引信息</p>
+          <table-info
+            rowKey="uid"
+            :scroll="{x: 1000, y: currTableHeight / 2}"
+            :columns="COLUMN_INDEXES[type]"
+            :dataSource="tableIndexes"
+          />
+        </div>
+      </template>
     </template>
   </split-resize>
 </template>
@@ -33,11 +42,12 @@
 <script>
 import SplitResize from '@/components/split-resize'
 import { mapGetters } from 'vuex'
-import { genHorizontalScroll } from '@/utils/util'
-const hScroll = genHorizontalScroll()
+import TableInfo from './table-info'
+import { COLUMN_INDEXES, COLUMN_FIELDS } from './columns'
 export default {
   components: {
-    SplitResize
+    SplitResize,
+    TableInfo
   },
   props: {
     api: {
@@ -47,7 +57,7 @@ export default {
     },
     type: {
       type: String,
-      default: 'MySql'
+      default: 'MySQL'
     },
     fields: {
       type: Array,
@@ -55,21 +65,12 @@ export default {
     }
   },
   data () {
-    const columns = [
-      { title: 'Field', dataIndex: 'Field', width: 200 },
-      { title: 'Type', dataIndex: 'Type', width: 90 },
-      { title: 'Key', dataIndex: 'Key', width: 40 },
-      { title: 'Null', dataIndex: 'Null', width: 40 },
-      { title: 'Extra', dataIndex: 'Extra' },
-      { title: '默认', dataIndex: 'Default' },
-      { title: '权限', dataIndex: 'Privileges' },
-      { title: '字符集', dataIndex: 'Collation' },
-      { title: '注释', dataIndex: 'Comment' },
-    ]
     return {
-      columns,
+      COLUMN_INDEXES,
+      COLUMN_FIELDS,
       selectedTable: null,
       tableFields: [],
+      tableIndexes: [],
       options: {
         treeData: [],
         replaceFields: {
@@ -79,7 +80,7 @@ export default {
         loadData: this.onLoadData,
         rowKey: 'uid'
       },
-      currTableHeight: 50
+      currTableHeight: 150
     }
   },
   computed: {
@@ -92,22 +93,16 @@ export default {
       const inst = this.resourceMap[type] && this.resourceMap[type][this.instId]
       return inst && inst.name
     },
-    currTableName () {
+    currTableInfo () {
       if (!this.selectedTable) {
         return ''
       }
       const { db, name } = this.selectedTable
-      return `${db}.${name} 表字段信息`
-    },
-    fieldColumns () {
-      return this.fields || this.columns
+      return `${db}.${name} `
     }
   },
   mounted () {
     this.onLoadData()
-  },
-  beforeDestroy () {
-    hScroll.remove()
   },
   methods: {
     onLoadData (treeNode) {
@@ -143,23 +138,27 @@ export default {
         this.$emit('set-db', node.dataRef)
       } else if (level === 2) {
         this.selectedTable = node.dataRef
-        this.api
-          .fields({
-            inst_id: this.instId,
-            db_name: node.dataRef.db,
-            tb_name: node.dataRef.name
-          }).then((result) => {
-            this.tableFields = result
-            this.setFields()
-          })
-        hScroll.remove()
-        this
-          .$nextTick(() => {
-            hScroll.add(
-              this.$el.querySelector('.ant-table-wrapper'),
-              this.$el.querySelector('.ant-table-body')
-            )
-          })
+        if (this.api.fields) {
+          this.api
+            .fields({
+              inst_id: this.instId,
+              db_name: node.dataRef.db,
+              tb_name: node.dataRef.name
+            }).then((result) => {
+              this.tableFields = result
+              this.setFields()
+            })
+        }
+        if (this.api.indexes) {
+          this.api
+            .indexes({
+              inst_id: this.instId,
+              db_name: node.dataRef.db,
+              tb_name: node.dataRef.name
+            }).then((result) => {
+              this.tableIndexes = result
+            })
+        }
       }
     },
     setFields () {

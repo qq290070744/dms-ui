@@ -57,7 +57,7 @@ const genQueryInstanceRoute = (resourceNames = []) => {
  * 路由名匹配children
  */
 const mapChildrenByName = genQueryInstanceRoute(['Redis', 'MySQL', 'PgSQL', 'MongoDB'])
-console.log(mapChildrenByName)
+
 /**
  * 动态生成菜单
  * @param token

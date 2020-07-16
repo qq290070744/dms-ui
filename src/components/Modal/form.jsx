@@ -23,6 +23,10 @@ export default {
     button: {
       type: String,
       default: ''
+    },
+    size: {
+      type: String,
+      default: 'default'
     }
   },
   data () {
@@ -85,10 +89,10 @@ export default {
         cancelText = defaultCancelText
       ] = this.button ? this.button.split('|') : []
       return <a-form-item>
-        <a-button type="primary" onClick={this.onSubmit}>{submitText}</a-button>
+        <a-button size={this.size} type="primary" onClick={this.onSubmit}>{submitText}</a-button>
         {
           (this.$listeners.cancel || cancelText) &&
-          <a-button onClick={this.onCancel}>{cancelText}</a-button>
+          <a-button size={this.size} onClick={this.onCancel}>{cancelText}</a-button>
         }
       </a-form-item>
     },
@@ -127,6 +131,9 @@ export default {
                 onChange(v, this.formVm, { show, hide })
               }
             }
+          }
+          if (!props.size) {
+            props.size = this.size
           }
           return <a-form-item label={label}>
             {

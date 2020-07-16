@@ -10,7 +10,68 @@ import { waitRefShow } from '../../utils/util'
 import throttle from 'lodash.throttle'
 
 const HAS_REGISTER = {}
-
+const langs = [
+  'abap',
+  'apex',
+  'azcli',
+  'bat',
+  'cameligo',
+  'clojure',
+  'coffee',
+  'cpp',
+  'csharp',
+  'csp',
+  'css',
+  'dockerfile',
+  'fsharp',
+  'go',
+  'graphql',
+  'handlebars',
+  'html',
+  'ini',
+  'java',
+  'javascript',
+  'kotlin',
+  'less',
+  'lua',
+  'markdown',
+  'mips',
+  'msdax',
+  'mysql',
+  'objective-c',
+  'pascal',
+  'pascaligo',
+  'perl',
+  'pgsql',
+  'php',
+  'postiats',
+  'powerquery',
+  'powershell',
+  'pug',
+  'python',
+  'r',
+  'razor',
+  'redis',
+  'redshift',
+  'restructuredtext',
+  'ruby',
+  'rust',
+  'sb',
+  'scheme',
+  'scss',
+  'shell',
+  'solidity',
+  'sophia',
+  'sql',
+  'st',
+  'swift',
+  'tcl',
+  'twig',
+  'typescript',
+  'vb',
+  'xml',
+  'yaml',
+]
 export default {
   name: 'XMonacoEditor',
   props: {
@@ -112,18 +173,20 @@ export default {
       })
     },
     registerLanguageSuggention () {
-      try {
-        const lang = this.language
-        const langDef = require(`monaco-editor/esm/vs/basic-languages/${lang}/${lang}`)
-        const { builtinFunctions, keywords, operators } = langDef.language
+      const lang = this.language
+      if (langs.includes(lang)) {
+        try {
+          const langDef = require(`monaco-editor/esm/vs/basic-languages/${lang}/${lang}`)
+          const { builtinFunctions, keywords, operators } = langDef.language
 
-        this.langSuggestions = [
-          ...this.genSuggestion(builtinFunctions, '函数'),
-          ...this.genSuggestion(keywords, '关键字'),
-          ...this.genSuggestion(operators, '操作符'),
-        ]
-      } catch (e) {
-        console.log(e)
+          this.langSuggestions = [
+            ...this.genSuggestion(builtinFunctions, '函数'),
+            ...this.genSuggestion(keywords, '关键字'),
+            ...this.genSuggestion(operators, '操作符'),
+          ]
+        } catch (e) {
+          console.log(e)
+        }
       }
     },
     registerSuggention () {

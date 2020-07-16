@@ -101,7 +101,6 @@ export function genHorizontalScroll () {
     scrollEl: null,
     saver: 0,
     listener (e) {
-      console.log(e)
       if (e.ctrlKey) {
         e.preventDefault()
         scroller.saver += e.deltaY

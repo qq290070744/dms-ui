@@ -1,49 +1,20 @@
 <template>
   <split-resize class="ys-query-panel" :vertical="true" :autoStart="true" :asideWidth="500">
     <monaco-editor
-      language="pgsql"
+      language="json"
       :height="450"
       ref="editor"
-      :suggestions="suggestions"
-      @ctrl-enter="query"
       @change="lastCheck.valid = false"
     />
     <template #aside>
       <div class="main">
-        <div :class="['function-row', {'has-result': resultRecords}]">
-          <beauty-action :params="buildSql" :cb="setValue" />
-          <template v-if="inQuery">
-            <suggestion-action
-              :params="buildSql"
-            />
-            <a-button
-              type="primary"
-              size="small"
-              @click="clickQuery"
-              :loading="querying"
-            >查询</a-button>
-            <apply-export
-              v-show="resultRecords && exportParams"
-              :extra="exportParams"
-            />
-            <span class="query-time" v-if="latency">查询耗时：{{ latency }}</span>
-            <span class="query-time" v-if="resultRecords">总数据量：{{ resultRecords.length }}</span>
-          </template>
-          <template v-else>
-            <check-action :params="buildSql" :cb="afterChecked" type="pgsql"/>
-            <merge-action
-              :params="buildSql"
-              :cb="setValue"
-            />
-            <submit-workorder
-              :sql="lastCheck.sql"
-              :extra="extraParams"
-              :disabled="!lastCheck.valid"
-            />
-          </template>
+        <div class="function-row">
+          <query-form :tables="tables" @query="query" :loading="querying"></query-form>
+          <span class="query-time" v-if="latency">查询耗时：{{ latency }}</span>
+          <span class="query-time" v-if="resultRecords">总数据量：{{ resultRecords.length }}</span>
         </div>
-        <div class="result">
-          <sql-result v-bind="result" :key="queryCount" />
+        <div class="result" :class="['result', {'has-result': resultRecords}]">
+          <sql-result :result="result.records" />
         </div>
       </div>
     </template>
@@ -54,15 +25,11 @@
 import MonacoEditor from '@/components/monaco-editor'
 import SplitResize from '@/components/split-resize'
 import SubmitWorkorder from '../../components/work-order-action/main'
-import SqlResult from '../../components/result.jsx'
+import SqlResult from './result.jsx'
 import { DMS_INSTANCE_TYPE } from '@/utils/const'
-import {
-  BeautyAction,
-  MergeAction,
-  CheckAction,
-  SuggestionAction
-} from '../../components/actions'
-import { querySql } from '@/api/pgsql-query'
+
+import { querySql } from '@/api/mongodb-query'
+import QueryForm from './query-form'
 import ApplyExport from '@/views/work-order/exports/apply'
 
 export default {
@@ -72,10 +39,7 @@ export default {
     SqlResult,
     ApplyExport,
     SubmitWorkorder,
-    BeautyAction,
-    CheckAction,
-    MergeAction,
-    SuggestionAction
+    QueryForm
   },
   props: {
     suggestions: {
@@ -121,6 +85,9 @@ export default {
         type: this.type
       }
     },
+    tables () {
+      return this.database.children.map(t => ({ value: t.name, label: t.name }))
+    },
     inQuery () {
       return this.type !== DMS_INSTANCE_TYPE.PgSQL
     },
@@ -131,44 +98,42 @@ export default {
   methods: {
     getValue () {
       const editorVm = this.$refs.editor
-      return editorVm ? editorVm.getValue() : ''
+      try {
+        const value = editorVm ? editorVm.getValue() : ''
+        return JSON.parse(value)
+      } catch (e) {
+        return {}
+      }
     },
-    setValue (value) {
-      this.$refs.editor.setValue(value)
-    },
-    buildSql () {
+    buildSql (params) {
       const sql = this.getValue()
       if (/^\s*$/.test(sql)) {
         this.$message.warning(`请输入语句再进行提交`)
         return
       }
       return {
-        sql,
+        ...params,
+        condition: sql,
         db_name: this.database.name,
         inst_id: this.instId
       }
     },
-    afterChecked (result, params, valid) {
-      const sql = params.sql
-      this.queryCount++
-      this.result = result
-      this.lastCheck = { sql, valid }
-    },
-    clickQuery () {
+    clickQuery (params) {
       const sql = this.getValue()
-      this.query(sql)
+      this.query(sql, params)
+      this.buildSql(params)
     },
-    query (sql) {
+    query (params) {
       if (!this.inQuery || this.querying) {
         return
       }
-      const params = this.buildSql()
+      params = this.buildSql(params)
       this.querying = true
       querySql(params)
         .then((result) => {
-          this.lastQuery = sql
+          this.lastQuery = params.sql
           this.queryCount++
-          this.result = result
+          this.result = result || {}
         })
         .finally(() => {
           this.querying = false
@@ -187,6 +152,9 @@ export default {
   .result {
     overflow: auto;
     margin-top: 16px;
+    &.has-result {
+      margin-top: -56px;
+    }
   }
   .ys-monaco-editor {
     margin: 0 8px;
@@ -198,18 +166,27 @@ export default {
   .function-row {
     padding: 0 8px;
     margin: 8px 0;
-    &.has-result {
-      position: absolute;
-      z-index: 10;
-      top: -5px;
-      margin-top: 0;
-    }
+    vertical-align: middle;
+    position: relative;
+    z-index: 1;
   }
   .query-time {
+    margin-top: 10px;
     margin-left: 8px;
+    display: inline-block;
+    vertical-align: middle;
   }
 }
 ::v-deep .split-resize--aside {
   overflow: auto;
+}
+::v-deep {
+  .ant-pagination.mini.ant-table-pagination {
+    position: relative;
+    z-index: 10;
+  }
+  .ant-table-thead > tr > th {
+    border-bottom: 2px solid #e8e8e8;
+  }
 }
 </style>
