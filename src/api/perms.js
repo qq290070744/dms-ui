@@ -15,8 +15,8 @@ export function getDatabaseSchema (instId) {
     url: '/common/v1/instances/schema_tree',
     method: 'get',
     params: { inst_id: instId }
-  }).then(({ Schemas }) => {
-    return Schemas.reduce((list, res) => {
+  }).then(({ schemas }) => {
+    return schemas.reduce((list, res) => {
       const { db, tables } = res
 
       const children = tables.map((tb) => ({

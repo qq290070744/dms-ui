@@ -1,16 +1,10 @@
-import { genDBApi } from './base-db-query'
-
-const Prefix = 'work_order/pgsql'
-
-const p = (path) => Prefix + (path || '')
+import { dbs, tables, genTableApi } from './base-db-query'
 
 const {
-  dbs,
-  tables,
   fields,
   indexes,
   querySql
-} = genDBApi(p)
+} = genTableApi('pgsql')
 
 export {
   dbs,

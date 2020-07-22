@@ -12,6 +12,7 @@ export function genPage (data, parameter) {
 
   !data.records && (data.records = [])
   !data.total && (data.total = data.records.length)
+  data.total = Number(data.total)
   return data
 }
 

@@ -1,17 +1,10 @@
-import { genDBApi } from './base-db-query'
-
-const Ver = 'v1'
-const Prefix = '/query/' + Ver + '/mysql'
-
-const p = (path) => Prefix + (path || '')
+import { dbs, tables, genTableApi } from './base-db-query'
 
 const {
-  dbs,
-  tables,
   fields,
   indexes,
   querySql
-} = genDBApi(p)
+} = genTableApi('mysql')
 
 export {
   dbs,
