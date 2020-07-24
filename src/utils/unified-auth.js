@@ -1,25 +1,7 @@
 import store from '@/store'
 import unifiedAuth from 'ys-unified-auth'
-import Cookies from 'js-cookie'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
-
-// bootstrap.js
-function getAccessTokenFromCookie () {
-  if (process.env.VUE_APP_LOCAL_TOKEN) {
-    return process.env.VUE_APP_LOCAL_TOKEN
-  }
-  const config = { path: '/', domain: process.env.VUE_APP_COOKIE_DOMAIN }
-  const prefix = process.env.VUE_APP_COOKIE_PREFIX
-  const accessToken = Cookies.get(`${prefix}TOKEN`, config)
-  return accessToken
-}
-
-function removeTokenFromCookie () {
-  const config = { path: '/', domain: process.env.VUE_APP_COOKIE_DOMAIN }
-  const prefix = process.env.VUE_APP_COOKIE_PREFIX
-  Cookies.remove(`${prefix}TOKEN`, config)
-}
 
 const auth = {
   clientId: process.env.VUE_APP_AUTH_CLIENT_ID,
@@ -28,38 +10,37 @@ const auth = {
   state: process.env.VUE_APP_STATE,
 }
 
-const config = {
-  authHost: process.env.VUE_APP_AUTH_HOST,
-  serverRedirectUri: process.env.VUE_APP_AUTH_AFTER_LOGIN,
-  ...auth
-}
-const {
-  genLoginUrl,
-  genLogoutUrl,
-} = unifiedAuth(config)
-
-function clearAll () {
+const clear = () => {
   store.commit('SET_TOKEN', '')
   store.commit('SET_ROLES', [])
   Vue.ls.remove(ACCESS_TOKEN)
-  removeTokenFromCookie()
-  return Promise.resolve(true)
 }
 
-function redirectToLogin () {
-  clearAll().then(() => {
-    window.location.href = genLoginUrl()
-  })
+const config = {
+  authHost: process.env.VUE_APP_AUTH_HOST,
+  serverRedirectUri: process.env.VUE_APP_AUTH_AFTER_LOGIN,
+  ...auth,
+  cookieConfig: {
+    key: `${process.env.VUE_APP_COOKIE_PREFIX}TOKEN`,
+    domain: process.env.VUE_APP_COOKIE_DOMAIN
+  },
+  tokenConfig: {
+    before: (token) => token.replace('+', ' '),
+    local: process.env.VUE_APP_LOCAL_TOKEN
+  },
+  beforeLogin: clear,
+  beforeLogout: clear
 }
-
-function redirectToLogout () {
-  clearAll().then(() => {
-    window.location.href = genLogoutUrl()
-  })
-}
+const {
+  redirectToLogin,
+  redirectToLogout,
+  hasAccessToken,
+  getAccessToken: getAccessTokenFromCookie,
+} = unifiedAuth(config)
 
 export {
   redirectToLogin,
   redirectToLogout,
-  getAccessTokenFromCookie
+  hasAccessToken,
+  getAccessTokenFromCookie,
 }
