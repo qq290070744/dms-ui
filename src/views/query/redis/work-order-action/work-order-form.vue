@@ -78,7 +78,7 @@ export default {
     getCommands () {
       const lines = this.$refs.editor.getPrettyValue()
       return lines.map((line) => {
-        const array = line.match(/"(?:[^"\\]|\\.)*"|\d+|[^\s]+/g)
+        const array = line.match(/"(?:[^"\\]|\\.)*"|[^\s]+/g)
         return array.map((v, i) => i > 0 ? str(v) : v).join(' ')
       })
     },

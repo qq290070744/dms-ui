@@ -3,7 +3,7 @@ import { genPage, transform } from './utils'
 // 实例列表
 export function getInstance(params) {
   return axios({
-    url: '/common/v1/instances/self',
+    url: '/ticket/v1/perms/instances',
     method: 'get',
     params
   })

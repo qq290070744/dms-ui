@@ -9,7 +9,7 @@ const trans = {
   entry (value, prop = '') {
     const type = Object.prototype.toString.call(value).slice(8, -1)
     if (trans[type]) {
-      return { children: trans[type](value), prop, type, key: uid++ }
+      return { children: [], _children: trans[type](value), prop, type, key: uid++ }
     } else {
       value = String(value)
       return { value, prop, type, key: uid++ }
@@ -26,6 +26,7 @@ export default {
   data () {
     return {
       pagination: {
+        total: 0,
         current: 1,
         pageSize: 10,
         position: 'top',
@@ -38,19 +39,20 @@ export default {
         { dataIndex: 'value', title: '值' },
       ],
       dataSource: [],
-      expandedRowKeys: [],
       scroll: { y: 400 },
     }
   },
   watch: {
-    result () {
+    result (val) {
       uid = 0
       this.setData()
+      this.pagination.total = val.length
     }
   },
   methods: {
     change (pagination) {
       this.pagination = { ...this.pagination, ...pagination }
+      console.log(this.pagination, pagination)
       this.setData()
     },
     setData () {
@@ -58,12 +60,9 @@ export default {
       this.dataSource = this.result
         .slice((current - 1) * pageSize, current * pageSize)
         .map(data => trans.entry(data))
-      this.$nextTick(() => {
-        this.expandedRowKeys = this.dataSource.map(d => d.key)
-      })
     },
-    expandedRowsChange (keys) {
-      this.expandedRowKeys = keys
+    expandedRowsChange (expanded, record) {
+      record.children = expanded ? record._children : []
     }
   },
   render () {
@@ -71,7 +70,7 @@ export default {
     return <a-table
       props={props}
       onChange={this.change}
-      onExpandedRowsChange={this.expandedRowsChange}
+      onExpand={this.expandedRowsChange}
     />
   }
 }

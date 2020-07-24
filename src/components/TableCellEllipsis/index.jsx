@@ -16,8 +16,8 @@ export default {
     showFull (text) {
       Modal.info({
         icon: () => '',
-        content: <pre>{text}</pre>,
-        width: '50vw'
+        content: <pre style={{ height: '70vh', overflow: 'auto' }}>{text}</pre>,
+        width: '70vw'
       })
     }
   },

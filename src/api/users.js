@@ -5,7 +5,7 @@ export function queryAllUser () {
 }
 
 export function queryApprovalUser () {
-  return axios.get('/auth/approvals/user').then((result) => {
+  return axios.get('/upms/v1/approver').then((result) => {
     return result.map(u => ({ label: u.name, value: u.id }))
   })
 }

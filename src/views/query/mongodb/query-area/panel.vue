@@ -151,9 +151,8 @@ export default {
   height: calc(100% - 50px);
   .result {
     overflow: auto;
-    margin-top: 16px;
     &.has-result {
-      margin-top: -56px;
+      margin-top: -26px;
     }
   }
   .ys-monaco-editor {

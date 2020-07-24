@@ -23,12 +23,12 @@ import { DMS_INSTANCE_TYPE, DMS_PERMS_ORDER_TYPE } from '@/utils/const'
 
 const defaultFilter = () => {
   return [
-    ['type', '类型', {
-      component: 'a-select',
-      props: {
-        options: DMS_INSTANCE_TYPE.$items
-      }
-    }],
+    // ['type', '类型', {
+    //   component: 'a-select',
+    //   props: {
+    //     options: DMS_INSTANCE_TYPE.$items
+    //   }
+    // }],
     ['auditor', '审核人', {
       component: 'user-complete'
     }],

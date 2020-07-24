@@ -61,15 +61,18 @@ export default {
     this.form = this.$form.createForm(this)
   },
   mounted () {
-    getInstance({
-      type: this.INSTANCE_TYPE.REDIS
-    })
-      .then((res) => {
-        this.instances = res.map(({ id, name }) => ({ label: name, value: id }))
-        this.emptyInstace = !this.instances.length
-      })
+    this.getInstance()
   },
   methods: {
+    getInstance () {
+      getInstance({
+        type: this.INSTANCE_TYPE.REDIS
+      })
+        .then((res) => {
+          this.instances = res.map(({ id, name }) => ({ label: name, value: id }))
+          this.emptyInstace = !this.instances.length
+        })
+    },
     submit () {
       this.form.validateFields((err, values) => {
         if (!err) {
@@ -84,6 +87,7 @@ export default {
       })
     },
     reset () {
+      this.getInstance()
       this.form.resetFields()
       this.success = false
     }
