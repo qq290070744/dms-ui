@@ -5,6 +5,7 @@ import Modal from 'ant-design-vue/es/modal'
 import { VueAxios } from './axios-plugin'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { getAccessTokenFromCookie, redirectToLogin } from './unified-auth'
+import { transformPaginationRequest, transformPaginationResponse } from '@/api/utils'
 
 const VALID_CODE = 0
 const ECONNABORTED = 'ECONNABORTED'
@@ -61,26 +62,36 @@ service.interceptors.request.use(config => {
   if (token) {
     config.headers['Authorization'] = token.replace('+', ' ') // 让每个请求携带自定义 token 请根据实际情况自行修改
   }
-  return config
+
+  return transformPaginationRequest(config)
 }, err)
 
 // response interceptor
 service.interceptors.response.use((response) => {
   const responseData = response.data
+  const config = response.config
   // 处理业务逻辑
   if (responseData.code !== undefined && responseData.msg !== undefined) {
     if (responseData.code !== VALID_CODE) {
-      const customErrorHandler = response.config && response.config.customErrorHandler
+      const customErrorHandler = config && config.customErrorHandler
       if (customErrorHandler) {
         return customErrorHandler(response)
       }
       return err(responseData.msg)
     } else {
       // 返回真正的业务数据
-      return responseData.data || responseData.result
+      const businessData = transformPaginationResponse(
+        config,
+        responseData.data || responseData.result
+      )
+      return businessData
     }
   } else {
-    return response.data
+    const businessData = transformPaginationResponse(
+      config,
+      responseData
+    )
+    return businessData
   }
 }, err)
 

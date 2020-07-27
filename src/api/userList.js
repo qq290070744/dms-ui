@@ -98,3 +98,37 @@ export function getMysqlLog(data) {
     params: data
   })
 }
+
+/**
+ * 查看pgsql审计日志
+ * @param {object} params
+ * @param {number} params.inst_id - 实例id
+ * @param {number} params.page - 当前页码
+ * @param {number} params.page_size - 页面返回数据量
+ * @param {string} params.username - 用户名
+ * @return {#/definitions/model.ListLogResp} - OK
+ */
+export function apiGetWorkOrderPgsqlPgsqlLog(params) {
+  return axios({
+    url: '/work_order/pgsql/pgsql_log',
+    method: 'get',
+    params,
+  })
+}
+
+/**
+ * 查看mongo审计日志
+ * @param {object} params
+ * @param {number} params.page - 当前页码
+ * @param {number} params.page_size - 页面返回数据量
+ * @param {string} params.username - 用户名
+ * @param {number} params.inst_id - 实例id
+ * @return {#/definitions/model.ListLogResp} - OK
+ */
+export function apiGetWorkOrderMongodbMongoLog(params) {
+  return axios({
+    url: '/work_order/mongodb/mongo_log',
+    method: 'get',
+    params,
+  })
+}

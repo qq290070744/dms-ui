@@ -70,3 +70,16 @@ export function tables (params) {
       }))
   })
 }
+
+/**
+ * 查看MySQL建表语句
+ * @param {#/definitions/model.MysqlShowCreateTable} data - 请求参数
+ * @return {#/definitions/model.BeautyJsonBody} - OK
+ */
+export function apiPostWorkOrderMysqlShowCreateTable(data) {
+  return axios({
+    url: '/work_order/mysql/show_create_table',
+    method: 'post',
+    data,
+  })
+}

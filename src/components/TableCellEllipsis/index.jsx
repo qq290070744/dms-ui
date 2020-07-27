@@ -14,10 +14,13 @@ export default {
   },
   methods: {
     showFull (text) {
-      Modal.info({
+      const modal = Modal.info({
         icon: () => '',
         content: <pre style={{ height: '70vh', overflow: 'auto' }}>{text}</pre>,
-        width: '70vw'
+        width: '70vw',
+        onOk: () => {
+          modal.destroy()
+        }
       })
     }
   },

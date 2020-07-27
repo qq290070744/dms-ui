@@ -94,7 +94,7 @@ export default {
       }
     },
     height: {
-      type: Number,
+      type: [Number, String],
       default: 200
     }
   },
@@ -118,7 +118,7 @@ export default {
     },
     contentStyle () {
       return {
-        height: this.height + 'px'
+        height: /^\d+(\.\d+)?$/.test(this.height + '') ? this.height + 'px' : this.height
       }
     }
   },

@@ -16,7 +16,7 @@
       <a-empty v-if="!currTableInfo" description="选择上面的表可以在此处展示表结构" />
       <template v-else>
         <div class="table-field-info" v-if="COLUMN_FIELDS[type] && api.fields">
-          <p>{{ currTableInfo }}表字段信息</p>
+          <p>{{ currTableInfo }}表字段信息 <table-create-info :params="currTable"></table-create-info></p>
           <table-info
             rowKey="uid"
             :scroll="{x: 1000, y: currTableHeight / 2}"
@@ -43,11 +43,13 @@
 import SplitResize from '@/components/split-resize'
 import { mapGetters } from 'vuex'
 import TableInfo from './table-info'
+import TableCreateInfo from './table-create-info'
 import { COLUMN_INDEXES, COLUMN_FIELDS } from './columns'
 export default {
   components: {
     SplitResize,
-    TableInfo
+    TableInfo,
+    TableCreateInfo
   },
   props: {
     api: {
@@ -80,7 +82,8 @@ export default {
         loadData: this.onLoadData,
         rowKey: 'uid'
       },
-      currTableHeight: 150
+      currTableHeight: 150,
+      currTable: {}
     }
   },
   computed: {
@@ -138,24 +141,22 @@ export default {
         this.$emit('set-db', node.dataRef)
       } else if (level === 2) {
         this.selectedTable = node.dataRef
+        const currTable = {
+          inst_id: this.instId,
+          db_name: node.dataRef.db,
+          tb_name: node.dataRef.name
+        }
+        this.currTable = currTable
         if (this.api.fields) {
           this.api
-            .fields({
-              inst_id: this.instId,
-              db_name: node.dataRef.db,
-              tb_name: node.dataRef.name
-            }).then((result) => {
+            .fields(currTable).then((result) => {
               this.tableFields = result
               this.setFields()
             })
         }
         if (this.api.indexes) {
           this.api
-            .indexes({
-              inst_id: this.instId,
-              db_name: node.dataRef.db,
-              tb_name: node.dataRef.name
-            }).then((result) => {
+            .indexes(currTable).then((result) => {
               this.tableIndexes = result
             })
         }

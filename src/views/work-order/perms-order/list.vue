@@ -163,13 +163,16 @@ export default {
             return result
           }, {})
       )
-      Modal.info({
+      const modal = Modal.info({
         content: () => {
           return <a-directory-tree treeData={tree}/>
         },
         icon: () => '',
-        title: '所有库表申请列表(待优化)',
-        width: '60vw'
+        title: '所有库表申请列表',
+        width: '60vw',
+        onOk: () => {
+          modal.destroy()
+        }
       })
     }
   },

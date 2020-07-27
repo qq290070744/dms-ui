@@ -95,7 +95,9 @@ export default {
       innerSource: null,
       currOrder: null,
       loading: false,
-      filterForm: {},
+      filterForm: {
+        only_mine: true
+      },
       pagination: {},
       columns,
     }

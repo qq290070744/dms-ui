@@ -14,15 +14,17 @@ export function cancelWorkOrder (params) {
 }
 
 export function myReviewWorkOrder (params) {
-  return axios.get('/work_order/my_assigned_order', { params: transform(params) }).then((data) => {
-    return genPage(data, params)
-  })
+  return axios.get(
+    '/work_order/my_assigned_order',
+    { params, xPagination: true }
+  )
 }
 
 export function mySubmitWorkOrder (params) {
-  return axios.get('/work_order/my_order', { params: transform(params) }).then((data) => {
-    return genPage(data, params)
-  })
+  return axios.get(
+    '/work_order/my_order',
+    { params, xPagination: true }
+  )
 }
 
 export function getWorkOrder (workId) {
@@ -111,4 +113,27 @@ export function urge (workId) {
     '/work_order/hurry',
     { params: { work_id: workId } }
   )
+}
+
+/**
+ * 获取我要审核的工单列表
+ * @param {object} params
+ * @param {number} params.type - 订单类型
+ * @param {number} params.status - 状态
+ * @param {string} params.db_name - 数据库名
+ * @param {number} params.username - 用户名
+ * @param {number} params.assigned - 审核人
+ * @param {string} params.start_date - 开始时间
+ * @param {string} params.end_date - 结束时间
+ * @param {number} params.page - page
+ * @param {number} params.page_size - page_size
+ * @return {#/definitions/model.WorkOrders} - OK
+ */
+export function apiGetWorkOrderMyAssignedOrder(params) {
+  return axios({
+    url: '/work_order/my_assigned_order',
+    method: 'get',
+    params,
+    xPagination: true
+  })
 }
