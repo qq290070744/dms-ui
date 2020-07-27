@@ -1,5 +1,14 @@
 <template>
-  <a-modal title="工单详情" @cancel="close" :visible="showDrawer" :width="'80vw'" :footer="null">
+  <a-modal
+    title="工单详情"
+    @cancel="close"
+    :visible="showDrawer"
+    :width="'80vw'"
+    :footer="null"
+    :bodyStyle="{position: 'relative'}">
+    <div class="detail-loading" v-show="loading">
+      <a-spin size="large"></a-spin>
+    </div>
     <div class="ant-descriptions">
       <h3 class="ant-descriptions-title">执行命令</h3>
       <monaco-editor :key="uid" :readOnly="true" :value="sql" :language="language"></monaco-editor>
@@ -25,7 +34,7 @@
       </a-descriptions-item>
       <a-descriptions-item label="状态">
         {{ orderStatus[workOrder.status] }}
-        <a @click="reload" v-if="isExecuting">刷新</a>
+        <refresh @refresh="reload" v-if="isExecuting"></refresh>
       </a-descriptions-item>
       <a-descriptions-item :span="3" v-if="workOrder.rejected" label="驳回信息">
         {{ workOrder.rejected }}
@@ -68,10 +77,12 @@ import MonacoEditor from '@/components/monaco-editor'
 import DdlOsc from './ddl-osc'
 import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder, getWorkOrder } from '@/api/work-order'
 import { DMS_MODIFY_ORDER_STATUS, DMS_ORDER_TYPE, dmsBaseOrderType } from '@/utils/const'
+import Refresh from './refresh'
 export default {
   components: {
     MonacoEditor,
-    DdlOsc
+    DdlOsc,
+    Refresh
   },
   props: {
     dataSource: {
@@ -85,6 +96,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       orderType: DMS_ORDER_TYPE.$label,
       orderStatus: DMS_MODIFY_ORDER_STATUS.$label,
       PENDING_WO: DMS_MODIFY_ORDER_STATUS.CHECK_PENDING,
@@ -159,6 +171,7 @@ export default {
         .then((result) => {
           if (Array.isArray(result)) {
             this.execResult = result
+            this.loading = false
           }
         })
     },
@@ -177,6 +190,7 @@ export default {
         })
     },
     reload () {
+      this.loading = true
       getWorkOrder(this.workOrder.work_id).then((result) => {
         this.innerDataSource = result[0] || result
       })
@@ -200,5 +214,17 @@ export default {
 }
 .ant-btn {
   margin-right: 8px;
+}
+.detail-loading {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin-left: -24px;
+  margin-top: -24px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.5);
 }
 </style>
