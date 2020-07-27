@@ -1,5 +1,4 @@
 import { axios } from '@/utils/request'
-import { genPage, transform } from './utils'
 // 实例列表
 export function getInstance(params) {
   return axios({
@@ -38,15 +37,11 @@ export function applyPerms (params) {
 }
 
 export function myApplyPermsWO (params) {
-  return axios.get('/ticket/v1/schema/self', { params: transform(params) }).then((data) => {
-    return genPage(data, params)
-  })
+  return axios.get('/ticket/v1/schema/self', { params, xPagination: true })
 }
 
 export function myAuditPermsWO (params) {
-  return axios.get('/ticket/v1/schema', { params: transform(params) }).then((data) => {
-    return genPage(data, params)
-  })
+  return axios.get('/ticket/v1/schema', { params, xPagination: true })
 }
 
 export function rejectPermsWO (orderId) {

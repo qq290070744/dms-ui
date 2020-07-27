@@ -1,5 +1,4 @@
 import { axios } from '@/utils/request'
-import { genPage, transform } from './utils'
 
 export function applyExport (params) {
   return axios
@@ -30,18 +29,14 @@ export function myApplyList (params) {
   return axios
     .get(
       '/ticket/v1/data_export/self',
-      { params: transform(params) }
-    ).then((data) => {
-      return genPage(data, params)
-    })
+      { params, xPagination: true }
+    )
 }
 
 export function myReviewList (params) {
   return axios
     .get(
       '/ticket/v1/data_export',
-      { params: transform(params) }
-    ).then((data) => {
-      return genPage(data, params)
-    })
+      { params, xPagination: true }
+    )
 }

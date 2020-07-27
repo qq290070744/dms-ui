@@ -3,19 +3,6 @@ const defaultPagination = {
   pageSize: 10
 }
 
-export function genPage (data, parameter) {
-  data = {
-    ...defaultPagination,
-    ...parameter,
-    ...data
-  }
-
-  !data.records && (data.records = [])
-  !data.total && (data.total = data.records.length)
-  data.total = Number(data.total)
-  return data
-}
-
 export function transformAfter (data, { page: current, page_size: pageSize }) {
   data = {
     ...defaultPagination,

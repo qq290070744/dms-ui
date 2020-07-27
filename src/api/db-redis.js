@@ -1,15 +1,12 @@
 import { axios } from '@/utils/request'
-import { genPage, transform } from './utils'
 
 const Ver = 'v1'
 const Prefix = '/dbmgr/' + Ver + '/redis'
 
 const p = (path) => Prefix + (path || '')
 
-export function page (parameter = {}) {
-  return axios.get(p(), { params: transform(parameter) }).then((data) => {
-    return genPage(data, parameter)
-  })
+export function page (params = {}) {
+  return axios.get(p(), { params, xPagination: true })
 }
 
 export function create (params) {

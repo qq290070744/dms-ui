@@ -1,5 +1,4 @@
 import { axios } from '@/utils/request'
-import { genPage, transform } from './utils'
 
 export function createWorkOrder (params) {
   return axios.post('/work_order/submit_work_order', params)
@@ -104,8 +103,7 @@ export function operateOsc (SQLSHA1, action) {
 }
 
 export function getFinished (params) {
-  return axios.get('/work_order/get_completed_order', { params: transform(params) })
-    .then((data) => genPage(data, params))
+  return axios.get('/work_order/get_completed_order', { params, xPagination: true })
 }
 
 export function urge (workId) {
