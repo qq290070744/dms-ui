@@ -4,6 +4,7 @@
       language="json"
       :height="450"
       ref="editor"
+      value="{}"
       @change="lastCheck.valid = false"
     />
     <template #aside>

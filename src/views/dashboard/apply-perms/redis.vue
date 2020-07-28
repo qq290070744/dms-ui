@@ -34,7 +34,7 @@
 
 <script>
 import { getInstance } from '@/api/perms'
-import { INSTANCE_TYPE } from './utils'
+import { DMS_INSTANCE_TYPE } from '@/utils/const'
 import AuditorSelector from '@/components/AuditorSelector'
 import XResult from './result'
 export default {
@@ -54,7 +54,7 @@ export default {
       instances: [],
       emptyInstace: false,
       loading: false,
-      INSTANCE_TYPE
+      DMS_INSTANCE_TYPE
     }
   },
   created () {
@@ -66,7 +66,7 @@ export default {
   methods: {
     getInstance () {
       getInstance({
-        type: this.INSTANCE_TYPE.REDIS
+        type: this.DMS_INSTANCE_TYPE.Redis
       })
         .then((res) => {
           this.instances = res.map(({ id, name }) => ({ label: name, value: id }))
@@ -77,7 +77,7 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           this.loading = true
-          values.type = this.INSTANCE_TYPE.REDIS
+          values.type = this.DMS_INSTANCE_TYPE.Redis
           this.$asyncEmit('submit', values)
             .then(() => {
               this.loading = false

@@ -17,12 +17,12 @@
 </template>
 
 <script>
-import { statusOptions } from './utils'
+import { DMS_PERMS_ORDER_TYPE } from '@/utils/const'
 import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
-      statusOptions,
+      statusOptions: DMS_PERMS_ORDER_TYPE.$items,
       formData: {
         type: undefined,
         applicant: undefined,

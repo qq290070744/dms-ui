@@ -39,7 +39,7 @@ import { DMS_INSTANCE_TYPE } from '@/utils/const'
 import AuditorSelector from '@/components/AuditorSelector'
 import XResult from './result'
 export default {
-  name: 'ApplyMysqlPerms',
+  name: 'ApplyMongodbPerms',
   components: {
     XResult,
     DbtbSelector,
@@ -63,8 +63,9 @@ export default {
     this.form = this.$form.createForm(this)
   },
   mounted () {
+    console.log(this.DMS_INSTANCE_TYPE.MongoDB)
     getInstance({
-      type: this.DMS_INSTANCE_TYPE.MySQL
+      type: this.DMS_INSTANCE_TYPE.MongoDB
     })
       .then((res) => {
         this.instances = res.map(({ id, name, host }) => ({ label: `${host}(${name})`, value: id }))
@@ -75,7 +76,7 @@ export default {
       this.form.validateFields((err, values) => {
         if (!err) {
           this.loading = true
-          values.type = this.DMS_INSTANCE_TYPE.MySQL
+          values.type = this.DMS_INSTANCE_TYPE.MongoDB
           this.$asyncEmit('submit', values)
             .then(() => {
               this.loading = false

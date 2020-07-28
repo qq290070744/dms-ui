@@ -90,6 +90,6 @@ export const DMS_INSTANCE_TYPE = new Enum([
 
 export const DMS_PERMS_ORDER_TYPE = new Enum([
   { key: 'CHECK_PENDING', label: '待审核', color: '#2db7f5' },
-  { key: 'REJECT', label: '驳回', color: '#ff6666' },
-  { key: 'SUCCESS', label: '通过', color: '#00c024' },
+  { key: 'REJECT', label: '已驳回', color: '#ff6666' },
+  { key: 'SUCCESS', label: '已通过', color: '#00c024' },
 ], 1)
