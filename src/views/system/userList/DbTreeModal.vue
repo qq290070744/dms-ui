@@ -219,12 +219,9 @@ export default {
         this.indeterminate = {}
         return
       }
-      let selectedMap = {}
+      const selectedMap = {}
       this.treeData.map(item => {
-        selectedMap = {
-          ...selectedMap,
-          ...{ [item.key]: item.children && item.children.length > 0 ? true : item }
-        }
+        selectedMap[item.key] = item.children && item.children.length > 0 ? true : item
       })
 
       this.indeterminate = {}
