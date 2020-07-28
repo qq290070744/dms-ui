@@ -5,7 +5,7 @@ import { axios } from '@/utils/request'
  */
 export function getUserList(data) {
   return axios({
-    url: '/auth/users',
+    url: '/upms/v1/users',
     method: 'get',
     params: data
   })
@@ -25,17 +25,18 @@ export function associatedUserRole(data) {
  */
 export function getUserInfo(id) {
   return axios({
-    url: `/auth/users/${id}`,
+    url: `/upms/v1/users/${id}`,
     method: 'get'
   })
 }
 /**
  * 获取数据库实例列表
  */
-export function getDatabase() {
+export function getDatabase(params) {
   return axios({
-    url: '/common/v1/instances',
-    method: 'get'
+    url: '/instance/v1/authorization/instances',
+    method: 'get',
+    params
   })
 }
 /**
@@ -49,6 +50,36 @@ export function associatedUserDatabase(data) {
   })
 }
 /**
+ * 实例id获取库表结构-mysql
+ */
+export function getDatabaseBySql(params) {
+  return axios({
+    url: '/core/mysql/v1/query/schema/tree',
+    method: 'get',
+    params
+  })
+}
+/**
+ * 实例id获取库表结构-mongo
+ */
+export function getDatabaseByMongo(params) {
+  return axios({
+    url: '/core/mongodb/v1/query/schema/tree',
+    method: 'get',
+    params
+  })
+}
+/**
+ * 实例id获取库表结构-pgsql
+ */
+export function getDatabaseByPgsql(params) {
+  return axios({
+    url: '/core/pgsql/v1/query/schema/tree',
+    method: 'get',
+    params
+  })
+}
+/**
  * 实例id获取库表结构
  */
 export function getDatabaseById(data) {
@@ -59,11 +90,11 @@ export function getDatabaseById(data) {
   })
 }
 /**
- * 实例和schema的关联
+ * 授权数据库实例和库表权限
  */
-export function associatedChema(data) {
+export function associatedSchema(data) {
   return axios({
-    url: '/auth/grant/db_schemas',
+    url: '/instance/v1/authorization/schemas',
     method: 'put',
     data
   })
@@ -73,7 +104,7 @@ export function associatedChema(data) {
  */
 export function getAuthByUserId(data) {
   return axios({
-    url: '/auth/grant/user_resource',
+    url: '/instance/v1/authorization/schema/tree',
     method: 'get',
     params: data
   })
@@ -130,5 +161,14 @@ export function apiGetWorkOrderMongodbMongoLog(params) {
     url: '/work_order/mongodb/mongo_log',
     method: 'get',
     params,
+  })
+}
+
+//  获取用户拥有的数据库实例的列表
+export function getUserAuthInstance(data) {
+  return axios({
+    url: '/instance/v1/authorization/instance/self',
+    method: 'get',
+    params: data
   })
 }
