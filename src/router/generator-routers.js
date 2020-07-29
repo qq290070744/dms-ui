@@ -1,7 +1,5 @@
-// eslint-disable-next-line
 import { getMenuUserTree } from '@/api/menu'
-// eslint-disable-next-line
-import { BasicLayout, BlankLayout, PageView, RouteView } from '@/layouts'
+import { BasicLayout, BlankLayout, RouteView } from '@/layouts'
 import { constantMenu } from '@/config/router.config'
 
 // 前端未找到页面路由（固定不用改）
@@ -31,26 +29,25 @@ const genQueryInstanceRoute = (resourceNames = []) => {
     .reduce((routes, resourceName) => {
       const lower = resourceName.toLowerCase()
       const capitalize = lower.slice(0, 1).toUpperCase() + lower.slice(1)
+
       const routeChildren = [
         {
           path: 'instances',
           name: `query${capitalize}Instances`,
-          component: () => import(`@/views/query/${lower}/instance-list`),
+          component: () => import('@/views/query/' + lower + '/instance-list'),
           meta: { title: `${resourceName}列表` }
         },
         {
           path: ':instance_id',
           name: `query${capitalize}Instance`,
-          component: () => import(`@/views/query/${lower}/instance`),
+          component: () => import('@/views/query/' + lower + '/instance'),
           meta: { title: `${resourceName}实例` }
         }
       ]
 
       routes[`query${capitalize}`] = routeChildren
       return routes
-    },
-    {}
-    )
+    }, {})
 }
 
 /**
@@ -101,7 +98,9 @@ export const generator = (routerMap, parent) => {
       name: name,
       // 该路由对应页面的 组件 : (动态加载)
       component:
-        item.name === 'root' ? BasicLayout : parent.name === 'root' ? RouteView : () => import(`@/views${item.path}`),
+        item.name === 'root' ? BasicLayout : parent.name === 'root' ? RouteView : () => import(
+          '@/views' + item.path
+        ),
       meta: {
         title: display_name, icon: extras
       },

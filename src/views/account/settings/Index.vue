@@ -96,7 +96,7 @@ export default {
     },
     updateMenu () {
       const routes = this.$route.matched.concat()
-      this.selectedKeys = [ routes.pop().path ]
+      this.selectedKeys = [routes.pop().path]
     }
   },
   watch: {

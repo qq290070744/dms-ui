@@ -62,7 +62,7 @@ export default {
   computed: {
     ...mapGetters(['resourceMap']),
     instanceName () {
-      const inst = this.resourceMap['redis'] && this.resourceMap['redis'][this.instId]
+      const inst = this.resourceMap.redis && this.resourceMap.redis[this.instId]
       return inst && inst.name
     },
     instId () {

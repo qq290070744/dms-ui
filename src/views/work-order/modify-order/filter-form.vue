@@ -46,7 +46,7 @@ export default {
   methods: {
     parseForm () {
       const { range, ...rest } = this.formData
-      const [ start_date, end_date ] = (range || []).map((m) => m.format('YYYY-MM-DD HH:mm:ss'))
+      const [start_date, end_date] = (range || []).map((m) => m.format('YYYY-MM-DD HH:mm:ss'))
       return {
         start_date,
         end_date,

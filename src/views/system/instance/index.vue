@@ -14,7 +14,7 @@
       <template #serial="text, record, index">
         <span>{{ index + 1 }}</span>
       </template>
-      <template #handler="text, record, index">
+      <template #handler="text, record">
         <x-modal title="编辑" :onOk="d => update(d, record)">
           <template #default="{registerForm}">
             <x-form :registerForm="registerForm" :fields="redisFields" :initialValues="record" />
@@ -145,9 +145,6 @@ export default {
       this.$nextTick(() => {
         this.table.scroll.y = calcTableBodyHeight(this.$refs.table.$el)
       })
-    },
-    registerForm(a) {
-      console.log(a)
     },
     searchForm(form) {
       this.table.pagination.current = 1

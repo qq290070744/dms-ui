@@ -152,7 +152,7 @@ export default {
     }
   },
   render () {
-    const [ label, wrapper ] = this.layoutCol
+    const [label, wrapper] = this.layoutCol
     const {
       labelCol = { span: label },
       wrapperCol = { span: wrapper },

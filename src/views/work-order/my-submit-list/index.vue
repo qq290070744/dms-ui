@@ -44,7 +44,6 @@ export default {
         labelCol: { span: 4 },
         wrapperCol: { span: 16 },
       },
-      record: null,
       showModal: false,
       CHECK_PENDING: DMS_MODIFY_ORDER_STATUS.CHECK_PENDING,
     }
@@ -58,7 +57,6 @@ export default {
       promise.then((result) => {
         record.auditor_id = result.auditor_id
         record.assigned = result.assigned
-        this.record = null
         this.$message.success('更换审核人成功')
       })
       return promise
