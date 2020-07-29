@@ -98,9 +98,11 @@ export const generator = (routerMap, parent) => {
       name: name,
       // 该路由对应页面的 组件 : (动态加载)
       component:
-        item.name === 'root' ? BasicLayout : parent.name === 'root' ? RouteView : () => import(
-          '@/views' + item.path
-        ),
+        item.name === 'root'
+          ? BasicLayout
+          : parent.name === 'root'
+            ? RouteView
+            : () => import('@/views' + item.path),
       meta: {
         title: display_name, icon: extras
       },
