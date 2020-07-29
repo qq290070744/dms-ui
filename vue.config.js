@@ -4,6 +4,17 @@ const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
 
 const parallel = process.env.VUE_APP_PARALLEL_BUILD !== 'off'
+const minimizerParallel = (() => {
+  let p = process.env.VUE_APP_MINIMIZER_PARALLEL
+  if (/^\d+$/.test(p)) {
+    p = Number(p)
+  } else if (p === 'false') {
+    p = false
+  } else {
+    p = true
+  }
+  return p
+})()
 
 function resolve (dir) {
   return path.join(__dirname, dir)
@@ -69,6 +80,10 @@ const vueConfig = {
     if (isProd) {
       config.plugin('html').tap(args => {
         args[0].cdn = assetsCDN
+        return args
+      })
+      config.optimization.minimizer('terser').tap(args => {
+        args[0].parallel = minimizerParallel
         return args
       })
     }
