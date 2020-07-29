@@ -11598,9 +11598,9 @@ yorkie@^2.0.0:
     normalize-path "^1.0.0"
     strip-indent "^2.0.0"
 
-ys-unified-auth@1.0.0:
-  version "1.0.0"
-  resolved "http://nexus.devops.local.perfectdiary.com/repository/npm-all/ys-unified-auth/-/ys-unified-auth-1.0.0.tgz#fdca638b564412197c264998edd6bbb9a8a7b267"
-  integrity sha512-4lcDdI5BvDuEK25u55arcuOqEWa6hKc9kz3eeth52aDyugFknt42gj2c3tx8JfP3f/tPTeh8RqkrHwB24n5fTw==
+ys-unified-auth@^1.0.1:
+  version "1.0.1"
+  resolved "http://nexus.devops.local.perfectdiary.com/repository/npm-all/ys-unified-auth/-/ys-unified-auth-1.0.1.tgz#c646e9f3cedf0a690750a298d659f51aa78feaa7"
+  integrity sha512-cmb964kE20RenHRABhKbmI5ss5v/NxjQ+TPwAwb/+dGjidiqfsdNnGanh01RlJ52lBLZVzLMOAurSBCK1tpSKw==
   dependencies:
     url-parameter-append "^1.0.2"

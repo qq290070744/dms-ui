@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "install:internal": "yarn --registry=http://nexus.corp.yatsenglobal.com/repository/npm-all/",
+    "install:internal2": "yarn --registry=http://nexus.devops.local.perfectdiary.com/repository/npm-all/",
     "serve": "vue-cli-service serve",
     "serve:mock": "vue-cli-service serve --mode mock",
     "build:test": "vue-cli-service build --mode test",
@@ -44,7 +45,7 @@
     "vue-svg-component-runtime": "^1.0.1",
     "vue-virtual-scroll-list": "^2.3.0",
     "vuex": "^3.1.1",
-    "ys-unified-auth": "1.0.0"
+    "ys-unified-auth": "^1.0.1"
   },
   "devDependencies": {
     "@ant-design/colors": "^3.2.1",
