@@ -16,6 +16,16 @@ const minimizerParallel = (() => {
   return p
 })()
 
+// 打印环境变量
+console.log(
+  Object.keys(process.env)
+    .filter(key => key.startsWith('VUE_APP_'))
+    .reduce((map, key) => ({
+      ...map,
+      [key]: process.env[key]
+    }), {})
+)
+
 function resolve (dir) {
   return path.join(__dirname, dir)
 }
