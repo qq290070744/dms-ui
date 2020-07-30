@@ -185,7 +185,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-.ys-query-panel {
+.ys-query-panel.split-resize {
   // relative to a-tabs
   position: absolute;
   top: 50px;
