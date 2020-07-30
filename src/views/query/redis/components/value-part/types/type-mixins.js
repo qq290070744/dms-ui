@@ -1,8 +1,8 @@
-import { defaultRedisObject } from '../../utils'
+import { defaultRedisObject } from '../../../utils'
 import EditableCell from './editable-cell'
 import TypeContent from './type-content'
 import WorkOrderAction from '../../work-order-action'
-import EventBus, { REDIS_KEY_CREATED } from '../../event-bus'
+import EventBus, { REDIS_KEY_CREATED } from '../../../event-bus'
 import { DMS_ORDER_TYPE } from '@/utils/const'
 import { genActions } from './gen-cmd'
 

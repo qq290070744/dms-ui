@@ -20,7 +20,7 @@
 import EditableCell from './editable-cell'
 import TypeContent from './type-content'
 import WorkOrderAction from '../../work-order-action'
-import { defaultRedisObject } from '../../utils'
+import { defaultRedisObject } from '../../../utils'
 import { genActions } from './gen-cmd'
 import { DMS_ORDER_TYPE } from '@/utils/const'
 export default {

@@ -4,8 +4,8 @@ import ZsetType from './zset-type'
 import SetType from './set-type'
 import ListType from './list-type'
 import BaseInfo from '../base-info'
-import { defaultRedisObject } from '../../utils'
-import EventBus, { REDIS_KEY_CREATED } from '../../event-bus'
+import { defaultRedisObject } from '../../../utils'
+import EventBus, { REDIS_KEY_CREATED } from '../../../event-bus'
 export default {
   components: {
     StringType,

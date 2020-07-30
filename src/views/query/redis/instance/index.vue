@@ -9,8 +9,8 @@
 
 <script>
 import SplitWindow from '@/components/split-resize'
-import RedisKeyList from './key-list'
-import RedisValuePart from './value-part'
+import RedisKeyList from '../components/key-list'
+import RedisValuePart from '../components/value-part'
 export default {
   components: {
     SplitWindow,

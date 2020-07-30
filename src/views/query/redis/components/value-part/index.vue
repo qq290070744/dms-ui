@@ -7,7 +7,7 @@
 
 <script>
 import TypeStrategy from './types/type-strategy'
-import { defaultRedisObject } from '../utils'
+import { defaultRedisObject } from '../../utils'
 export default {
   components: {
     TypeStrategy

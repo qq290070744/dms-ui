@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import InstanceTemplate from '../components/instances'
+import InstanceTemplate from '../../components/instances'
 export default {
   components: {
     InstanceTemplate

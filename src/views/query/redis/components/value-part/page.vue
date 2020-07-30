@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { defaultRedisObject } from '../utils'
+import { defaultRedisObject } from '../../utils'
 export default {
   props: {
     redisObject: {

@@ -2,15 +2,14 @@
   <split-resize class="container" :asideWidth="450">
     <template #aside>
       <database-tree
-        type="PgSQL"
+        type="MongoDB"
         @set-db="setDB"
         @init-db="initDB"
         @set-fields="(f) => currFields = f"
         :api="dbApi"
-        :fields="fields"
       />
     </template>
-    <multi-pane v-if="currDatabase" :fixedPanes="panes">
+    <multi-pane v-if="currDatabase">
       <span slot="title">{{ currDatabase && currDatabase.name }}</span>
       <template #default="scopedProps">
         <query-area
@@ -29,12 +28,11 @@
 </template>
 
 <script>
-import { dbs, tables, fields, indexes } from '@/api/pgsql-query'
-import QueryArea from './query-area/panel'
-import MultiPane from '../components/multi-pane'
-import DatabaseTree from '../components/database'
+import { dbs, tables, indexes } from '@/api/mongodb-query'
+import QueryArea from '../components/panel'
+import MultiPane from '../../components/multi-pane'
+import DatabaseTree from '../../components/database'
 import SplitResize from '@/components/split-resize'
-import { DMS_INSTANCE_TYPE } from '@/utils/const'
 export default {
   components: {
     SplitResize,
@@ -51,24 +49,12 @@ export default {
   },
   data () {
     return {
-      panes: [
-        { key: DMS_INSTANCE_TYPE.PgSQL, title: '工单窗口', fixed: true },
-      ],
       currDatabase: null,
       currFields: [],
       databases: [],
       dbApi: {
-        dbs, tables, fields, indexes
+        dbs, tables, indexes
       },
-      fields: [
-        { title: 'Field', dataIndex: 'field', width: 60 },
-        { title: 'Type', dataIndex: 'type', width: 60 },
-        { title: 'Attnum', dataIndex: 'attnum', width: 60 },
-        { title: 'Length', dataIndex: 'length', width: 60 },
-        { title: 'LengthVar', dataIndex: 'lengthvar', width: 60 },
-        { title: 'NotNull', dataIndex: 'notnull', width: 60 },
-        { title: 'Comment', dataIndex: 'comment', width: 300 },
-      ]
     }
   },
   computed: {

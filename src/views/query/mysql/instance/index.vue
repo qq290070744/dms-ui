@@ -29,13 +29,13 @@
 
 <script>
 import { dbs, tables, fields, indexes } from '@/api/mysql-query'
-import QueryArea from './query-area/panel'
-import QueryTips from './query-area/tips'
-import MultiPane from '../components/multi-pane'
-import DatabaseTree from '../components/database'
+import QueryArea from '../components/panel'
+import QueryTips from '../components/tips'
+import MultiPane from '../../components/multi-pane'
+import DatabaseTree from '../../components/database'
 import SplitResize from '@/components/split-resize'
 import { DMS_ORDER_TYPE } from '@/utils/const'
-import { genSuggestions } from '../components/utils'
+import { genSuggestions } from '../../components/utils'
 export default {
   components: {
     SplitResize,

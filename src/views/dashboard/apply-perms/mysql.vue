@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import DbtbSelector from './dbtb-selector'
+import DbtbSelector from './components/dbtb-selector'
 import { getInstance } from '@/api/perms'
 import { DMS_INSTANCE_TYPE } from '@/utils/const'
 import AuditorSelector from '@/components/AuditorSelector'

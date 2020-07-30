@@ -31,7 +31,7 @@
 <script>
 import RedisContentKeyList from './content-list'
 import * as redisApi from '@/api/redis-query'
-import { defaultRedisObject } from '../utils'
+import { defaultRedisObject } from '../../utils'
 import { DMS_ORDER_TYPE } from '@/utils/const'
 import { mapGetters } from 'vuex'
 const genDBList = () => {

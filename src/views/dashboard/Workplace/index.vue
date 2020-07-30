@@ -8,15 +8,6 @@
     </div>
     <div slot="extra">
       <a-row class="more-info">
-        <!-- <a-col :span="8">
-          <head-info title="项目" content="56" :center="false" :bordered="false"/>
-        </a-col>
-        <a-col :span="8">
-          <head-info title="团队排名" content="8/24" :center="false" :bordered="false"/>
-        </a-col>
-        <a-col :span="8">
-          <head-info title="项目数" content="2,223" :center="false" />
-        </a-col> -->
       </a-row>
     </div>
 

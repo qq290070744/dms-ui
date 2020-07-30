@@ -1,6 +1,7 @@
 import { getMenuUserTree } from '@/api/menu'
 import { BasicLayout, BlankLayout, RouteView } from '@/layouts'
 import { constantMenu } from '@/config/router.config'
+import { dynamicRouterMap } from '@/config/dynamic-router.config'
 
 // 前端未找到页面路由（固定不用改）
 const notFoundRouter = {
@@ -34,13 +35,13 @@ const genQueryInstanceRoute = (resourceNames = []) => {
         {
           path: 'instances',
           name: `query${capitalize}Instances`,
-          component: () => import('@/views/query/' + lower + '/instance-list'),
+          component: () => dynamicRouterMap['/query/' + lower + '/instance-list'],
           meta: { title: `${resourceName}列表` }
         },
         {
           path: ':instance_id',
           name: `query${capitalize}Instance`,
-          component: () => import('@/views/query/' + lower + '/instance'),
+          component: () => dynamicRouterMap['/query/' + lower + '/instance'],
           meta: { title: `${resourceName}实例` }
         }
       ]
@@ -102,7 +103,9 @@ export const generator = (routerMap, parent) => {
           ? BasicLayout
           : parent.name === 'root'
             ? RouteView
-            : () => import('@/views' + item.path),
+            : () => dynamicRouterMap[item.path],
+      // ? dynamicRouterMap[item.path]
+      // : () => import('@/views' + item.path),
       meta: {
         title: display_name, icon: extras
       },

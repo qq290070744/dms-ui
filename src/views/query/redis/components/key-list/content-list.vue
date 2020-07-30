@@ -34,7 +34,7 @@
 <script>
 import { waitRefShow, calcTableBodyHeight } from '@/utils/util'
 import WorkOrderAction from '../work-order-action'
-import EventBus, { REDIS_KEY_CREATED } from '../event-bus'
+import EventBus, { REDIS_KEY_CREATED } from '../../event-bus'
 export default {
   components: {
     WorkOrderAction
