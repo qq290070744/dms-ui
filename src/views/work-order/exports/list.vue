@@ -110,7 +110,11 @@ export default {
         dataIndex: 'download_url',
         width: 120,
         customRender: (v) => {
-          return v ? <a href={v}>下载</a> : '无'
+          return v === '-'
+            ? '已过期'
+            : v
+              ? <a href={v}>下载</a>
+              : '无'
         }
       },
       {
