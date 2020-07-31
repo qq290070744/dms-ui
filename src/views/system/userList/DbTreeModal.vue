@@ -197,7 +197,7 @@ export default {
       return schemas.reduce((list, res) => {
         const { db, tables } = res
 
-        const children = tables.map(tb => ({
+        const children = (tables || []).map(tb => ({
           ...tb,
           db_name: db.name,
           parent: db
@@ -237,7 +237,7 @@ export default {
         this.instanceList = res
       })
       //  redis的直接获取用户的授权
-      if (type === '2') {
+      if (type === DMS_INSTANCE_TYPE.Redis) {
         getUserAuthInstance({ type, user_id: this.userId }).then(res => {
           this.userAuthRedis = res
         })
