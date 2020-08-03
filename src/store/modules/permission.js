@@ -64,6 +64,7 @@ const permission = {
   },
   actions: {
     GenerateRoutes ({ commit }, data) {
+      console.log(123123)
       return new Promise(resolve => {
         /**
          * 如果需要根据角色权限来控制路由，请在 @/config/defaultSettings 中设置

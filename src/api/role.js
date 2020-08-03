@@ -5,7 +5,7 @@ import { axios } from '@/utils/request'
  */
 export function getRoles(data) {
   return axios({
-    url: '/auth/roles',
+    url: '/upms/v1/roles',
     method: 'get',
     params: data
   })
@@ -35,7 +35,7 @@ export function editRole(id, data) {
  */
 export function deleteRole(id, data) {
   return axios({
-    url: `/auth/roles/${id}`,
+    url: `/upms/v1/roles/${id}`,
     method: 'delete',
     data
   })

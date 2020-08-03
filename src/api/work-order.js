@@ -1,5 +1,4 @@
 import { axios } from '@/utils/request'
-import { genPage, transform } from './utils'
 
 export function createWorkOrder (params) {
   return axios.post('/work_order/submit_work_order', params)
@@ -14,15 +13,17 @@ export function cancelWorkOrder (params) {
 }
 
 export function myReviewWorkOrder (params) {
-  return axios.get('/work_order/my_assigned_order', { params: transform(params) }).then((data) => {
-    return genPage(data, params)
-  })
+  return axios.get(
+    '/work_order/my_assigned_order',
+    { params, xPagination: true }
+  )
 }
 
 export function mySubmitWorkOrder (params) {
-  return axios.get('/work_order/my_order', { params: transform(params) }).then((data) => {
-    return genPage(data, params)
-  })
+  return axios.get(
+    '/work_order/my_order',
+    { params, xPagination: true }
+  )
 }
 
 export function getWorkOrder (workId) {
@@ -72,11 +73,11 @@ const checkedResultColumns = [
   { title: '阶段状态', dataIndex: 'stage_status' },
 ]
 
-export function checkSql (params) {
+export function checkSql (params, type = 'mysql') {
   return new Promise((resolve, reject) => {
     axios({
       method: 'post',
-      url: '/work_order/mysql/check_sql',
+      url: `/work_order/${type}/check_sql`,
       data: params,
       customErrorHandler ({ data }) {
         return data
@@ -102,8 +103,7 @@ export function operateOsc (SQLSHA1, action) {
 }
 
 export function getFinished (params) {
-  return axios.get('/work_order/get_completed_order', { params: transform(params) })
-    .then((data) => genPage(data, params))
+  return axios.get('/work_order/get_completed_order', { params, xPagination: true })
 }
 
 export function urge (workId) {
@@ -111,4 +111,27 @@ export function urge (workId) {
     '/work_order/hurry',
     { params: { work_id: workId } }
   )
+}
+
+/**
+ * 获取我要审核的工单列表
+ * @param {object} params
+ * @param {number} params.type - 订单类型
+ * @param {number} params.status - 状态
+ * @param {string} params.db_name - 数据库名
+ * @param {number} params.username - 用户名
+ * @param {number} params.assigned - 审核人
+ * @param {string} params.start_date - 开始时间
+ * @param {string} params.end_date - 结束时间
+ * @param {number} params.page - page
+ * @param {number} params.page_size - page_size
+ * @return {#/definitions/model.WorkOrders} - OK
+ */
+export function apiGetWorkOrderMyAssignedOrder(params) {
+  return axios({
+    url: '/work_order/my_assigned_order',
+    method: 'get',
+    params,
+    xPagination: true
+  })
 }

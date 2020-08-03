@@ -23,12 +23,12 @@ import { DMS_INSTANCE_TYPE, DMS_PERMS_ORDER_TYPE } from '@/utils/const'
 
 const defaultFilter = () => {
   return [
-    ['type', '类型', {
-      component: 'a-select',
-      props: {
-        options: DMS_INSTANCE_TYPE.$items
-      }
-    }],
+    // ['type', '类型', {
+    //   component: 'a-select',
+    //   props: {
+    //     options: DMS_INSTANCE_TYPE.$items
+    //   }
+    // }],
     ['auditor', '审核人', {
       component: 'user-complete'
     }],
@@ -110,7 +110,11 @@ export default {
         dataIndex: 'download_url',
         width: 120,
         customRender: (v) => {
-          return v ? <a href={v}>下载</a> : '无'
+          return v === '-'
+            ? '已过期'
+            : v
+              ? <a href={v}>下载</a>
+              : '无'
         }
       },
       {

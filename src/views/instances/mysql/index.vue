@@ -13,7 +13,7 @@
       <template #serial="text, record, index">
         <span>{{ index + 1 }}</span>
       </template>
-      <template #handler="text, record, index">
+      <template #handler="text, record">
         <x-modal title="编辑" :onOk="(d) => update(d, record)">
           <template #default="{registerForm}">
             <x-form

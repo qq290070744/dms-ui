@@ -23,12 +23,16 @@ export default {
     button: {
       type: String,
       default: ''
+    },
+    size: {
+      type: String,
+      default: 'default'
     }
   },
   data () {
     return {
       formVm: null,
-      invisible: new Set()
+      invisible: {}
     }
   },
   created () {
@@ -36,6 +40,18 @@ export default {
     if (typeof this.registerForm === 'function') {
       this.registerForm(this.formVm)
     }
+  },
+  mounted () {
+    this.fields.map(field => {
+      // eslint-disable-next-line no-unused-vars
+      const [prop, label, settings = {}] = field
+      const isInit = true
+      if (settings.onChange) {
+        const { show, hide } = this
+        settings.onChange(this.initialValues[prop], this.formVm, { show, hide, isInit })
+        // this.$forceUpdate()
+      }
+    })
   },
   methods: {
     onSubmit () {
@@ -55,12 +71,12 @@ export default {
     },
     hide (keys = []) {
       for (const key of keys) {
-        this.invisible.add(key)
+        this.$set(this.invisible, key, true)
       }
     },
     show (keys = []) {
       for (const key of keys) {
-        this.invisible.delete(key)
+        this.$set(this.invisible, key, false)
       }
     },
     rButton () {
@@ -73,10 +89,10 @@ export default {
         cancelText = defaultCancelText
       ] = this.button ? this.button.split('|') : []
       return <a-form-item>
-        <a-button type="primary" onClick={this.onSubmit}>{submitText}</a-button>
+        <a-button size={this.size} type="primary" onClick={this.onSubmit}>{submitText}</a-button>
         {
           (this.$listeners.cancel || cancelText) &&
-          <a-button onClick={this.onCancel}>{cancelText}</a-button>
+          <a-button size={this.size} onClick={this.onCancel}>{cancelText}</a-button>
         }
       </a-form-item>
     },
@@ -85,7 +101,7 @@ export default {
       const items = this.fields
         .map((field) => {
           const [prop, label, settings = {}] = field
-          if (this.invisible.has(prop)) {
+          if (this.invisible[prop]) {
             return
           }
           const {
@@ -116,11 +132,16 @@ export default {
               }
             }
           }
+          if (!props.size) {
+            props.size = this.size
+          }
           return <a-form-item label={label}>
             {
-              getFieldDecorator(prop, resetSettings)(
-                <component {...{ props, attrs, on }}></component>
-              )
+              prop
+                ? getFieldDecorator(prop, resetSettings)(
+                  <component {...{ props, attrs, on }}></component>
+                )
+                : <component {...{ props, attrs, on }}></component>
             }
           </a-form-item>
         })
@@ -131,7 +152,7 @@ export default {
     }
   },
   render () {
-    const [ label, wrapper ] = this.layoutCol
+    const [label, wrapper] = this.layoutCol
     const {
       labelCol = { span: label },
       wrapperCol = { span: wrapper },

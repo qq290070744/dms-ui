@@ -1,6 +1,7 @@
 <script>
 import { Modal } from 'ant-design-vue'
-import { types, statusMap } from './utils'
+// import { statusMap } from './utils'
+import { DMS_INSTANCE_TYPE, DMS_PERMS_ORDER_TYPE } from '@/utils/const'
 import FilterForm from './filter'
 export default {
   components: {
@@ -40,7 +41,7 @@ export default {
         dataIndex: 'type',
         width: 100,
         customRender: (v) => {
-          return <span>{types[v]}</span>
+          return <span>{DMS_INSTANCE_TYPE.$label[v]}</span>
         }
       },
       {
@@ -73,8 +74,8 @@ export default {
         dataIndex: 'status',
         width: 80,
         customRender: (v) => {
-          const [text, color] = statusMap[v - 1] || []
-          return <a-tag color={color}>{text}</a-tag>
+          const { label, color } = DMS_PERMS_ORDER_TYPE.$map[v] || {}
+          return <a-tag color={color}>{label}</a-tag>
         }
       },
       {
@@ -163,13 +164,16 @@ export default {
             return result
           }, {})
       )
-      Modal.info({
+      const modal = Modal.info({
         content: () => {
           return <a-directory-tree treeData={tree}/>
         },
         icon: () => '',
-        title: '所有库表申请列表(待优化)',
-        width: '60vw'
+        title: '所有库表申请列表',
+        width: '60vw',
+        onOk: () => {
+          modal.destroy()
+        }
       })
     }
   },

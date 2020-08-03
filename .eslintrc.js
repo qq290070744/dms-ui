@@ -3,7 +3,7 @@ module.exports = {
   env: {
     node: true
   },
-  'extends': [
+  extends: [
     'plugin:vue/strongly-recommended',
     '@vue/standard'
   ],
@@ -15,10 +15,10 @@ module.exports = {
     'vue/max-attributes-per-line': [
       2,
       {
-        'singleline': 5,
-        'multiline': {
-          'max': 1,
-          'allowFirstLine': false
+        singleline: 5,
+        multiline: {
+          max: 1,
+          allowFirstLine: false
         }
       }
     ],
@@ -33,31 +33,31 @@ module.exports = {
     'vue/html-closing-bracket-newline': 0,
     'vue/no-parsing-error': 0,
     'no-tabs': 0,
-    'quotes': [
+    quotes: [
       2,
       'single',
       {
-        'avoidEscape': true,
-        'allowTemplateLiterals': true
+        avoidEscape: true,
+        allowTemplateLiterals: true
       }
     ],
-    'semi': [
+    semi: [
       2,
       'never',
       {
-        'beforeStatementContinuationChars': 'never'
+        beforeStatementContinuationChars: 'never'
       }
     ],
     'no-delete-var': 2,
     'prefer-const': [
       2,
       {
-        'ignoreReadBeforeAssign': false
+        ignoreReadBeforeAssign: false
       }
     ],
     'comma-dangle': ['error', 'only-multiline'],
     'space-before-function-paren': 0,
-    'camelcase': 0
+    camelcase: 0
   },
   parserOptions: {
     parser: 'babel-eslint'

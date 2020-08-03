@@ -21,7 +21,8 @@ export default {
     return {
       showDialog: false,
       rFlag: 0,
-      form: null
+      form: null,
+      loading: false
     }
   },
   methods: {
@@ -41,14 +42,20 @@ export default {
         if (err) {
           return
         }
+        this.loading = true
         const promise = this.onOk(values)
         if (promise instanceof Promise) {
           promise.then(() => {
             if (!this.silent) {
               this.$message.success(`${this.title}成功`)
             }
+            this.loading = false
             this.handleCancel()
+          }, () => {
+            this.loading = false
           })
+        } else {
+          this.loading = false
         }
       })
     },
@@ -60,14 +67,11 @@ export default {
         ...omit(this.$props, ['silent', 'button']),
         visible: this.showDialog
       }
-      const on = {
-        ok: this.handleOk,
-        cancel: this.handleCancel
-      }
+
       return (
         <a-modal
           props={modalProps}
-          on={on}
+          onCancel={this.handleCancel}
         >
           {
             this.$scopedSlots
@@ -77,6 +81,14 @@ export default {
                 registerForm: this.registerForm
               })
           }
+          <template slot="footer">
+            <a-button key="back" onClick={this.handleCancel}>
+              取消
+            </a-button>
+            <a-button key="submit" type="primary" loading={this.loading} onClick={this.handleOk}>
+              提交
+            </a-button>
+          </template>
         </a-modal>
       )
     }

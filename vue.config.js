@@ -3,7 +3,23 @@ const webpack = require('webpack')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
 
-const parallel = process.env.VUE_APP_PARALLEL_BUILD !== 'off'
+const parallelValue = (() => {
+  const p = process.env.VUE_APP_PARALLEL_BUILD
+  if (!p) {
+    return 2; // 默认两个cpu，启动两个进程
+  }
+  return /^\d+$/.test(p) ? Number(p) : p !== 'false';
+})();
+
+// 打印环境变量
+console.log(
+  Object.keys(process.env)
+    .filter(key => key.startsWith('VUE_APP_'))
+    .reduce((map, key) => ({
+      ...map,
+      [key]: process.env[key]
+    }), {})
+)
 
 function resolve (dir) {
   return path.join(__dirname, dir)
@@ -31,7 +47,7 @@ const assetsCDN = {
 
 // vue.config.js
 const vueConfig = {
-  parallel,
+  parallel: parallelValue,
 
   configureWebpack: {
     // webpack plugins
@@ -69,6 +85,10 @@ const vueConfig = {
     if (isProd) {
       config.plugin('html').tap(args => {
         args[0].cdn = assetsCDN
+        return args
+      })
+      config.optimization.minimizer('terser').tap(args => {
+        args[0].parallel = parallelValue
         return args
       })
     }

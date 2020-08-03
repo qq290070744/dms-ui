@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { myReviewWorkOrder } from '@/api/work-order'
+import { apiGetWorkOrderMyAssignedOrder } from '@/api/work-order'
 import WorkOrderList from '../modify-order/list'
 
 export default {
@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     dataSource (params) {
-      return myReviewWorkOrder(params)
+      return apiGetWorkOrderMyAssignedOrder(params)
     }
   }
 }

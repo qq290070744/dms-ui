@@ -29,7 +29,7 @@ export function myApplyList (params) {
   return axios
     .get(
       '/ticket/v1/data_export/self',
-      { params }
+      { params, xPagination: true }
     )
 }
 
@@ -37,6 +37,6 @@ export function myReviewList (params) {
   return axios
     .get(
       '/ticket/v1/data_export',
-      { params }
+      { params, xPagination: true }
     )
 }

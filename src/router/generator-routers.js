@@ -1,8 +1,7 @@
-// eslint-disable-next-line
 import { getMenuUserTree } from '@/api/menu'
-// eslint-disable-next-line
-import { BasicLayout, BlankLayout, PageView, RouteView } from '@/layouts'
+import { BasicLayout, BlankLayout, RouteView } from '@/layouts'
 import { constantMenu } from '@/config/router.config'
+import { dynamicRouterMap } from '@/config/dynamic-router.config'
 
 // 前端未找到页面路由（固定不用改）
 const notFoundRouter = {
@@ -21,42 +20,41 @@ const redirectRouter = {
   query: '/query/redis', //  查询
   queryRedis: 'redis/instances', //  查询
   queryMysql: 'mysql/instances', //  查询
+  queryPgsql: 'pgsql/instances', //  查询
+  queryMongodb: 'mongodb/instances', //  查询
   dashboard: '/dashboard/Workplace' // 仪表盘
+}
+
+const genQueryInstanceRoute = (resourceNames = []) => {
+  return resourceNames
+    .reduce((routes, resourceName) => {
+      const lower = resourceName.toLowerCase()
+      const capitalize = lower.slice(0, 1).toUpperCase() + lower.slice(1)
+
+      const routeChildren = [
+        {
+          path: 'instances',
+          name: `query${capitalize}Instances`,
+          component: () => dynamicRouterMap['/query/' + lower + '/instance-list'],
+          meta: { title: `${resourceName}列表` }
+        },
+        {
+          path: ':instance_id',
+          name: `query${capitalize}Instance`,
+          component: () => dynamicRouterMap['/query/' + lower + '/instance'],
+          meta: { title: `${resourceName}实例` }
+        }
+      ]
+
+      routes[`query${capitalize}`] = routeChildren
+      return routes
+    }, {})
 }
 
 /**
  * 路由名匹配children
  */
-const mapChildrenByName = {
-  queryRedis: [
-    {
-      path: 'instances',
-      name: 'queryRedisInstances',
-      component: () => import('@/views/query/redis/instance-list'),
-      meta: { title: 'redis查询', keepAlive: true }
-    },
-    {
-      path: ':instance_id',
-      name: 'queryRedisInstance',
-      component: () => import('@/views/query/redis/instance'),
-      meta: { title: 'redis查询', keepAlive: true }
-    }
-  ],
-  queryMysql: [
-    {
-      path: 'instances',
-      name: 'queryMysqlInstances',
-      component: () => import('@/views/query/mysql/instance-list'),
-      meta: { title: 'mysql查询' }
-    },
-    {
-      path: ':instance_id',
-      name: 'queryMysqlInstance',
-      component: () => import('@/views/query/mysql/instance'),
-      meta: { title: 'mysql查询' }
-    }
-  ]
-}
+const mapChildrenByName = genQueryInstanceRoute(['Redis', 'MySQL', 'PgSQL', 'MongoDB'])
 
 /**
  * 动态生成菜单
@@ -101,7 +99,13 @@ export const generator = (routerMap, parent) => {
       name: name,
       // 该路由对应页面的 组件 : (动态加载)
       component:
-        item.name === 'root' ? BasicLayout : parent.name === 'root' ? RouteView : () => import(`@/views${item.path}`),
+        item.name === 'root'
+          ? BasicLayout
+          : parent.name === 'root'
+            ? RouteView
+            : () => dynamicRouterMap[item.path],
+      // ? dynamicRouterMap[item.path]
+      // : () => import('@/views' + item.path),
       meta: {
         title: display_name, icon: extras
       },

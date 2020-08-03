@@ -1,9 +1,8 @@
 import { axios } from '@/utils/request'
-import { genPage, transform } from './utils'
 // 实例列表
 export function getInstance(params) {
   return axios({
-    url: '/common/v1/instances/self',
+    url: '/ticket/v1/perms/instances',
     method: 'get',
     params
   })
@@ -15,8 +14,8 @@ export function getDatabaseSchema (instId) {
     url: '/common/v1/instances/schema_tree',
     method: 'get',
     params: { inst_id: instId }
-  }).then(({ Schemas }) => {
-    return Schemas.reduce((list, res) => {
+  }).then(({ schemas }) => {
+    return schemas.reduce((list, res) => {
       const { db, tables } = res
 
       const children = tables.map((tb) => ({
@@ -38,15 +37,11 @@ export function applyPerms (params) {
 }
 
 export function myApplyPermsWO (params) {
-  return axios.get('/ticket/v1/schema/self', { params: transform(params) }).then((data) => {
-    return genPage(data, params)
-  })
+  return axios.get('/ticket/v1/schema/self', { params, xPagination: true })
 }
 
 export function myAuditPermsWO (params) {
-  return axios.get('/ticket/v1/schema', { params: transform(params) }).then((data) => {
-    return genPage(data, params)
-  })
+  return axios.get('/ticket/v1/schema', { params, xPagination: true })
 }
 
 export function rejectPermsWO (orderId) {

@@ -21,25 +21,24 @@
       >
         <template slot="operation" slot-scope="text, record">
           <a-button type="primary" @click="handleAssociated(record)" size="small">
-            关联角色
+            角色切换
           </a-button>
-          <a-button type="primary" @click="handleTransfer(record)" size="small">
+          <!-- <a-button type="primary" @click="handleTransfer(record)" size="small">
             实例授权
-          </a-button>
+          </a-button> -->
           <a-button type="primary" @click="handleDatabase(record)" size="small">
-            库表授权
+            实例分配
           </a-button>
         </template>
       </a-table>
     </div>
     <AssociatedRole ref="associatedModal" />
-    <TransferModal ref="transferModal" :databaseSource="databaseSource" />
-    <DbTreeModal ref="dbTreeModal" :databaseSource="databaseSource" />
+    <DbTreeModal ref="dbTreeModal" />
   </div>
 </template>
 
 <script>
-import { getUserList, getDatabase } from '@/api/userList'
+import { getUserList } from '@/api/userList'
 import moment from 'moment'
 import AssociatedRole from './AssociatedRole'
 import TransferModal from './TransferModal'
@@ -63,8 +62,8 @@ const columns = [
   },
   {
     title: '部门',
-    key: 'org_name',
-    dataIndex: 'org_name'
+    key: 'org_display_name',
+    dataIndex: 'org_display_name'
   },
   {
     title: '更新时间',
@@ -95,7 +94,6 @@ export default {
         pageSize: 10
       },
       loading: false,
-      databaseSource: [],
       myForm: {}
     }
   },
@@ -110,12 +108,11 @@ export default {
       getUserList({
         page: this.pagination.current,
         page_size: this.pagination.pageSize,
-        condition: 'name',
         q: this.myForm.name
       }).then(res => {
         const pagination = { ...this.pagination }
         pagination.total = res.total
-        this.userList = res.Records
+        this.userList = res.records
         this.pagination = pagination
         this.loading = false
       })
@@ -135,18 +132,6 @@ export default {
     handleDatabase(record) {
       this.$refs.dbTreeModal.handleOpenModal(record)
     },
-    fetchDatabase() {
-      getDatabase().then(res => {
-        const list = (res || []).map(item => {
-          return {
-            ...item,
-            key: item.id.toString(),
-            title: item.name
-          }
-        })
-        this.databaseSource = list
-      })
-    },
     handleSearch() {
       this.pagination.current = 1
       this.fetchData()
@@ -154,7 +139,6 @@ export default {
   },
   created() {
     this.fetchData()
-    this.fetchDatabase()
   }
 }
 </script>
