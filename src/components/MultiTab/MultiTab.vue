@@ -8,7 +8,8 @@ export default {
       fullPathList: [],
       pages: [],
       activeKey: '',
-      newTabIndex: 0
+      newTabIndex: 0,
+      extraTitle: {}
     }
   },
   created () {
@@ -25,13 +26,14 @@ export default {
       }
       this.closeThat(val)
     }).$on('rename', ({ key, name }) => {
-      console.log('rename', key, name)
       try {
         const item = this.pages.find(item => item.path === key)
         item.meta.customTitle = name
         this.$forceUpdate()
       } catch (e) {
       }
+    }).$on('extra', ({ key, name }) => {
+      this.$set(this.extraTitle, key, name)
     })
 
     this.pages.push(this.$route)
@@ -111,10 +113,11 @@ export default {
     // render
     renderTabPane (title, keyPath) {
       const menu = this.renderTabPaneMenu(keyPath)
+      const extra = this.extraTitle[keyPath]
 
       return (
         <a-dropdown overlay={menu} trigger={['contextmenu']}>
-          <span style={{ userSelect: 'none' }}>{ title }</span>
+          <span style={{ userSelect: 'none' }}>{extra ? extra + ' - ' : ''}{ title }</span>
         </a-dropdown>
       )
     }
@@ -148,6 +151,7 @@ export default {
         <div class="ant-pro-multi-tab-wrapper">
           <a-tabs
             hideAdd
+            size="small"
             type={'editable-card'}
             v-model={this.activeKey}
             tabBarStyle={{ margin: 0, paddingLeft: '16px', paddingTop: '1px' }}

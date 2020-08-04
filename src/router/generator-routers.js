@@ -1,5 +1,5 @@
 import { getMenuUserTree } from '@/api/menu'
-import { BasicLayout, BlankLayout, RouteView } from '@/layouts'
+import { BasicLayout, RouteView } from '@/layouts'
 import { constantMenu } from '@/config/router.config'
 import { dynamicRouterMap } from '@/config/dynamic-router.config'
 
@@ -36,13 +36,13 @@ const genQueryInstanceRoute = (resourceNames = []) => {
           path: 'instances',
           name: `query${capitalize}Instances`,
           component: () => dynamicRouterMap['/query/' + lower + '/instance-list'],
-          meta: { title: `${resourceName}列表` }
+          meta: { title: `${resourceName}列表`, resourceKey: lower }
         },
         {
           path: ':instance_id',
           name: `query${capitalize}Instance`,
           component: () => dynamicRouterMap['/query/' + lower + '/instance'],
-          meta: { title: `${resourceName}实例` }
+          meta: { title: `${resourceName}实例`, resourceKey: lower }
         }
       ]
 
@@ -119,8 +119,8 @@ export const generator = (routerMap, parent) => {
     if (mapChildrenByName[item.name]) {
       currentRouter.children = mapChildrenByName[item.name]
       currentRouter.hideChildrenInMenu = true
-      // 当有子路由时，把当前路由的组件置为空的 <router-view />
-      currentRouter.component = BlankLayout
+      // 当有子路由时，把当前路由的组件置为路由组件，用来支持 keep-alive
+      currentRouter.component = RouteView
     }
 
     // 是否有子菜单，并递归处理
