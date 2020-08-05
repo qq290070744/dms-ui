@@ -9,7 +9,8 @@ export default {
       pages: [],
       activeKey: '',
       newTabIndex: 0,
-      extraTitle: {}
+      extraTitle: {},
+      root: '/dashboard/Workplace'
     }
   },
   created () {
@@ -45,6 +46,9 @@ export default {
       this[action](targetKey)
     },
     remove (targetKey) {
+      if (targetKey === this.root) {
+        return
+      }
       this.pages = this.pages.filter(page => page.fullPath !== targetKey)
       this.fullPathList = this.fullPathList.filter(path => path !== targetKey)
       // 判断当前标签是否关闭，若关闭则跳转到最后一个还存在的标签页
@@ -117,7 +121,10 @@ export default {
 
       return (
         <a-dropdown overlay={menu} trigger={['contextmenu']}>
-          <span style={{ userSelect: 'none' }}>{extra ? extra + ' - ' : ''}{ title }</span>
+          <span style={{ userSelect: 'none' }}>
+            {extra ? extra + ' - ' : ''}{ title }
+            {keyPath === this.root && <a-tooltip title="固定菜单" placement="right"><a-icon type="pushpin" style={{ marginLeft: '8px' }}/></a-tooltip>}
+          </span>
         </a-dropdown>
       )
     }
@@ -141,7 +148,7 @@ export default {
         <a-tab-pane
           style={{ height: 0 }}
           tab={this.renderTabPane(page.meta.customTitle || page.meta.title, page.fullPath)}
-          key={page.fullPath} closable={pages.length > 1}
+          key={page.fullPath} closable={page.fullPath !== this.root && pages.length > 1}
         >
         </a-tab-pane>)
     })

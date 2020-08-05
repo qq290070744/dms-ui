@@ -119,11 +119,6 @@ export default {
         inst_id: this.instId
       }
     },
-    clickQuery (params) {
-      const sql = this.getValue()
-      this.query(sql, params)
-      this.buildSql(params)
-    },
     query (params) {
       if (!this.inQuery || this.querying) {
         return
