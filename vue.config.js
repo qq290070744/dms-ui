@@ -79,7 +79,11 @@ const vueConfig = {
       .options({
         name: 'assets/[name].[hash:8].[ext]'
       })
-
+    
+    config.plugin('html').tap(args => {
+      args[0].title = '数据库审核平台'
+      return args
+    })
     // if prod is on
     // assets require on cdn
     if (isProd) {

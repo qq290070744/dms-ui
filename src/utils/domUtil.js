@@ -16,4 +16,4 @@ export const setDocumentTitle = function (title) {
   }
 }
 
-export const domTitle = 'Perfect Diary'
+export const domTitle = '数据库审核平台'
