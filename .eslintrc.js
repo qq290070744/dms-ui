@@ -7,6 +7,9 @@ module.exports = {
     'plugin:vue/strongly-recommended',
     '@vue/standard'
   ],
+  globals: {
+    __PROD__: true
+  },
   rules: {
     'no-console': 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',

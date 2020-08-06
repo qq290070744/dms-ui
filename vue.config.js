@@ -80,6 +80,16 @@ const vueConfig = {
         name: 'assets/[name].[hash:8].[ext]'
       })
     
+    config.plugin('define').tap(args => {
+      if (args[0]) {
+        args[0] = {
+          // 注入自定义变量，放在最前面，可以替换 process.env.NODE_ENV
+          __PROD__: '(process.env.NODE_ENV === "production")',
+          ...args[0]
+        }
+      }
+      return args
+    })
     config.plugin('html').tap(args => {
       args[0].title = '数据库审核平台'
       return args
