@@ -10,6 +10,10 @@ export default {
     value: {
       type: [Number, String],
       default: undefined
+    },
+    backup: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -18,7 +22,7 @@ export default {
     }
   },
   mounted () {
-    queryApprovalUser().then((result) => {
+    queryApprovalUser(this.backup).then((result) => {
       this.auditors = result
     })
   },
