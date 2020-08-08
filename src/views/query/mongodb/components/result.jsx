@@ -49,10 +49,12 @@ export default {
       this.pagination.total = val.length
     }
   },
+  mounted () {
+    this.setData()
+  },
   methods: {
     change (pagination) {
       this.pagination = { ...this.pagination, ...pagination }
-      console.log(this.pagination, pagination)
       this.setData()
     },
     setData () {

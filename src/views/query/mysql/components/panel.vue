@@ -188,8 +188,8 @@ export default {
 .ys-query-panel.split-resize {
   // relative to a-tabs
   position: absolute;
-  top: 50px;
-  height: calc(100% - 50px);
+  top: 30px;
+  height: calc(100% - 30px);
   .result {
     overflow: auto;
     margin-top: 16px;
