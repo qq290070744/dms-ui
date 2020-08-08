@@ -37,7 +37,7 @@
             checkable
             :tree-data="menuTree"
             :replaceFields="replaceFields"
-            v-model="form.menuIds"
+            :checkedKeys="form.menuIds"
             @check="onCheck"
           >
           </a-tree>
@@ -59,6 +59,21 @@
 <script>
 import { createRole, editRole, getRoleDetail } from '@/api/role'
 import { getMenuTree } from '@/api/menu'
+
+const getLeafMapper = (tree) => {
+  const leaves = {}
+  const loop = (nodes, ans = []) => {
+    nodes.forEach((node) => {
+      if (node.children && node.children.length) {
+        loop(node.children, [...ans, node.id])
+      } else {
+        leaves[node.id] = ans
+      }
+    })
+  }
+  loop(tree)
+  return leaves
+}
 
 export default {
   data() {
@@ -87,6 +102,7 @@ export default {
         sm: { span: 20 }
       },
       menuTree: [],
+      leafIdMapper: {},
       replaceFields: {
         title: 'display_name',
         key: 'id'
@@ -130,11 +146,22 @@ export default {
     },
     getParams() {
       const { form } = this
+      const menuIds = Object.keys(
+        form.menuIds
+          .reduce((mapper, id) => {
+            mapper[id] = true
+            this.leafIdMapper[id]
+              .forEach((aid) => {
+                mapper[aid] = true
+              })
+            return mapper
+          }, {})
+      ).map(Number)
       return {
         display_name: form.display_name,
         name: form.name,
         remark: form.remark,
-        menu_ids: form.menuIds,
+        menu_ids: menuIds,
         status: form.status
       }
     },
@@ -151,10 +178,11 @@ export default {
     fetchMenuTree() {
       getMenuTree().then(res => {
         this.menuTree = res.children
+        this.leafIdMapper = getLeafMapper(res.children || [])
       })
     },
     onCheck(checkedKeys) {
-      this.form.menuIds = checkedKeys
+      this.form.menuIds = checkedKeys.filter(id => this.leafIdMapper[id])
     },
     handleEdit(record) {
       this.visible = true
@@ -171,7 +199,7 @@ export default {
       this.editId = record.id
       const _this = this
       getRoleDetail(this.editId).then(res => {
-        _this.$set(this.form, 'menuIds', res.menus || [])
+        _this.$set(this.form, 'menuIds', (res.menus || []).filter(id => !!this.leafIdMapper[id]))
       })
     },
     resetForm() {
