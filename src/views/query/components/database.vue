@@ -109,7 +109,10 @@ export default {
   },
   methods: {
     onLoadData (treeNode) {
-      if (!treeNode && this.instId) {
+      if (!this.instId) {
+        return
+      }
+      if (!treeNode) {
         this.api.dbs({ inst_id: this.instId }).then((result) => {
           this.options.treeData = result
           this.$emit('init-db', result)
