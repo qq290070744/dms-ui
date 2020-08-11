@@ -13,9 +13,19 @@
           <query-form :tables="tables" @query="query" :loading="querying"></query-form>
           <span class="query-time" v-if="latency">查询耗时：{{ latency }}</span>
           <span class="query-time" v-if="resultRecords">总数据量：{{ resultRecords.length }}</span>
+          <span class="query-time" v-if="resultRecords"><a-switch v-model="showJsonFormat"/> JSON格式</span>
         </div>
-        <div class="result" :class="['result', {'has-result': resultRecords}]">
-          <sql-result :result="result.records" />
+        <div class="json-result" v-if="showJsonFormat">
+          <monaco-editor
+            language="json"
+            :value="JsonResult"
+            :readOnly="true"
+            :height="600"
+            :key="queryCount"
+          />
+        </div>
+        <div class="result" :class="['result', {'has-result': resultRecords}]" v-else>
+          <sql-result :result="resultRecords" />
         </div>
       </div>
     </template>
@@ -65,7 +75,8 @@ export default {
       lastCheck: {
         sql: '',
         valid: false
-      }
+      },
+      showJsonFormat: false
     }
   },
   computed: {
@@ -74,6 +85,9 @@ export default {
     },
     resultRecords () {
       return this.result.records
+    },
+    JsonResult () {
+      return JSON.stringify(this.resultRecords, null, 2)
     },
     latency () {
       const latency = this.result.latency
@@ -119,11 +133,6 @@ export default {
         inst_id: this.instId
       }
     },
-    clickQuery (params) {
-      const sql = this.getValue()
-      this.query(sql, params)
-      this.buildSql(params)
-    },
     query (params) {
       if (!this.inQuery || this.querying) {
         return
@@ -148,8 +157,8 @@ export default {
 .ys-query-panel.split-resize {
   // relative to a-tabs
   position: absolute;
-  top: 50px;
-  height: calc(100% - 50px);
+  top: 30px;
+  height: calc(100% - 30px);
   .result {
     overflow: auto;
     &.has-result {

@@ -8,7 +8,9 @@ export default {
       fullPathList: [],
       pages: [],
       activeKey: '',
-      newTabIndex: 0
+      newTabIndex: 0,
+      extraTitle: {},
+      root: '/dashboard/Workplace'
     }
   },
   created () {
@@ -25,13 +27,14 @@ export default {
       }
       this.closeThat(val)
     }).$on('rename', ({ key, name }) => {
-      console.log('rename', key, name)
       try {
         const item = this.pages.find(item => item.path === key)
         item.meta.customTitle = name
         this.$forceUpdate()
       } catch (e) {
       }
+    }).$on('extra', ({ key, name }) => {
+      this.$set(this.extraTitle, key, name)
     })
 
     this.pages.push(this.$route)
@@ -43,6 +46,9 @@ export default {
       this[action](targetKey)
     },
     remove (targetKey) {
+      if (targetKey === this.root) {
+        return
+      }
       this.pages = this.pages.filter(page => page.fullPath !== targetKey)
       this.fullPathList = this.fullPathList.filter(path => path !== targetKey)
       // 判断当前标签是否关闭，若关闭则跳转到最后一个还存在的标签页
@@ -111,10 +117,14 @@ export default {
     // render
     renderTabPane (title, keyPath) {
       const menu = this.renderTabPaneMenu(keyPath)
+      const extra = this.extraTitle[keyPath]
 
       return (
         <a-dropdown overlay={menu} trigger={['contextmenu']}>
-          <span style={{ userSelect: 'none' }}>{ title }</span>
+          <span style={{ userSelect: 'none' }}>
+            {extra ? extra + ' - ' : ''}{ title }
+            {keyPath === this.root && <a-tooltip title="固定菜单" placement="right"><a-icon type="pushpin" style={{ marginLeft: '8px' }}/></a-tooltip>}
+          </span>
         </a-dropdown>
       )
     }
@@ -138,7 +148,7 @@ export default {
         <a-tab-pane
           style={{ height: 0 }}
           tab={this.renderTabPane(page.meta.customTitle || page.meta.title, page.fullPath)}
-          key={page.fullPath} closable={pages.length > 1}
+          key={page.fullPath} closable={page.fullPath !== this.root && pages.length > 1}
         >
         </a-tab-pane>)
     })
@@ -148,6 +158,7 @@ export default {
         <div class="ant-pro-multi-tab-wrapper">
           <a-tabs
             hideAdd
+            size="small"
             type={'editable-card'}
             v-model={this.activeKey}
             tabBarStyle={{ margin: 0, paddingLeft: '16px', paddingTop: '1px' }}

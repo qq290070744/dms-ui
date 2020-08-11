@@ -6,10 +6,10 @@ const createThemeColorReplacerPlugin = require('./config/plugin.config')
 const parallelValue = (() => {
   const p = process.env.VUE_APP_PARALLEL_BUILD
   if (!p) {
-    return 2; // 默认两个cpu，启动两个进程
+    return 2 // 默认两个cpu，启动两个进程
   }
-  return /^\d+$/.test(p) ? Number(p) : p !== 'false';
-})();
+  return /^\d+$/.test(p) ? Number(p) : p !== 'false'
+})()
 
 // 打印环境变量
 console.log(
@@ -80,6 +80,20 @@ const vueConfig = {
         name: 'assets/[name].[hash:8].[ext]'
       })
 
+    config.plugin('define').tap(args => {
+      if (args[0]) {
+        args[0] = {
+          // 注入自定义变量，放在最前面，可以替换 process.env.NODE_ENV
+          __PROD__: '(process.env.NODE_ENV === "production")',
+          ...args[0]
+        }
+      }
+      return args
+    })
+    config.plugin('html').tap(args => {
+      args[0].title = '数据库审核平台'
+      return args
+    })
     // if prod is on
     // assets require on cdn
     if (isProd) {

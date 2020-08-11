@@ -14,7 +14,7 @@ export default {
     const { $route: { meta }, $store: { getters } } = this
     const inKeep = (
       <keep-alive>
-        <router-view />
+        <router-view key={this.$route.fullPath}/>
       </keep-alive>
     )
     const notKeep = (

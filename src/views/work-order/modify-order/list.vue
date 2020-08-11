@@ -61,6 +61,7 @@ export default {
         title: '备注',
         dataIndex: 'text',
         width: 300,
+        customRender: (text) => <XTableCellEllipsis text={text}/>
       },
       {
         title: '审核人',

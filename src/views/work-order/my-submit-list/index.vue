@@ -35,7 +35,8 @@ export default {
       fields: [
         ['auditor_id', '审批人', {
           required: true,
-          component: 'XAuditorSelector'
+          component: 'XAuditorSelector',
+          props: { backup: true }
         }],
       ],
       auditors: [],

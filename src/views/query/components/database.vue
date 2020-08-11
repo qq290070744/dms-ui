@@ -109,6 +109,9 @@ export default {
   },
   methods: {
     onLoadData (treeNode) {
+      if (!this.instId) {
+        return
+      }
       if (!treeNode) {
         this.api.dbs({ inst_id: this.instId }).then((result) => {
           this.options.treeData = result
