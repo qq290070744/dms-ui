@@ -16,8 +16,6 @@
 export const dynamicRouterMap = {
   '/dashboard/apply-perms': import(/* webpackChunkName: "views-apply-perms" */'@/views/dashboard/apply-perms'),
   '/dashboard/Workplace': import(/* webpackChunkName: "views-Workplace" */'@/views/dashboard/Workplace'),
-  '/instances/mysql': import(/* webpackChunkName: "views-mysql" */'@/views/instances/mysql'),
-  '/instances/redis': import(/* webpackChunkName: "views-redis" */'@/views/instances/redis'),
   '/log/finished': import(/* webpackChunkName: "views-finished" */'@/views/log/finished'),
   '/log/mongodb': import(/* webpackChunkName: "views-mongodb" */'@/views/log/mongodb'),
   '/log/mysql': import(/* webpackChunkName: "views-mysql" */'@/views/log/mysql'),
