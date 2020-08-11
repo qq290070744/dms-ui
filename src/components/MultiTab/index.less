@@ -30,6 +30,10 @@
   & > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
     border-color: transparent;
     background: transparent;
+    &:not(:first-child) {
+      border-left: 1px solid #aaa;
+      border-radius: 0;
+    }
   }
   
   & > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {

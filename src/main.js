@@ -1,6 +1,7 @@
 // with polyfills
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
+import '@/utils/favicon'
 
 import Vue from 'vue'
 import App from './App.vue'

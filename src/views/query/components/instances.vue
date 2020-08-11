@@ -46,18 +46,21 @@ export default {
       }
     }
   },
-  beforeRouteEnter (_f, _t, next) {
+  mounted () {
+    this.GetInfo()
+  },
+  activated () {
     // 重新获取用户信息，以获取新的授权实例
-    next((vm) => vm.GetInfo())
+    this.GetInfo()
   },
   computed: {
     ...mapGetters(['resources']),
     instances () {
-      return this.resources
-        ? (
-          this.resources[this.resourceKey] || []
-        )
-        : []
+      return (
+        this.resources
+          ? (this.resources[this.resourceKey] || [])
+          : []
+      ).filter(res => res.id !== 0)
     }
   },
   methods: {
