@@ -118,9 +118,14 @@ export default {
     renderTabPane (title, keyPath) {
       const menu = this.renderTabPaneMenu(keyPath)
       const extra = this.extraTitle[keyPath]
-
+      // 模拟点击鼠标滚轮关闭标签
+      const mouseup = ({ which }) => {
+        if (which === 2) {
+          this.closeThat(keyPath)
+        }
+      }
       return (
-        <a-dropdown overlay={menu} trigger={['contextmenu']}>
+        <a-dropdown overlay={menu} trigger={['contextmenu']} nativeOn={{ mouseup }}>
           <span style={{ userSelect: 'none' }}>
             {extra ? extra + ' - ' : ''}{ title }
             {keyPath === this.root && <a-tooltip title="固定菜单" placement="right"><a-icon type="pushpin" style={{ marginLeft: '8px' }}/></a-tooltip>}
