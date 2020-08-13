@@ -93,3 +93,9 @@ export const DMS_PERMS_ORDER_TYPE = new Enum([
   { key: 'REJECT', label: '已驳回', color: '#ff6666' },
   { key: 'SUCCESS', label: '已通过', color: '#00c024' },
 ], 1)
+
+export const DMS_ORDER_EXEC_TYPE = new Enum([
+  { key: 'SUCCESS', label: '成功', color: '#00c024' },
+  { key: 'WARNING', label: '成功（有警告）', color: '#fa8c16' },
+  { key: 'FAIL', label: '失败', color: '#ff6666' },
+])
