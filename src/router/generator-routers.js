@@ -1,5 +1,5 @@
 import { getMenuUserTree } from '@/api/menu'
-import { BasicLayout, RouteView } from '@/layouts'
+import { BasicLayout, RouteView, BlankLayout } from '@/layouts'
 import { constantMenu } from '@/config/router.config'
 import { dynamicRouterMap } from '@/config/dynamic-router.config'
 
@@ -102,7 +102,7 @@ export const generator = (routerMap, parent) => {
         item.name === 'root'
           ? BasicLayout
           : parent.name === 'root'
-            ? RouteView
+            ? BlankLayout
             : () => dynamicRouterMap[item.path],
       // ? dynamicRouterMap[item.path]
       // : () => import('@/views' + item.path),

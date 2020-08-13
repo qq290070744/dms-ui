@@ -32,7 +32,8 @@ const Result = Vue.extend({
           return {
             title,
             dataIndex: title,
-            width: 100
+            width: 100,
+            customRender: (value) => <pre>{value}</pre>
           }
         })
       ]

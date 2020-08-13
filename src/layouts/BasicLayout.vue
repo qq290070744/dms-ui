@@ -43,7 +43,7 @@
       <a-layout-content :style="{ height: '100%', margin: '16px', paddingTop: fixedHeader ? '64px' : '0' }">
         <multi-tab v-if="multiTab"></multi-tab>
         <transition name="page-transition">
-          <route-view />
+          <router-view />
         </transition>
       </a-layout-content>
 
@@ -65,7 +65,7 @@ import { mapState, mapActions } from 'vuex'
 import { mixin, mixinDevice } from '@/utils/mixin'
 import config from '@/config/defaultSettings'
 
-import RouteView from './RouteView'
+// import RouteView from './RouteView'
 import SideMenu from '@/components/Menu/SideMenu'
 import GlobalHeader from '@/components/GlobalHeader'
 import GlobalFooter from '@/components/GlobalFooter'
@@ -76,7 +76,7 @@ export default {
   name: 'BasicLayout',
   mixins: [mixin, mixinDevice],
   components: {
-    RouteView,
+    // RouteView,
     SideMenu,
     GlobalHeader,
     GlobalFooter,
