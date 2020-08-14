@@ -2,6 +2,7 @@ import { getMenuUserTree } from '@/api/menu'
 import { BasicLayout, RouteView } from '@/layouts'
 import { constantMenu } from '@/config/router.config'
 import { dynamicRouterMap } from '@/config/dynamic-router.config'
+import Vue from 'vue'
 
 // 前端未找到页面路由（固定不用改）
 const notFoundRouter = {
@@ -31,6 +32,34 @@ const genQueryInstanceRoute = (resourceNames = []) => {
       const lower = resourceName.toLowerCase()
       const capitalize = lower.slice(0, 1).toUpperCase() + lower.slice(1)
 
+      // 用来支持相同路由组件但不同路径参数的 keep-alive 情况
+      const Instance = Vue.extend({
+        name: `query${capitalize}Instance`,
+        props: {
+          uid: {
+            type: String,
+            default: ''
+          }
+        },
+        components: {
+          Inner: () => dynamicRouterMap['/query/' + lower + '/instance']
+        },
+        beforeRouteEnter (to, _from, next) {
+          if (/\d+/.test(to.params.instance_id)) {
+            next()
+          } else {
+            next({ name: `query${capitalize}Instances` })
+          }
+        },
+        render () {
+          return (
+            <keep-alive>
+              { <inner key={this.uid}/> }
+            </keep-alive>
+          )
+        }
+      })
+
       const routeChildren = [
         {
           path: 'instances',
@@ -41,8 +70,9 @@ const genQueryInstanceRoute = (resourceNames = []) => {
         {
           path: ':instance_id',
           name: `query${capitalize}Instance`,
-          component: () => dynamicRouterMap['/query/' + lower + '/instance'],
-          meta: { title: `${resourceName}实例`, resourceKey: lower }
+          component: Instance,
+          meta: { title: `${resourceName}实例`, resourceKey: lower },
+          props: (route) => ({ uid: route.params.instance_id })
         }
       ]
 

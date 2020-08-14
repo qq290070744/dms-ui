@@ -65,7 +65,12 @@ export function sqlSuggestions (params) {
 
 const checkedResultColumns = [
   { title: '检测语句', dataIndex: 'sql' },
-  { title: '错误等级', dataIndex: 'error_level' },
+  {
+    title: '错误等级',
+    dataIndex: 'error_level',
+    filters: [{ text: '只显示错误等级2', value: '2' }],
+    onFilter: (value, { error_level }) => value === error_level,
+  },
   { title: '错误信息', dataIndex: 'error_message' },
   { title: '执行时间', dataIndex: 'execute_time' },
   { title: '影响行数', dataIndex: 'affected_rows' },

@@ -9,6 +9,7 @@
 <script>
 import { getMonitorUrl } from '@/api/monitor'
 export default {
+  name: 'MonitorDas',
   beforeRouteEnter (to, from, next) {
     next(vm => {
       vm.showMonitor()
