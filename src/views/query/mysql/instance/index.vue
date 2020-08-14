@@ -37,6 +37,7 @@ import SplitResize from '@/components/split-resize'
 import { DMS_ORDER_TYPE } from '@/utils/const'
 import { genSuggestions } from '../../components/utils'
 export default {
+  name: 'QueryMysqlInstance',
   components: {
     SplitResize,
     QueryArea,
