@@ -79,7 +79,7 @@ export default {
         this.$set(this.invisible, key, false)
       }
     },
-    rButton () {
+    rButton ({ labelCol, wrapperCol }) {
       const [
         defaultSubmitText,
         defaultCancelText
@@ -88,7 +88,7 @@ export default {
         submitText = defaultSubmitText,
         cancelText = defaultCancelText
       ] = this.button ? this.button.split('|') : []
-      return <a-form-item>
+      return <a-form-item wrapperCol={{ span: wrapperCol?.span, offset: labelCol?.span }}>
         <a-button size={this.size} type="primary" onClick={this.onSubmit}>{submitText}</a-button>
         {
           (this.$listeners.cancel || cancelText) &&
@@ -96,7 +96,7 @@ export default {
         }
       </a-form-item>
     },
-    rItems () {
+    rItems (layout) {
       const { getFieldDecorator } = this.formVm
       const items = this.fields
         .map((field) => {
@@ -146,7 +146,7 @@ export default {
           </a-form-item>
         })
       const buttons = this.$listeners.submit || this.$listeners.filter
-        ? this.rButton()
+        ? this.rButton(layout)
         : undefined
       return buttons ? [...items, buttons] : items
     }
@@ -166,7 +166,7 @@ export default {
       form: this.formVm
     }
     return <a-form props={props}>
-      { this.rItems() }
+      { this.rItems(layout) }
     </a-form>
   }
 }
