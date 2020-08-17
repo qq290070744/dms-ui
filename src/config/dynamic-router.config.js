@@ -30,6 +30,7 @@ export const dynamicRouterMap = {
   '/query/pgsql/instance-list': import(/* webpackChunkName: "views-pgsql" */'@/views/query/pgsql/instance-list'),
   '/query/redis/instance': import(/* webpackChunkName: "views-redis" */'@/views/query/redis/instance'),
   '/query/redis/instance-list': import(/* webpackChunkName: "views-redis" */'@/views/query/redis/instance-list'),
+  '/system/global-settings': import(/* webpackChunkName: "views-global-settings" */'@/views/system/global-settings'),
   '/system/instance': import(/* webpackChunkName: "views-instance" */'@/views/system/instance'),
   '/system/menu': import(/* webpackChunkName: "views-menu" */'@/views/system/menu'),
   '/system/role': import(/* webpackChunkName: "views-role" */'@/views/system/role'),

@@ -14,7 +14,8 @@
     "install:internal": "yarn --registry=http://nexus.corp.yatsenglobal.com/repository/npm-all/",
     "install:internal2": "yarn --registry=http://nexus.devops.local.perfectdiary.com/repository/npm-all/",
     "lint:nofix": "vue-cli-service lint --no-fix",
-    "serve:mock": "vue-cli-service serve --mode mock"
+    "serve:mock": "vue-cli-service serve --mode mock",
+    "scan:routes": "node ./scripts/gen-routers.js"
   },
   "dependencies": {
     "@antv/data-set": "^0.10.2",

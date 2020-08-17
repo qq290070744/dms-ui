@@ -15,3 +15,11 @@ export function getPolicies (method = '') {
 export function setPolicies (params, method = '') {
   return axios.post(`/work_order/audit_options/set${method}`, params)
 }
+
+export function getGlobalConfig () {
+  return axios.get('/global_configurations/get')
+}
+
+export function setGlobalConfig (data) {
+  return axios.post('/global_configurations/set', data)
+}
