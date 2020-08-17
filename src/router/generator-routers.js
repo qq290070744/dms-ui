@@ -52,6 +52,9 @@ const genQueryInstanceRoute = (resourceNames = []) => {
           }
         },
         render () {
+          if (!this.uid) {
+            return
+          }
           return (
             <keep-alive>
               { <inner key={this.uid}/> }
