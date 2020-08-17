@@ -5,16 +5,25 @@ export default {
     keepAlive: {
       type: Boolean,
       default: true
+    },
+    unique: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     return {}
   },
+  methods: {
+    renderRouterView () {
+      return this.unique ? <router-view key={this.$route.fullPath}/> : <router-view/>
+    }
+  },
   render () {
     const { $route: { meta }, $store: { getters } } = this
     const inKeep = (
       <keep-alive max={15}>
-        <router-view/>
+        { this.renderRouterView() }
       </keep-alive>
     )
     const notKeep = (

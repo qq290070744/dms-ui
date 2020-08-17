@@ -34,7 +34,7 @@ const genQueryInstanceRoute = (resourceNames = []) => {
 
       // 用来支持相同路由组件但不同路径参数的 keep-alive 情况
       const Instance = Vue.extend({
-        name: `query${capitalize}Instance`,
+        name: `query${capitalize}InstanceWrapper`,
         props: {
           uid: {
             type: String,
@@ -52,12 +52,9 @@ const genQueryInstanceRoute = (resourceNames = []) => {
           }
         },
         render () {
-          if (!this.uid) {
-            return
-          }
           return (
             <keep-alive>
-              { <inner key={this.uid}/> }
+              { this.uid && <inner key={this.uid}/> }
             </keep-alive>
           )
         }
@@ -75,7 +72,7 @@ const genQueryInstanceRoute = (resourceNames = []) => {
           name: `query${capitalize}Instance`,
           component: Instance,
           meta: { title: `${resourceName}实例`, resourceKey: lower },
-          props: (route) => ({ uid: route.params.instance_id })
+          props: (route) => ({ uid: route.fullPath })
         }
       ]
 
@@ -154,6 +151,8 @@ export const generator = (routerMap, parent) => {
       currentRouter.hideChildrenInMenu = true
       // 当有子路由时，把当前路由的组件置为路由组件，用来支持 keep-alive
       currentRouter.component = RouteView
+      // 传入 RouteView
+      currentRouter.props = { unique: true }
     }
 
     // 是否有子菜单，并递归处理
