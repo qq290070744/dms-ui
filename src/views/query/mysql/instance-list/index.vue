@@ -7,6 +7,7 @@
 <script>
 import InstanceTemplate from '../../components/instances'
 export default {
+  name: 'QueryMysqlInstances',
   components: {
     InstanceTemplate
   }

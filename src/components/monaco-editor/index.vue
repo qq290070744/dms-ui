@@ -10,6 +10,7 @@ import { waitRefShow } from '../../utils/util'
 import throttle from 'lodash.throttle'
 
 const HAS_REGISTER = {}
+const langSuggestions = {}
 const langs = [
   'abap',
   'apex',
@@ -174,12 +175,16 @@ export default {
     },
     registerLanguageSuggention () {
       const lang = this.language
+      if (HAS_REGISTER[lang]) {
+        return
+      }
+      HAS_REGISTER[lang] = true
       if (langs.includes(lang)) {
         try {
           const langDef = require(`monaco-editor/esm/vs/basic-languages/${lang}/${lang}`)
           const { builtinFunctions, keywords, operators } = langDef.language
 
-          this.langSuggestions = [
+          langSuggestions[lang] = [
             ...this.genSuggestion(builtinFunctions, '函数'),
             ...this.genSuggestion(keywords, '关键字'),
             ...this.genSuggestion(operators, '操作符'),
@@ -191,10 +196,7 @@ export default {
     },
     registerSuggention () {
       const lang = this.language
-      if (HAS_REGISTER[lang]) {
-        return
-      }
-      HAS_REGISTER[lang] = true
+
       this.registerLanguageSuggention()
       const that = this
       monaco.languages.registerCompletionItemProvider(lang, {
@@ -207,7 +209,7 @@ export default {
             endColumn: word.endColumn
           }
           return {
-            suggestions: that.finalSuggestions.map(s => ({ ...s, range }))
+            suggestions: [...(langSuggestions[lang] || []), ...that.customSuggestions].map(s => ({ ...s, range }))
           }
         }
       })

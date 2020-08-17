@@ -76,7 +76,7 @@
 import MonacoEditor from '@/components/monaco-editor'
 import DdlOsc from './ddl-osc'
 import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder, getWorkOrder } from '@/api/work-order'
-import { DMS_MODIFY_ORDER_STATUS, DMS_ORDER_TYPE, dmsBaseOrderType } from '@/utils/const'
+import { DMS_MODIFY_ORDER_STATUS, DMS_ORDER_TYPE, DMS_ORDER_EXEC_TYPE, dmsBaseOrderType } from '@/utils/const'
 import Refresh from './refresh'
 export default {
   components: {
@@ -112,7 +112,15 @@ export default {
           width: 300,
           customRender: (text) => <XTableCellEllipsis text={text}/>
         },
-        { dataIndex: 'state', title: '状态', width: 80 },
+        {
+          dataIndex: 'status_code',
+          title: '状态',
+          width: 80,
+          customRender: (v) => {
+            const { label, color } = DMS_ORDER_EXEC_TYPE.$map[v] || {}
+            return <a-tag color={color}>{label}</a-tag>
+          }
+        },
         { dataIndex: 'affectrow', title: '影响行数', width: 80 },
         {
           dataIndex: 'error',
