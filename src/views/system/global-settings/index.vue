@@ -1,10 +1,12 @@
 <template>
   <basic-container>
-    <x-form @submit="submit" :fields="fields"></x-form>
+    <x-form @submit="submit" :fields="fields" :registerForm="registerForm"></x-form>
   </basic-container>
 </template>
 
 <script>
+import { getGlobalConfig, setGlobalConfig } from '@/api/settings'
+
 export default {
   data () {
     return {
@@ -27,12 +29,30 @@ export default {
             min: 30
           }
         }],
-      ]
+      ],
+      formVm: null
     }
+  },
+  mounted () {
+    getGlobalConfig()
+      .then((config) => {
+        const { insulate_word_list, ...rest } = config
+        this.formVm.setFieldsValue({
+          ...rest,
+          insulate_word_list: insulate_word_list.join(',')
+        })
+      })
   },
   methods: {
     submit (values) {
-      console.log(values)
+      values.insulate_word_list = values.insulate_word_list.split(',').filter(Boolean)
+      setGlobalConfig(values)
+        .then(() => {
+          this.$message.success('更新成功')
+        })
+    },
+    registerForm (formVm) {
+      this.formVm = formVm
     }
   }
 }
