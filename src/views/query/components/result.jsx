@@ -33,7 +33,7 @@ const Result = Vue.extend({
             title,
             dataIndex: title,
             width: 100,
-            customRender: (value) => <pre>{value}</pre>
+            customRender: (value) => <pre style={{ whiteSpace: 'pre-wrap' }}>{value}</pre>
           }
         })
       ]
