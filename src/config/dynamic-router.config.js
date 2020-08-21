@@ -33,6 +33,7 @@ export const dynamicRouterMap = {
   '/system/global-settings': import(/* webpackChunkName: "views-global-settings" */'@/views/system/global-settings'),
   '/system/instance': import(/* webpackChunkName: "views-instance" */'@/views/system/instance'),
   '/system/menu': import(/* webpackChunkName: "views-menu" */'@/views/system/menu'),
+  '/system/outsourcing': import(/* webpackChunkName: "views-outsourcing" */'@/views/system/outsourcing'),
   '/system/role': import(/* webpackChunkName: "views-role" */'@/views/system/role'),
   '/system/settings': import(/* webpackChunkName: "views-settings" */'@/views/system/settings'),
   '/system/userList': import(/* webpackChunkName: "views-userList" */'@/views/system/userList'),
