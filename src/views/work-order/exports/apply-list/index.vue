@@ -1,6 +1,7 @@
 <template>
   <data-list
     :page="page"
+    :filters="filters"
   />
 </template>
 
@@ -14,7 +15,12 @@ export default {
   },
   data () {
     return {
-      page: myApplyList
+      page: myApplyList,
+      filters: [
+        ['auditor', '审核人', {
+          component: 'user-complete'
+        }],
+      ]
     }
   }
 }

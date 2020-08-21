@@ -3,6 +3,7 @@
     ref="list"
     :page="page"
     :operation="operation"
+    :filters="filters"
   />
 </template>
 
@@ -19,6 +20,11 @@ export default {
   data () {
     return {
       page: myReviewList,
+      filters: [
+        ['auditor', '审核人', {
+          component: 'user-complete'
+        }],
+      ],
       operation: {
         title: '操作',
         width: 150,

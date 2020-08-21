@@ -1,6 +1,6 @@
 <template>
   <basic-container>
-    <perms-work-order-list :dataSource="dataSource">
+    <perms-work-order-list :dataSource="dataSource" :auditor="true">
       <template #operation="record">
         <span v-if="record.status === 1">
           <a-popconfirm title="确认通过该项权限申请？" @confirm="pass(record)">

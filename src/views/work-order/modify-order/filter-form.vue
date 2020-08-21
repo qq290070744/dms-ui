@@ -4,16 +4,16 @@
       <a-checkbox v-model="formData.only_mine"/>
     </a-form-model-item>
     <a-form-model-item label="工单类型">
-      <a-select v-model="formData.type" :options="orderTypeOptions" placeholder="请选择工单类型"/>
+      <a-select v-model="formData.type" :options="orderTypeOptions" placeholder="请选择工单类型" allowClear/>
     </a-form-model-item>
     <a-form-model-item label="工单状态">
-      <a-select v-model="formData.status" :options="orderStatusOptions" placeholder="请选择工单状态"/>
+      <a-select v-model="formData.status" :options="orderStatusOptions" placeholder="请选择工单状态" allowClear/>
     </a-form-model-item>
     <a-form-model-item label="数据库名">
       <a-input v-model="formData.db_name"/>
     </a-form-model-item>
     <a-form-model-item label="时间范围">
-      <a-range-picker v-model="formData.range" show-time format="YYYY-MM-DD HH:mm:ss"/>
+      <a-range-picker v-model="formData.range" show-time format="YYYY-MM-DD HH:mm:ss" allowClear/>
     </a-form-model-item>
     <a-form-model-item>
       <a-button type="primary" @click="handleSearch">搜索</a-button>

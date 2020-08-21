@@ -1,6 +1,6 @@
 <template>
   <basic-container class="my-review-list">
-    <work-order-list :dataSource="dataSource">
+    <work-order-list :dataSource="dataSource" :auditor="true">
     </work-order-list>
   </basic-container>
 </template>
