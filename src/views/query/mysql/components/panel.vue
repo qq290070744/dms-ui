@@ -156,9 +156,7 @@ export default {
         this.$message.warning(`请输入语句再进行提交`)
         return
       }
-      // 如果有多行，只查询第一条
-      sql = sql.replace(/;[\s\S]*$/, '')
-      console.log(sql)
+
       return {
         sql,
         db_name: this.database.name,
@@ -189,6 +187,8 @@ export default {
         return
       }
 
+      // 如果有多行，只查询第一条
+      params.sql = params.sql.replace(/;[\s\S]*$/, '')
       this.querying = true
       querySql(params)
         .then((result) => {
