@@ -43,7 +43,7 @@ const Result = Vue.extend({
     records: {
       immediate: true,
       handler () {
-        this.dataSource = this.records.map((data) => {
+        this.dataSource = (this.records || []).map((data) => {
           return {
             [this.rowKey]: this.uid++,
             ...data
