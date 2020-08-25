@@ -34,6 +34,13 @@ describe('test parse: normal', () => {
     )
       .toBe(`987654321;`)
   })
+
+  test('cursor before semi', () => {
+    expect(
+      parseSql(normalString, pos(10, 1))
+    )
+      .toBe('123456789;')
+  })
 })
 
 const splitString = `
