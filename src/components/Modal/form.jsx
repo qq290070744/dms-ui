@@ -88,7 +88,8 @@ export default {
         submitText = defaultSubmitText,
         cancelText = defaultCancelText
       ] = this.button ? this.button.split('|') : []
-      return <a-form-item wrapperCol={{ span: wrapperCol?.span, offset: labelCol?.span }}>
+      wrapperCol = wrapperCol ? { span: wrapperCol?.span, offset: labelCol?.span } : undefined
+      return <a-form-item wrapperCol={wrapperCol}>
         <a-button size={this.size} type="primary" onClick={this.onSubmit}>{submitText}</a-button>
         {
           (this.$listeners.cancel || cancelText) &&

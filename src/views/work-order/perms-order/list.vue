@@ -101,7 +101,9 @@ export default {
       innerSource: null,
       currOrder: null,
       loading: false,
-      filterForm: {},
+      filterForm: {
+        status: DMS_PERMS_ORDER_TYPE.CHECK_PENDING
+      },
       pagination: {},
       columns,
     }
@@ -180,7 +182,7 @@ export default {
   render () {
     return (
       <div>
-        <filter-form onFilter={this.onFilter}/>
+        <filter-form onFilter={this.onFilter} auditor={!!this.$attrs.auditor}/>
         <a-table
           rowKey="id"
           loading={this.loading}
