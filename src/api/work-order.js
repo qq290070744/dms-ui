@@ -140,3 +140,10 @@ export function apiGetWorkOrderMyAssignedOrder(params) {
     xPagination: true
   })
 }
+
+export function getStatistics () {
+  return axios({
+    url: '/work_order/home_statistics',
+    method: 'get'
+  })
+}

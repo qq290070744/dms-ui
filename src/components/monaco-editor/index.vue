@@ -139,6 +139,9 @@ export default {
     getPrettyValue () {
       return this.getValue().split('\n').map(command => command.trim().replace(/\s+/g, ' ')).filter(v => !!v)
     },
+    getSelectionValue () {
+      return this.editor.getModel().getValueInRange(this.editor.getSelection())
+    },
     initEditor () {
       this.registerSuggention()
       waitRefShow(this, 'target').then((ref) => {
@@ -152,9 +155,12 @@ export default {
     },
     bindEvent () {
       if (this.$listeners['ctrl-enter']) {
-        this.editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
-          this.$emit('ctrl-enter', this.getValue())
-        })
+        this.editor.addCommand(
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+          () => {
+            this.$emit('ctrl-enter', this.getValue(), this.editor.getPosition())
+          }
+        )
       }
       if (this.$listeners.change) {
         const change = throttle(() => {

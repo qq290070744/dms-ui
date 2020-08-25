@@ -65,6 +65,7 @@ import {
 import { querySql } from '@/api/mysql-query'
 import ApplyExport from '@/views/work-order/exports/apply'
 import { DMS_ORDER_TYPE } from '@/utils/const'
+import { parseSql } from './parse-sql'
 
 const MYSQL_DML_TYPE = DMS_ORDER_TYPE['MySQL-DML']
 const MYSQL_DDL_TYPE = DMS_ORDER_TYPE['MySQL-DDL']
@@ -142,12 +143,22 @@ export default {
     setValue (value) {
       this.$refs.editor.setValue(value)
     },
-    buildSql () {
-      const sql = this.getValue()
+    buildSql (pos) {
+      let sql = this.getValue()
+      const selection = this.getSelection()
+      if (selection) {
+        sql = selection
+      } else {
+        sql = parseSql(sql, pos)
+      }
+
       if (/^\s*$/.test(sql)) {
         this.$message.warning(`请输入语句再进行提交`)
         return
       }
+      // 如果有多行，只查询第一条
+      sql = sql.replace(/;[\s\S]*$/, '')
+      console.log(sql)
       return {
         sql,
         db_name: this.database.name,
@@ -164,11 +175,20 @@ export default {
       const sql = this.getValue()
       this.query(sql)
     },
-    query (sql) {
+    getSelection () {
+      const editorVm = this.$refs.editor
+      return editorVm ? editorVm.getSelectionValue() : ''
+    },
+    query (sql, pos = null) {
       if (!this.inQuery || this.querying) {
         return
       }
-      const params = this.buildSql()
+
+      const params = this.buildSql(pos)
+      if (!params) {
+        return
+      }
+
       this.querying = true
       querySql(params)
         .then((result) => {

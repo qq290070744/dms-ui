@@ -2,18 +2,13 @@
   <page-view :avatar="avatar" :title="false">
     <div slot="headerContent">
       <div class="title">{{ timeFix }}，{{ user.name }}<span class="welcome-text">，{{ welcome }}</span></div>
-      <div>
-        <!-- 内容 -->
-      </div>
+      <div></div>
     </div>
     <div slot="extra">
-      <a-row class="more-info">
-      </a-row>
+      <a-row class="more-info"> </a-row>
     </div>
 
-    <div>
-    <!-- 内容 -->
-    </div>
+    <x-statistics></x-statistics>
   </page-view>
 </template>
 
@@ -23,12 +18,13 @@ import { mapState } from 'vuex'
 
 import { PageView } from '@/layouts'
 import HeadInfo from '@/components/tools/HeadInfo'
-
+import XStatistics from './components/statistics'
 export default {
   name: 'Workplace',
   components: {
     PageView,
-    HeadInfo
+    HeadInfo,
+    XStatistics
   },
   data () {
     return {
