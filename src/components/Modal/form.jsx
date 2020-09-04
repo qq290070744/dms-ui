@@ -97,6 +97,12 @@ export default {
         }
       </a-form-item>
     },
+    rContent (component, data) {
+      if (typeof component === 'function') {
+        return component(data)
+      }
+      return <component {...data}></component>
+    },
     rItems (layout) {
       const { getFieldDecorator } = this.formVm
       const items = this.fields
@@ -140,9 +146,9 @@ export default {
             {
               prop
                 ? getFieldDecorator(prop, resetSettings)(
-                  <component {...{ props, attrs, on }}></component>
+                  this.rContent(component, { props, attrs, on })
                 )
-                : <component {...{ props, attrs, on }}></component>
+                : this.rContent(component, { props, attrs, on })
             }
           </a-form-item>
         })

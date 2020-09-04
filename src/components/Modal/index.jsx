@@ -97,7 +97,11 @@ export default {
     const { title, button } = this.$props
     return <span class="ys-modal-trigger">
       { this.showDialog && this.renderDialog() }
-      <a-button props={button} onClick={this.show}>{button.title || title}</a-button>
+      {
+        this.$scopedSlots.trigger
+          ? this.$scopedSlots.trigger({ trigger: this.show })
+          : <a-button props={button} onClick={this.show}>{button.title || title}</a-button>
+      }
     </span>
   }
 }

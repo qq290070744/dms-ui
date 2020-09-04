@@ -163,6 +163,11 @@ export default {
               this.tableIndexes = result
             })
         }
+
+        const db = this.options.treeData.find(({ name }) => name === node.dataRef.db)
+        if (db) {
+          this.$emit('set-db', db)
+        }
       }
     },
     setFields () {
