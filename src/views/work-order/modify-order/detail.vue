@@ -11,7 +11,7 @@
     </div>
     <div class="ant-descriptions">
       <h3 class="ant-descriptions-title">执行命令</h3>
-      <monaco-editor :key="uid" :readOnly="true" :value="sql" :language="language"></monaco-editor>
+      <monaco-editor :key="uid" ref="monaco" :readOnly="true" :value="sql" :language="language"></monaco-editor>
     </div>
 
     <a-divider />
@@ -75,7 +75,13 @@
 <script>
 import MonacoEditor from '@/components/monaco-editor'
 import DdlOsc from './ddl-osc'
-import { execWorkOrder, queryWorkOrderExection, rejectWorkOrder, getWorkOrder } from '@/api/work-order'
+import {
+  execWorkOrder,
+  queryWorkOrderExection,
+  rejectWorkOrder,
+  getWorkOrder,
+  getSqlFileText
+} from '@/api/work-order'
 import { DMS_MODIFY_ORDER_STATUS, DMS_ORDER_TYPE, DMS_ORDER_EXEC_TYPE, dmsBaseOrderType } from '@/utils/const'
 import Refresh from './refresh'
 export default {
@@ -164,7 +170,7 @@ export default {
       immediate: true,
       handler (val) {
         if (val) {
-          this.reload()
+          this.reload(true)
         }
       }
     }
@@ -175,13 +181,13 @@ export default {
       this.$emit('close')
     },
     queryResult () {
-      queryWorkOrderExection(this.workOrder.work_id)
-        .then((result) => {
-          if (Array.isArray(result)) {
-            this.execResult = result
-            this.loading = false
-          }
-        })
+      const query = queryWorkOrderExection(this.workOrder.work_id)
+      query.then((result) => {
+        if (Array.isArray(result)) {
+          this.execResult = result
+        }
+      })
+      return query
     },
     exec () {
       const { work_id: id, type } = this.workOrder
@@ -197,12 +203,31 @@ export default {
           this.executed = true
         })
     },
-    reload () {
+    reload (isInit) {
       this.loading = true
-      getWorkOrder(this.workOrder.work_id).then((result) => {
-        this.innerDataSource = result[0] || result
+      const getResult = this.queryResult()
+
+      const getWo = new Promise((resolve, reject) => {
+        getWorkOrder(this.workOrder.work_id).then((result) => {
+          this.innerDataSource = result[0] || result
+
+          if (isInit && this.dataSource.is_file_work === '1' && this.dataSource.sql_file_path) {
+            const getText = getSqlFileText(result.sql_file_path)
+
+            getText.then((data) => {
+              this.$refs.monaco.setValue(data.sql_file_content)
+              resolve()
+            }, reject)
+          } else {
+            resolve()
+          }
+        }, reject)
       })
-      this.queryResult()
+
+      Promise.all([getWo, getResult])
+        .then(() => {
+          this.loading = false
+        })
     },
     submitReject () {
       rejectWorkOrder(this.workOrder.work_id, this.rejectReason).then(() => {

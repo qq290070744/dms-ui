@@ -8,6 +8,7 @@
 import * as monaco from 'monaco-editor'
 import { waitRefShow } from '../../utils/util'
 import throttle from 'lodash.throttle'
+import suggestionStore from './suggestion'
 
 const HAS_REGISTER = {}
 const langSuggestions = {}
@@ -101,25 +102,26 @@ export default {
   },
   data () {
     return {
-      editor: null,
-      langSuggestions: []
+      editor: null
     }
   },
   computed: {
     initialValue () {
       return Array.isArray(this.value) ? this.value.join('\n') : this.value
     },
-    customSuggestions () {
-      return this.suggestions.reduce((result, [detail, strList]) => {
-        return result.concat(this.genSuggestion(strList, detail))
-      }, [])
-    },
-    finalSuggestions () {
-      return [...this.langSuggestions, ...this.customSuggestions]
-    },
     contentStyle () {
       return {
         height: /^\d+(\.\d+)?$/.test(this.height + '') ? this.height + 'px' : this.height
+      }
+    }
+  },
+  watch: {
+    suggestions: {
+      immediate: true,
+      handler (v) {
+        if (v) {
+          suggestionStore.insertSuggestions(v, this.language)
+        }
       }
     }
   },
@@ -143,7 +145,7 @@ export default {
       return this.editor.getModel().getValueInRange(this.editor.getSelection())
     },
     initEditor () {
-      this.registerSuggention()
+      this.registerLanguageSuggention()
       waitRefShow(this, 'target').then((ref) => {
         this.editor = monaco.editor.create(ref, {
           value: this.initialValue,
@@ -189,37 +191,17 @@ export default {
         try {
           const langDef = require(`monaco-editor/esm/vs/basic-languages/${lang}/${lang}`)
           const { builtinFunctions, keywords, operators } = langDef.language
-
           langSuggestions[lang] = [
-            ...this.genSuggestion(builtinFunctions, '函数'),
-            ...this.genSuggestion(keywords, '关键字'),
-            ...this.genSuggestion(operators, '操作符'),
+            ['函数', builtinFunctions],
+            ['关键字', keywords],
+            ['操作符', operators],
           ]
         } catch (e) {
           console.log(e)
         }
       }
+      suggestionStore.insertSuggestions(langSuggestions[lang], this.language)
     },
-    registerSuggention () {
-      const lang = this.language
-
-      this.registerLanguageSuggention()
-      const that = this
-      monaco.languages.registerCompletionItemProvider(lang, {
-        provideCompletionItems (model, position) {
-          const word = model.getWordUntilPosition(position)
-          const range = {
-            startLineNumber: position.lineNumber,
-            endLineNumber: position.lineNumber,
-            startColumn: word.startColumn,
-            endColumn: word.endColumn
-          }
-          return {
-            suggestions: [...(langSuggestions[lang] || []), ...that.customSuggestions].map(s => ({ ...s, range }))
-          }
-        }
-      })
-    }
   }
 }
 </script>
