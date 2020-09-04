@@ -36,6 +36,7 @@
               :params="buildSql"
               :cb="setValue"
             />
+            <upload-dml v-if="inDML" :extra="extraParams"></upload-dml>
             <submit-workorder
               :sql="lastCheck.sql"
               :extra="extraParams"
@@ -56,6 +57,7 @@ import MonacoEditor from '@/components/monaco-editor'
 import SplitResize from '@/components/split-resize'
 import SubmitWorkorder from '../../components/work-order-action/main'
 import SqlResult from '../../components/result.jsx'
+import UploadDml from './upload-dml'
 import {
   BeautyAction,
   MergeAction,
@@ -79,7 +81,8 @@ export default {
     BeautyAction,
     CheckAction,
     MergeAction,
-    SuggestionAction
+    SuggestionAction,
+    UploadDml
   },
   props: {
     suggestions: {
@@ -127,6 +130,9 @@ export default {
     },
     inDDL () {
       return this.type === MYSQL_DDL_TYPE
+    },
+    inDML () {
+      return this.type === MYSQL_DML_TYPE
     },
     inQuery () {
       return !([MYSQL_DDL_TYPE, MYSQL_DML_TYPE].includes(this.type))
