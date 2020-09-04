@@ -4,11 +4,12 @@
       name="avatar"
       :show-upload-list="false"
       :customRequest="action"
-      @change="handleChange"
     >
       <a-button> <a-icon type="upload" /> 点击上传文件并预览SQL </a-button>
     </a-upload>
-    <monaco-editor ref="monaco" readOnly language="mysql"></monaco-editor>
+    <a-spin :spinning="loading" tip="上传中">
+      <monaco-editor ref="monaco" readOnly language="mysql"></monaco-editor>
+    </a-spin>
   </div>
 </template>
 <script>
@@ -27,7 +28,7 @@ export default {
   },
   data() {
     return {
-      loading: false
+      loading: true
     }
   },
   props: {
@@ -37,21 +38,14 @@ export default {
     }
   },
   methods: {
-    handleChange(info) {
-      if (info.file.status === 'uploading') {
-        this.loading = true
-        return
-      }
-      if (info.file.status === 'done') {
-        this.loading = false
-      }
-    },
     action ({ file }) {
+      this.loading = true
       const formData = new FormData()
       formData.append('sql_file', file)
       const upload = apiPostSqlFileWorkOrderUploadSqlFile(formData)
       upload.then(({ sql_file_path }) => {
         this.triggerChange(sql_file_path)
+        this.loading = false
       })
       readFile(file, (result) => {
         this.$nextTick(() => {
