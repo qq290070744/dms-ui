@@ -147,3 +147,39 @@ export function getStatistics () {
     method: 'get'
   })
 }
+
+/**
+ * 上传sql文件
+ * @param {*} data - 请求参数
+ * @return {#/definitions/model.SqlFilePath} - OK
+ */
+export function apiPostSqlFileWorkOrderUploadSqlFile(data) {
+  return axios({
+    url: '/sql_file_work_order/upload_sql_file',
+    method: 'post',
+    data,
+  })
+}
+
+/**
+ * 提交sql文件工单
+ * @param {#/definitions/model.SubmitSqlFileWorkorderjsonbody} data - 请求参数   类型type 1 mysql 2 redis 3 mongodb 4 pgsql 5 mssql
+ * @return {#/definitions/model.SubmitSqlFileWorkorderjsonbody} - OK
+ */
+export function apiPostSqlFileWorkOrderSubmitSqlFileWorkOrder(data) {
+  return axios({
+    url: '/sql_file_work_order/submit_sql_file_work_order',
+    method: 'post',
+    data,
+  })
+}
+
+export function getSqlFileText (sql_file_path) {
+  return axios({
+    url: '/sql_file_work_order/get_upload_sql_file_content',
+    params: {
+      sql_file_path
+    },
+    method: 'GET'
+  })
+}
